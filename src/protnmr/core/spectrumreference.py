@@ -2,7 +2,7 @@ from dataclasses import dataclass
 import numpy as np
 from numpy.typing import NDArray
 
-from protnmr.spectra.spectrumtransform import SpectrumTransform
+from protnmr.core.spectrumtransform import SpectrumTransform
 
 
 @dataclass(frozen=True)
