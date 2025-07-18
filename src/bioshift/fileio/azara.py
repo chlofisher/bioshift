@@ -4,10 +4,11 @@ import numpy as np
 from numpy.typing import NDArray
 import math
 
-from protnmr.fileio.spectrumreader import SpectrumReader
-from protnmr.fileio.spectrumdatasource import SpectrumDataSource
-from protnmr.core.spectrumparams import SpectrumParams
-from protnmr.core.spectrumtransform import SpectrumTransform
+from bioshift.fileio.spectrumreader import SpectrumReader
+from bioshift.fileio.spectrumdatasource import SpectrumDataSource
+from bioshift.core.spectrumparams import SpectrumParams
+from bioshift.core.spectrumtransform import SpectrumTransform
+from bioshift.core.spectrumreference import SpectrumReference
 
 
 class AzaraSpectrumReader(SpectrumReader):
@@ -157,7 +158,7 @@ class AzaraSpectrumReader(SpectrumReader):
         shape = [0] * ndim
         block_shape = [0] * ndim
         nuclei = [0] * ndim
-        spectrum_width = [0] * ndim
+        spectral_width = [0] * ndim
         spectrometer_frequency = [0] * ndim
         ref_ppm = [0] * ndim
         ref_coord = [0] * ndim
@@ -174,7 +175,7 @@ class AzaraSpectrumReader(SpectrumReader):
                     case 'block':
                         block_shape[dim - 1] = int(param[1])
                     case 'sw':
-                        spectrum_width[dim - 1] = float(param[1])
+                        spectral_width[dim - 1] = float(param[1])
                     case 'sf':
                         spectrometer_frequency[dim - 1] = float(param[1])
                     case 'refppm':
@@ -195,19 +196,21 @@ class AzaraSpectrumReader(SpectrumReader):
         block_shape = np.array(block_shape[::-1])
         n_blocks = np.floor_divide(shape, block_shape)
         nuclei = np.array(nuclei[::-1])
-        spectrum_width = np.array(spectrum_width[::-1])
+        spectral_width = np.array(spectral_width[::-1])
         spectrometer_frequency = np.array(spectrometer_frequency[::-1])
         ref_ppm = np.array(ref_ppm[::-1])
         ref_coord = np.array(ref_coord[::-1])
 
         # Create a SpectrumTransform object from the given reference
-        transform = SpectrumTransform.from_reference(
+        reference = SpectrumReference(
             spectrum_shape=shape,
-            spectrum_width=spectrum_width,
+            spectral_width=spectral_width,
             spectrometer_frequency=spectrometer_frequency,
             ref_ppm=ref_ppm,
             ref_coord=ref_coord
         )
+
+        transform = reference.transform()
 
         return SpectrumParams(
             ndim=ndim,

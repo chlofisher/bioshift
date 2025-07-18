@@ -3,7 +3,7 @@ from enum import Enum
 from numpy.typing import NDArray
 from math import prod
 
-from protnmr.core.spectrumtransform import SpectrumTransform
+from bioshift.core.spectrumtransform import SpectrumTransform
 
 
 class NMRNucleus(Enum):

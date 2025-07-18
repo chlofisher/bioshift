@@ -5,10 +5,11 @@ import numpy as np
 from numpy.typing import NDArray
 import math
 
-from protnmr.core.spectrumparams import SpectrumParams
-from protnmr.core.spectrumtransform import SpectrumTransform
-from protnmr.fileio.spectrumdatasource import SpectrumDataSource
-from protnmr.fileio.spectrumreader import SpectrumReader
+from bioshift.core.spectrumparams import SpectrumParams
+from bioshift.core.spectrumtransform import SpectrumTransform
+from bioshift.core.spectrumreference import SpectrumReference
+from bioshift.fileio.spectrumdatasource import SpectrumDataSource
+from bioshift.fileio.spectrumreader import SpectrumReader
 
 
 GLOBAL_HEADER_SIZE = 180
@@ -56,10 +57,9 @@ class UCSFSpectrumReader(SpectrumReader):
 
         shape = [None] * ndim
         block_shape = [None] * ndim
-        n_blocks = [None] * ndim
         nuclei = [None] * ndim
         spectrometer_frequency = [None] * ndim
-        spectrum_width = [None] * ndim
+        spectral_width = [None] * ndim
         center_shift = [None] * ndim
 
         for i in range(ndim):
@@ -73,25 +73,27 @@ class UCSFSpectrumReader(SpectrumReader):
             shape[i] = int(axis_header[1])
             block_shape[i] = int(axis_header[2])
             spectrometer_frequency[i] = float(axis_header[3])
-            spectrum_width[i] = float(axis_header[4])
+            spectral_width[i] = float(axis_header[4])
             center_shift[i] = float(axis_header[5])
 
         shape = np.array(shape)
         block_shape = np.array(block_shape)
-        n_blocks = np.array(n_blocks)
+        n_blocks = np.floor_divide(shape, block_shape)
         nuclei = np.array(nuclei)
 
         spectrometer_frequency = np.array(spectrometer_frequency)
-        spectrum_width = np.array(spectrum_width)
+        spectral_width = np.array(spectral_width)
         center_shift = np.array(center_shift)
 
-        transform = SpectrumTransform.from_reference(
+        reference = SpectrumReference(
             spectrum_shape=shape,
-            spectrum_width=spectrum_width,
+            spectral_width=spectral_width,
             spectrometer_frequency=spectrometer_frequency,
             ref_ppm=center_shift,
             ref_coord=shape/2
         )
+
+        transform = reference.transform()
 
         return SpectrumParams(
             ndim=ndim,
@@ -145,6 +147,7 @@ class UCSFDataSource(SpectrumDataSource):
     """
 
     def __init__(self, path: Path, params: SpectrumParams):
+        print(params)
         self.params = params
         self.memmap = np.memmap(path,
                                 dtype=np.dtype('>f4'),
@@ -162,7 +165,7 @@ class UCSFDataSource(SpectrumDataSource):
 
         blocks = np.empty(self.params.n_blocks, dtype=object)
 
-        for idx in np.ndindex(self.params.n_blocks):
+        for idx in np.ndindex(tuple(self.params.n_blocks)):
             block_index = self.get_block_index(idx)
             blocks[idx] = self.read_block(block_index)
 

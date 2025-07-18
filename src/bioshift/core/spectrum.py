@@ -1,7 +1,7 @@
 from numpy.typing import NDArray
 
-from protnmr.core.spectrumparams import SpectrumParams
-from protnmr.fileio.spectrumdatasource import SpectrumDataSource
+from bioshift.core.spectrumparams import SpectrumParams
+from bioshift.fileio.spectrumdatasource import SpectrumDataSource
 
 
 class Spectrum:

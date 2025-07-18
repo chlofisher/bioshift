@@ -1,30 +1,26 @@
 [project]
-name = "protnmr"
+name = "bioshift"
 version = "0.1.0"
-description = "Add your description here"
-readme = "README.md"
+description = "Analysis tools for biological NMR spectra."
 authors = [
-    { name = "Chloe Fisher", email = "lf491@cam.ac.uk" }
+    { name = "Chloe Fisher", email = "dev@chlofisher.com" }
 ]
+readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
-    "numpy>=2.3.0",
+    "numpy>=2.3.1",
     "scikit-image>=0.25.2",
-    "xarray>=2025.6.1",
+    "scipy>=1.16.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.4.1",
 ]
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
-[dependency-groups]
-dev = [
-    "black>=25.1.0",
-    "matplotlib>=3.10.3",
-    "pytest>=8.4.1",
-]
-
-[tool.pytest.ini_options]
-testpaths = [
-    "tests"
-]
+[tool.hatch.build]
+sources = ["src"]

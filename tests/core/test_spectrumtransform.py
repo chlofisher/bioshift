@@ -1,6 +1,6 @@
 import pytest
 import numpy as np
-from protnmr.spectra.spectrumtransform import SpectrumTransform
+from bioshift.core.spectrumtransform import SpectrumTransform
 
 
 def random_transform_data(n=10, seed=123):

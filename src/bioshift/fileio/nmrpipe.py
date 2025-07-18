@@ -1,9 +1,9 @@
 from __future__ import annotations
 from pathlib import Path
 
-from protnmr.fileio.spectrumreader import SpectrumReader
-from protnmr.fileio.spectrumdatasource import SpectrumDataSource
-from protnmr.core.spectrumparams import SpectrumParams
+from bioshift.fileio.spectrumreader import SpectrumReader
+from bioshift.fileio.spectrumdatasource import SpectrumDataSource
+from bioshift.core.spectrumparams import SpectrumParams
 
 
 class NMRPipeSpectrumReader(SpectrumReader):

@@ -1,9 +1,9 @@
 from abc import ABC, abstractmethod
 from pathlib import Path
 
-from protnmr.core.spectrum import Spectrum
-from protnmr.core.spectrumparams import SpectrumParams
-from protnmr.fileio.spectrumdatasource import SpectrumDataSource
+from bioshift.core.spectrum import Spectrum
+from bioshift.core.spectrumparams import SpectrumParams
+from bioshift.fileio.spectrumdatasource import SpectrumDataSource
 
 
 class SpectrumReader(ABC):

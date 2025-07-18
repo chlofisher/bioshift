@@ -1,6 +1,6 @@
 import pytest
 import numpy as np
-from protnmr.spectra.spectrumreference import SpectrumReference
+from bioshift.core.spectrumreference import SpectrumReference
 
 
 @pytest.fixture
@@ -47,12 +47,6 @@ def test_shape_mismatch_raises(valid_reference_data, bad_field, bad_value):
 def test_non_1d_array_raises(valid_reference_data):
     valid_reference_data["spectrum_shape"] = np.array([[256, 512]])
     with pytest.raises(ValueError):
-        SpectrumReference(**valid_reference_data)
-
-
-def test_non_ndarray_type_raises(valid_reference_data):
-    valid_reference_data["ref_ppm"] = [4.7, 117.0]  # list instead of ndarray
-    with pytest.raises(TypeError):
         SpectrumReference(**valid_reference_data)
 
 

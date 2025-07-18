@@ -1,10 +1,10 @@
 from pathlib import Path
 from os import PathLike
 
-from protnmr.core.spectrum import Spectrum
-from protnmr.fileio.azara import AzaraSpectrumReader
-from protnmr.fileio.ucsf import UCSFSpectrumReader
-from protnmr.fileio.nmrpipe import NMRPipeSpectrumReader
+from bioshift.core.spectrum import Spectrum
+from bioshift.fileio.azara import AzaraSpectrumReader
+from bioshift.fileio.ucsf import UCSFSpectrumReader
+from bioshift.fileio.nmrpipe import NMRPipeSpectrumReader
 
 
 REGISTRY = [

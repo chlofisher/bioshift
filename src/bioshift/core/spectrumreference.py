@@ -2,7 +2,7 @@ from dataclasses import dataclass
 import numpy as np
 from numpy.typing import NDArray
 
-from protnmr.core.spectrumtransform import SpectrumTransform
+from bioshift.core.spectrumtransform import SpectrumTransform
 
 
 @dataclass(frozen=True)
@@ -39,7 +39,7 @@ class SpectrumReference:
         shapes = [getattr(self, name).shape for name in arr_fields]
         ndims = [getattr(self, name).ndim for name in arr_fields]
 
-        if not all(ndims == 1):
+        if not all(n == 1 for n in ndims):
             raise ValueError(
                 f"""All reference fields must be 1-dimensional, got shapes:
                  {shapes}""".strip()
