@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en"
+      data-content_root="./"
+      x-data="{ darkMode: localStorage.getItem('darkMode') || localStorage.setItem('darkMode', 'system'), activeSection: '' }"
+      x-init="$watch('darkMode', val => localStorage.setItem('darkMode', val))"
+      class="scroll-smooth"
+      :class="{'dark': darkMode === 'dark' || (darkMode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)}"
+>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8" />
+  <meta name="theme-color" media="(prefers-color-scheme: light)" content="white" />
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="black" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>bioshift.fileio package | bioshift  documentation</title>
+    <meta property="og:title" content="bioshift.fileio package | bioshift  documentation" />
+    <meta name="twitter:title" content="bioshift.fileio package | bioshift  documentation" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=e72c8e07" />
+      <link rel="stylesheet" type="text/css" href="_static/theme.css?v=42baaae4" />
+        <link rel="search" title="Search" href="search.html" />
+        <link rel="index" title="Index" href="genindex.html" />
+
+    <script>
+    <!-- Prevent Flash of wrong theme -->
+      const userPreference = localStorage.getItem('darkMode');
+      let mode;
+      if (userPreference === 'dark' || window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        mode = 'dark';
+        document.documentElement.classList.add('dark');
+      } else {
+        mode = 'light';
+      }
+      if (!userPreference) {localStorage.setItem('darkMode', mode)}
+    </script>
+</head>
+  <body x-data="{ showSidebar: false, showScrollTop: false }" class="min-h-screen font-sans antialiased bg-background text-foreground" :class="{ 'overflow-hidden': showSidebar }">
+    <div x-cloak x-show="showSidebar" class="fixed inset-0 z-50 overflow-hidden bg-background/80 backdrop-blur-sm md:hidden" @click.self="showSidebar = false"></div><div id="page" class="relative flex flex-col min-h-screen"><a href="#content" class="absolute top-0 left-0 z-[100] block bg-background p-4 text-xl transition -translate-x-full opacity-0 focus:translate-x-0 focus:opacity-100">
+      Skip to content
+    </a><header
+  class="sticky top-0 z-40 w-full border-b shadow-sm border-border supports-backdrop-blur:bg-background/60 bg-background/95 backdrop-blur"><div class="container flex items-center h-14">
+    <div class="hidden mr-4 md:flex">
+      <a href="index.html" class="flex items-center mr-6"><span class="hidden font-bold sm:inline-block text-clip whitespace-nowrap">bioshift  documentation</span>
+      </a></div><button
+      class="inline-flex items-center justify-center h-10 px-0 py-2 mr-2 text-base font-medium transition-colors rounded-md hover:text-accent-foreground hover:bg-transparent md:hidden"
+      type="button" @click="showSidebar = true">
+      <svg xmlns="http://www.w3.org/2000/svg" height="24" width="24" viewBox="0 96 960 960" aria-hidden="true"
+        fill="currentColor">
+        <path
+          d="M152.587 825.087q-19.152 0-32.326-13.174t-13.174-32.326q0-19.152 13.174-32.326t32.326-13.174h440q19.152 0 32.326 13.174t13.174 32.326q0 19.152-13.174 32.326t-32.326 13.174h-440Zm0-203.587q-19.152 0-32.326-13.174T107.087 576q0-19.152 13.174-32.326t32.326-13.174h320q19.152 0 32.326 13.174T518.087 576q0 19.152-13.174 32.326T472.587 621.5h-320Zm0-203.587q-19.152 0-32.326-13.174t-13.174-32.326q0-19.152 13.174-32.326t32.326-13.174h440q19.152 0 32.326 13.174t13.174 32.326q0 19.152-13.174 32.326t-32.326 13.174h-440ZM708.913 576l112.174 112.174q12.674 12.674 12.674 31.826t-12.674 31.826Q808.413 764.5 789.261 764.5t-31.826-12.674l-144-144Q600 594.391 600 576t13.435-31.826l144-144q12.674-12.674 31.826-12.674t31.826 12.674q12.674 12.674 12.674 31.826t-12.674 31.826L708.913 576Z" />
+      </svg>
+      <span class="sr-only">Toggle navigation menu</span>
+    </button>
+    <div class="flex items-center justify-between flex-1 space-x-2 sm:space-x-4 md:justify-end">
+      <div class="flex-1 w-full md:w-auto md:flex-none"><form id="searchbox"
+      action="search.html"
+      method="get"
+      class="relative flex items-center group"
+      @keydown.k.window.meta="$refs.search.focus()">
+  <input x-ref="search"
+          name="q"
+          id="search-input"
+          type="search"
+          aria-label="Search the docs"
+          placeholder="Search ..."
+          class="inline-flex items-center font-medium transition-colors bg-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-offset-background border border-input hover:bg-accent focus:bg-accent hover:text-accent-foreground focus:text-accent-foreground hover:placeholder-accent-foreground py-2 px-4 relative h-9 w-full justify-start rounded-[0.5rem] text-sm text-muted-foreground sm:pr-12 md:w-40 lg:w-64" />
+  <kbd class="pointer-events-none absolute right-1.5 top-2 hidden h-5 select-none text-muted-foreground items-center gap-1 rounded border border-border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex group-hover:bg-accent group-hover:text-accent-foreground">
+    <span class="text-xs">⌘</span>
+    K
+  </kbd>
+</form>
+      </div>
+      <nav class="flex items-center space-x-1">
+        <button @click="darkMode = darkMode === 'light' ? 'dark' : 'light'"
+          class="relative inline-flex items-center justify-center px-0 text-sm font-medium transition-colors rounded-md hover:bg-accent hover:text-accent-foreground h-9 w-9"
+          type="button"
+          aria-label="Color theme switcher">
+          <svg xmlns="http://www.w3.org/2000/svg" height="24" width="24" viewBox="0 96 960 960" fill="currentColor"
+            class="absolute transition-all scale-100 rotate-0 dark:-rotate-90 dark:scale-0">
+            <path
+              d="M480 685q45.456 0 77.228-31.772Q589 621.456 589 576q0-45.456-31.772-77.228Q525.456 467 480 467q-45.456 0-77.228 31.772Q371 530.544 371 576q0 45.456 31.772 77.228Q434.544 685 480 685Zm0 91q-83 0-141.5-58.5T280 576q0-83 58.5-141.5T480 376q83 0 141.5 58.5T680 576q0 83-58.5 141.5T480 776ZM80 621.5q-19.152 0-32.326-13.174T34.5 576q0-19.152 13.174-32.326T80 530.5h80q19.152 0 32.326 13.174T205.5 576q0 19.152-13.174 32.326T160 621.5H80Zm720 0q-19.152 0-32.326-13.174T754.5 576q0-19.152 13.174-32.326T800 530.5h80q19.152 0 32.326 13.174T925.5 576q0 19.152-13.174 32.326T880 621.5h-80Zm-320-320q-19.152 0-32.326-13.174T434.5 256v-80q0-19.152 13.174-32.326T480 130.5q19.152 0 32.326 13.174T525.5 176v80q0 19.152-13.174 32.326T480 301.5Zm0 720q-19.152 0-32.326-13.17Q434.5 995.152 434.5 976v-80q0-19.152 13.174-32.326T480 850.5q19.152 0 32.326 13.174T525.5 896v80q0 19.152-13.174 32.33-13.174 13.17-32.326 13.17ZM222.174 382.065l-43-42Q165.5 327.391 166 308.239t13.174-33.065q13.435-13.674 32.587-13.674t32.065 13.674l42.239 43q12.674 13.435 12.555 31.706-.12 18.272-12.555 31.946-12.674 13.674-31.445 13.413-18.772-.261-32.446-13.174Zm494 494.761-42.239-43q-12.674-13.435-12.674-32.087t12.674-31.565Q686.609 756.5 705.38 757q18.772.5 32.446 13.174l43 41.761Q794.5 824.609 794 843.761t-13.174 33.065Q767.391 890.5 748.239 890.5t-32.065-13.674Zm-42-494.761Q660.5 369.391 661 350.62q.5-18.772 13.174-32.446l41.761-43Q728.609 261.5 747.761 262t33.065 13.174q13.674 13.435 13.674 32.587t-13.674 32.065l-43 42.239q-13.435 12.674-31.706 12.555-18.272-.12-31.946-12.555Zm-495 494.761Q165.5 863.391 165.5 844.239t13.674-32.065l43-42.239q13.435-12.674 32.087-12.674t31.565 12.674Q299.5 782.609 299 801.38q-.5 18.772-13.174 32.446l-41.761 43Q231.391 890.5 212.239 890t-33.065-13.174ZM480 576Z" />
+          </svg>
+          <svg xmlns="http://www.w3.org/2000/svg" height="24" width="24" viewBox="0 96 960 960" fill="currentColor"
+            class="absolute transition-all scale-0 rotate-90 dark:rotate-0 dark:scale-100">
+            <path
+              d="M480 936q-151 0-255.5-104.5T120 576q0-138 90-239.5T440 218q25-3 39 18t-1 44q-17 26-25.5 55t-8.5 61q0 90 63 153t153 63q31 0 61.5-9t54.5-25q21-14 43-1.5t19 39.5q-14 138-117.5 229T480 936Zm0-80q88 0 158-48.5T740 681q-20 5-40 8t-40 3q-123 0-209.5-86.5T364 396q0-20 3-40t8-40q-78 32-126.5 102T200 576q0 116 82 198t198 82Zm-10-270Z" />
+          </svg>
+        </button>
+      </nav>
+    </div>
+  </div>
+</header>
+
+    <div class="flex-1"><div class="container flex-1 items-start md:grid md:grid-cols-[220px_minmax(0,1fr)] md:gap-6 lg:grid-cols-[240px_minmax(0,1fr)] lg:gap-10"><aside id="left-sidebar"
+  class="fixed inset-y-0 left-0 md:top-14 z-50 md:z-30 bg-background md:bg-transparent transition-all duration-100 -translate-x-full md:translate-x-0 ml-0 p-6 md:p-0 md:-ml-2 md:h-[calc(100vh-3.5rem)] w-5/6 md:w-full shrink-0 overflow-y-auto border-r border-border md:sticky"
+  :aria-hidden="!showSidebar" :class="{ 'translate-x-0': showSidebar }">
+
+    <a href="index.html" class="!justify-start text-sm md:!hidden bg-background"><span class="font-bold text-clip whitespace-nowrap">bioshift  documentation</span>
+    </a>
+
+    <div class="relative overflow-hidden md:overflow-auto my-4 md:my-0 h-[calc(100vh-8rem)] md:h-auto">
+      <div class="overflow-y-auto h-full w-full relative pr-6"><nav class="table w-full min-w-full my-6 lg:my-8">
+  
+</nav>
+      </div>
+    </div>
+    <button type="button" @click="showSidebar = false"
+      class="absolute md:hidden right-4 top-4 rounded-sm opacity-70 transition-opacity hover:opacity-100">
+      <svg xmlns="http://www.w3.org/2000/svg" height="24" width="24" viewBox="0 96 960 960" fill="currentColor"
+        stroke="none" class="h-4 w-4">
+        <path
+          d="M480 632 284 828q-11 11-28 11t-28-11q-11-11-11-28t11-28l196-196-196-196q-11-11-11-28t11-28q11-11 28-11t28 11l196 196 196-196q11-11 28-11t28 11q11 11 11 28t-11 28L536 576l196 196q11 11 11 28t-11 28q-11 11-28 11t-28-11L480 632Z" />
+      </svg>
+    </button>
+  </aside>
+        <main class="relative py-6 lg:gap-10 lg:py-8 xl:grid xl:grid-cols-[1fr_300px]">
+<div class="w-full min-w-0 mx-auto">
+<nav aria-label="breadcrumbs"
+     class="flex items-center mb-4 space-x-1 text-sm text-muted-foreground">
+  <a class="overflow-hidden text-ellipsis whitespace-nowrap hover:text-foreground"
+     href="index.html">
+    <span class="hidden md:inline">bioshift  documentation</span>
+    <svg xmlns="http://www.w3.org/2000/svg"
+         height="18"
+         width="18"
+         viewBox="0 96 960 960"
+         aria-label="Home"
+         fill="currentColor"
+         stroke="none"
+         class="md:hidden">
+      <path d="M240 856h120V616h240v240h120V496L480 316 240 496v360Zm-80 80V456l320-240 320 240v480H520V696h-80v240H160Zm320-350Z" />
+    </svg>
+  </a>
+  
+<div class="mr-1">/</div><span aria-current="page"
+        class="font-medium text-foreground overflow-hidden text-ellipsis whitespace-nowrap">bioshift.fileio package</span>
+</nav>
+
+    <div id="content" role="main">
+      <section id="bioshift-fileio-package">
+<h1>bioshift.fileio package<a class="headerlink" href="#bioshift-fileio-package" title="Link to this heading">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
+</section>
+<section id="module-bioshift.fileio.azara">
+<span id="bioshift-fileio-azara-module"></span><h2>bioshift.fileio.azara module<a class="headerlink" href="#module-bioshift.fileio.azara" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="bioshift.fileio.azara.AzaraDataSource">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bioshift.fileio.azara.</span></span><span class="sig-name descname"><span class="pre">AzaraDataSource</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="bioshift.core.html#bioshift.core.spectrumparams.SpectrumParams" title="bioshift.core.spectrumparams.SpectrumParams"><span class="pre">SpectrumParams</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#bioshift.fileio.azara.AzaraDataSource" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#bioshift.fileio.spectrumdatasource.SpectrumDataSource" title="bioshift.fileio.spectrumdatasource.SpectrumDataSource"><code class="xref py py-class docutils literal notranslate"><span class="pre">SpectrumDataSource</span></code></a></p>
+<p>Concrete implementation of SpectrumDataSource for reading data from
+Azara .spc files.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="bioshift.fileio.azara.AzaraDataSource.params">
+<span class="sig-name descname"><span class="pre">params</span></span><a class="headerlink" href="#bioshift.fileio.azara.AzaraDataSource.params" title="Link to this definition">¶</a></dt>
+<dd><p>Spectrum parameters used to determine how to read the data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="bioshift.core.html#bioshift.core.spectrumparams.SpectrumParams" title="bioshift.core.spectrumparams.SpectrumParams">bioshift.core.spectrumparams.SpectrumParams</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="bioshift.fileio.azara.AzaraDataSource.memmap">
+<span class="sig-name descname"><span class="pre">memmap</span></span><a class="headerlink" href="#bioshift.fileio.azara.AzaraDataSource.memmap" title="Link to this definition">¶</a></dt>
+<dd><p>Memory map of the file on disk.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.memmap</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bioshift.fileio.azara.AzaraDataSource.get_block_index">
+<span class="sig-name descname"><span class="pre">get_block_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#bioshift.fileio.azara.AzaraDataSource.get_block_index" title="Link to this definition">¶</a></dt>
+<dd><p>Takes an ND coordinate index vector and converts it to the linear
+index of the block within the file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>idx</strong> – ND index of the block</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Corresponding linear block index.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">memmap</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">memmap</span></em><a class="headerlink" href="#id0" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id1">
+<span class="sig-name descname"><span class="pre">params</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="bioshift.core.html#bioshift.core.spectrumparams.SpectrumParams" title="bioshift.core.spectrumparams.SpectrumParams"><span class="pre">SpectrumParams</span></a></em><a class="headerlink" href="#id1" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bioshift.fileio.azara.AzaraDataSource.read_block">
+<span class="sig-name descname"><span class="pre">read_block</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">_ScalarT</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#bioshift.fileio.azara.AzaraDataSource.read_block" title="Link to this definition">¶</a></dt>
+<dd><p>Read a single block from the data file, at the given linear index.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>index</strong> – Linear index of the block being read in the data file.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>N-dimensional array containing the spectrum values within
+the block.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>NDArray</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bioshift.fileio.azara.AzaraSpectrumReader">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bioshift.fileio.azara.</span></span><span class="sig-name descname"><span class="pre">AzaraSpectrumReader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">par_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spc_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#bioshift.fileio.azara.AzaraSpectrumReader" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#bioshift.fileio.spectrumreader.SpectrumReader" title="bioshift.fileio.spectrumreader.SpectrumReader"><code class="xref py py-class docutils literal notranslate"><span class="pre">SpectrumReader</span></code></a></p>
+<p>Implementation of SpectrumReader for Azara spectra stored in .par and
+.spc file pairs.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="bioshift.fileio.azara.AzaraSpectrumReader.par_path">
+<span class="sig-name descname"><span class="pre">par_path</span></span><a class="headerlink" href="#bioshift.fileio.azara.AzaraSpectrumReader.par_path" title="Link to this definition">¶</a></dt>
+<dd><p>Path to the .par file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pathlib.Path</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="bioshift.fileio.azara.AzaraSpectrumReader.spc_path">
+<span class="sig-name descname"><span class="pre">spc_path</span></span><a class="headerlink" href="#bioshift.fileio.azara.AzaraSpectrumReader.spc_path" title="Link to this definition">¶</a></dt>
+<dd><p>Path to the .spc file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pathlib.Path</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bioshift.fileio.azara.AzaraSpectrumReader.can_read">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">can_read</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#bioshift.fileio.azara.AzaraSpectrumReader.can_read" title="Link to this definition">¶</a></dt>
+<dd><p>Used to determine whether a particular spectrum path should be read
+using an AzaraSpectrumReader.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if the provided path is a .spc or .par file.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bioshift.fileio.azara.AzaraSpectrumReader.from_path">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#bioshift.fileio.azara.AzaraSpectrumReader" title="bioshift.fileio.azara.AzaraSpectrumReader"><span class="pre">AzaraSpectrumReader</span></a></span></span><a class="headerlink" href="#bioshift.fileio.azara.AzaraSpectrumReader.from_path" title="Link to this definition">¶</a></dt>
+<dd><p>Creates an instance of AzaraSpectrumReader from a given .spc or
+.par path. Given a .par file it will find the corresponding .spc and
+vice-versa.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Instance of AzaraSpectrumReader supplied with paths for both the
+.spc and .par files.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bioshift.fileio.azara.AzaraSpectrumReader.get_data">
+<span class="sig-name descname"><span class="pre">get_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#bioshift.fileio.azara.AzaraDataSource" title="bioshift.fileio.azara.AzaraDataSource"><span class="pre">AzaraDataSource</span></a></span></span><a class="headerlink" href="#bioshift.fileio.azara.AzaraSpectrumReader.get_data" title="Link to this definition">¶</a></dt>
+<dd><p>Create an AzaraDataSource object for the new spectrum.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>AzaraDataSource object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bioshift.fileio.azara.AzaraSpectrumReader.get_params">
+<span class="sig-name descname"><span class="pre">get_params</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="bioshift.core.html#bioshift.core.spectrumparams.SpectrumParams" title="bioshift.core.spectrumparams.SpectrumParams"><span class="pre">SpectrumParams</span></a></span></span><a class="headerlink" href="#bioshift.fileio.azara.AzaraSpectrumReader.get_params" title="Link to this definition">¶</a></dt>
+<dd><p>Read the spectrum metadata from the .par file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>SpectrumParams object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bioshift.fileio.azara.AzaraSpectrumReader.par_from_spc">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">par_from_spc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spc_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="headerlink" href="#bioshift.fileio.azara.AzaraSpectrumReader.par_from_spc" title="Link to this definition">¶</a></dt>
+<dd><p>Finds a corresponding .par file from a .spc file. Given
+spectrum.spc, checks spectrum.spc.par and spectrum.par.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>spc_path</strong> – Path to the .spc file.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Path to a .par file.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>FileNotFoundError</strong> – if a .par file can not be found</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id2">
+<span class="sig-name descname"><span class="pre">par_path</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Path</span></em><a class="headerlink" href="#id2" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bioshift.fileio.azara.AzaraSpectrumReader.parse_par_file">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parse_par_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">par_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#bioshift.fileio.azara.AzaraSpectrumReader.parse_par_file" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bioshift.fileio.azara.AzaraSpectrumReader.spc_from_par">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">spc_from_par</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">par_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="headerlink" href="#bioshift.fileio.azara.AzaraSpectrumReader.spc_from_par" title="Link to this definition">¶</a></dt>
+<dd><p>Finds a corresponding .spc file from a .par file. First checks for
+a .spc file specified in the .par file, failing that checks for a .spc
+with a matching name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>par_path</strong> – Path to the .par file.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Path to a .spc file.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>FileNotFoundError</strong> – if a .spc file can not be found</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id3">
+<span class="sig-name descname"><span class="pre">spc_path</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Path</span></em><a class="headerlink" href="#id3" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-bioshift.fileio.loadspectrum">
+<span id="bioshift-fileio-loadspectrum-module"></span><h2>bioshift.fileio.loadspectrum module<a class="headerlink" href="#module-bioshift.fileio.loadspectrum" title="Link to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="bioshift.fileio.loadspectrum.load_spectrum">
+<span class="sig-prename descclassname"><span class="pre">bioshift.fileio.loadspectrum.</span></span><span class="sig-name descname"><span class="pre">load_spectrum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">PathLike</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="bioshift.core.html#bioshift.core.spectrum.Spectrum" title="bioshift.core.spectrum.Spectrum"><span class="pre">Spectrum</span></a></span></span><a class="headerlink" href="#bioshift.fileio.loadspectrum.load_spectrum" title="Link to this definition">¶</a></dt>
+<dd><p>Helper function to dynamically dispatch a concrete SpectrumReader to
+read a spectrum from a path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> – Path to spectrum on disk.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Spectrum loaded from the path.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-bioshift.fileio.nmrpipe">
+<span id="bioshift-fileio-nmrpipe-module"></span><h2>bioshift.fileio.nmrpipe module<a class="headerlink" href="#module-bioshift.fileio.nmrpipe" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="bioshift.fileio.nmrpipe.NMRPipeSpectrumReader">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bioshift.fileio.nmrpipe.</span></span><span class="sig-name descname"><span class="pre">NMRPipeSpectrumReader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#bioshift.fileio.nmrpipe.NMRPipeSpectrumReader" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#bioshift.fileio.spectrumreader.SpectrumReader" title="bioshift.fileio.spectrumreader.SpectrumReader"><code class="xref py py-class docutils literal notranslate"><span class="pre">SpectrumReader</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="bioshift.fileio.nmrpipe.NMRPipeSpectrumReader.can_read">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">can_read</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#bioshift.fileio.nmrpipe.NMRPipeSpectrumReader.can_read" title="Link to this definition">¶</a></dt>
+<dd><p>Specifies whether or not a given path can be read by a particular
+concrete SpectrumReader implementation. Used to dynamically determine
+which concrete SpectrumReader to use to read from a given path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if the given path can be read by the concrete SpectrumReader
+class.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bioshift.fileio.nmrpipe.NMRPipeSpectrumReader.from_path">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#bioshift.fileio.nmrpipe.NMRPipeSpectrumReader" title="bioshift.fileio.nmrpipe.NMRPipeSpectrumReader"><span class="pre">NMRPipeSpectrumReader</span></a></span></span><a class="headerlink" href="#bioshift.fileio.nmrpipe.NMRPipeSpectrumReader.from_path" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bioshift.fileio.nmrpipe.NMRPipeSpectrumReader.get_data">
+<span class="sig-name descname"><span class="pre">get_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#bioshift.fileio.spectrumdatasource.SpectrumDataSource" title="bioshift.fileio.spectrumdatasource.SpectrumDataSource"><span class="pre">SpectrumDataSource</span></a></span></span><a class="headerlink" href="#bioshift.fileio.nmrpipe.NMRPipeSpectrumReader.get_data" title="Link to this definition">¶</a></dt>
+<dd><p>Creates a SpectrumDataSource object for the spectrum.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>SpectrumDataSource object which reads raw spectrum array from disk.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bioshift.fileio.nmrpipe.NMRPipeSpectrumReader.get_params">
+<span class="sig-name descname"><span class="pre">get_params</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="bioshift.core.html#bioshift.core.spectrumparams.SpectrumParams" title="bioshift.core.spectrumparams.SpectrumParams"><span class="pre">SpectrumParams</span></a></span></span><a class="headerlink" href="#bioshift.fileio.nmrpipe.NMRPipeSpectrumReader.get_params" title="Link to this definition">¶</a></dt>
+<dd><p>Creates a SpectrumParams object for the spectrum.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>SpectrumParams object containing metadata read from path.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-bioshift.fileio.spectrumdatasource">
+<span id="bioshift-fileio-spectrumdatasource-module"></span><h2>bioshift.fileio.spectrumdatasource module<a class="headerlink" href="#module-bioshift.fileio.spectrumdatasource" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="bioshift.fileio.spectrumdatasource.SpectrumDataSource">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bioshift.fileio.spectrumdatasource.</span></span><span class="sig-name descname"><span class="pre">SpectrumDataSource</span></span><a class="headerlink" href="#bioshift.fileio.spectrumdatasource.SpectrumDataSource" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<p>Class which lazily reads raw spectrum data.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="bioshift.fileio.spectrumdatasource.SpectrumDataSource.cache">
+<span class="sig-name descname"><span class="pre">cache</span></span><a class="headerlink" href="#bioshift.fileio.spectrumdatasource.SpectrumDataSource.cache" title="Link to this definition">¶</a></dt>
+<dd><p>Stores a cache of the raw spectrum array after it is loaded.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray[tuple[Any, …], numpy.dtype[numpy._typing._array_like._ScalarT]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id4">
+<span class="sig-name descname"><span class="pre">cache</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">_ScalarT</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#id4" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bioshift.fileio.spectrumdatasource.SpectrumDataSource.get_data">
+<span class="sig-name descname"><span class="pre">get_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">_ScalarT</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#bioshift.fileio.spectrumdatasource.SpectrumDataSource.get_data" title="Link to this definition">¶</a></dt>
+<dd><p>Checks if the data is in the cache, and loads it if not.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Raw spectrum data array.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-bioshift.fileio.spectrumreader">
+<span id="bioshift-fileio-spectrumreader-module"></span><h2>bioshift.fileio.spectrumreader module<a class="headerlink" href="#module-bioshift.fileio.spectrumreader" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="bioshift.fileio.spectrumreader.SpectrumReader">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bioshift.fileio.spectrumreader.</span></span><span class="sig-name descname"><span class="pre">SpectrumReader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#bioshift.fileio.spectrumreader.SpectrumReader" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<p>Base class for spectrum readers. Specifies an interface for producing a
+SpectrumParams and a SpectrumDataSource from different file formats
+implemented by concrete SpectrumReaders.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="bioshift.fileio.spectrumreader.SpectrumReader.can_read">
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">can_read</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#bioshift.fileio.spectrumreader.SpectrumReader.can_read" title="Link to this definition">¶</a></dt>
+<dd><p>Specifies whether or not a given path can be read by a particular
+concrete SpectrumReader implementation. Used to dynamically determine
+which concrete SpectrumReader to use to read from a given path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if the given path can be read by the concrete SpectrumReader
+class.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bioshift.fileio.spectrumreader.SpectrumReader.from_path">
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#bioshift.fileio.spectrumreader.SpectrumReader.from_path" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bioshift.fileio.spectrumreader.SpectrumReader.get_data">
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#bioshift.fileio.spectrumdatasource.SpectrumDataSource" title="bioshift.fileio.spectrumdatasource.SpectrumDataSource"><span class="pre">SpectrumDataSource</span></a></span></span><a class="headerlink" href="#bioshift.fileio.spectrumreader.SpectrumReader.get_data" title="Link to this definition">¶</a></dt>
+<dd><p>Creates a SpectrumDataSource object for the spectrum.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>SpectrumDataSource object which reads raw spectrum array from disk.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bioshift.fileio.spectrumreader.SpectrumReader.get_params">
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_params</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="bioshift.core.html#bioshift.core.spectrumparams.SpectrumParams" title="bioshift.core.spectrumparams.SpectrumParams"><span class="pre">SpectrumParams</span></a></span></span><a class="headerlink" href="#bioshift.fileio.spectrumreader.SpectrumReader.get_params" title="Link to this definition">¶</a></dt>
+<dd><p>Creates a SpectrumParams object for the spectrum.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>SpectrumParams object containing metadata read from path.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bioshift.fileio.spectrumreader.SpectrumReader.read">
+<span class="sig-name descname"><span class="pre">read</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="bioshift.core.html#bioshift.core.spectrum.Spectrum" title="bioshift.core.spectrum.Spectrum"><span class="pre">Spectrum</span></a></span></span><a class="headerlink" href="#bioshift.fileio.spectrumreader.SpectrumReader.read" title="Link to this definition">¶</a></dt>
+<dd><p>Creates a new spectrum from a SpectrumParams and SpectrumDataSource
+constructed by reading from self.path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>New spectrum object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-bioshift.fileio.ucsf">
+<span id="bioshift-fileio-ucsf-module"></span><h2>bioshift.fileio.ucsf module<a class="headerlink" href="#module-bioshift.fileio.ucsf" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="bioshift.fileio.ucsf.UCSFDataSource">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bioshift.fileio.ucsf.</span></span><span class="sig-name descname"><span class="pre">UCSFDataSource</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="bioshift.core.html#bioshift.core.spectrumparams.SpectrumParams" title="bioshift.core.spectrumparams.SpectrumParams"><span class="pre">SpectrumParams</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#bioshift.fileio.ucsf.UCSFDataSource" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#bioshift.fileio.spectrumdatasource.SpectrumDataSource" title="bioshift.fileio.spectrumdatasource.SpectrumDataSource"><code class="xref py py-class docutils literal notranslate"><span class="pre">SpectrumDataSource</span></code></a></p>
+<p>Concrete implementation of SpectrumDataSource for reading data from
+.ucsf files.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="bioshift.fileio.ucsf.UCSFDataSource.params">
+<span class="sig-name descname"><span class="pre">params</span></span><a class="headerlink" href="#bioshift.fileio.ucsf.UCSFDataSource.params" title="Link to this definition">¶</a></dt>
+<dd><p>Spectrum parameters used to determine how to read the data.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="bioshift.fileio.ucsf.UCSFDataSource.memmap">
+<span class="sig-name descname"><span class="pre">memmap</span></span><a class="headerlink" href="#bioshift.fileio.ucsf.UCSFDataSource.memmap" title="Link to this definition">¶</a></dt>
+<dd><p>Memory map of the file on disk.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bioshift.fileio.ucsf.UCSFDataSource.get_block_index">
+<span class="sig-name descname"><span class="pre">get_block_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#bioshift.fileio.ucsf.UCSFDataSource.get_block_index" title="Link to this definition">¶</a></dt>
+<dd><p>Takes an ND coordinate index vector and converts it to the linear
+index of the block within the file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>idx</strong> – ND index of the block</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Corresponding linear block index.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bioshift.fileio.ucsf.UCSFDataSource.read_block">
+<span class="sig-name descname"><span class="pre">read_block</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">_ScalarT</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#bioshift.fileio.ucsf.UCSFDataSource.read_block" title="Link to this definition">¶</a></dt>
+<dd><p>Read a single block from the data file, at the given linear index.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>index</strong> – Linear index of the block being read in the data file.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>N-dimensional array containing the spectrum</dt><dd><p>values within the block.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>NDArray</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bioshift.fileio.ucsf.UCSFSpectrumReader">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bioshift.fileio.ucsf.</span></span><span class="sig-name descname"><span class="pre">UCSFSpectrumReader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#bioshift.fileio.ucsf.UCSFSpectrumReader" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#bioshift.fileio.spectrumreader.SpectrumReader" title="bioshift.fileio.spectrumreader.SpectrumReader"><code class="xref py py-class docutils literal notranslate"><span class="pre">SpectrumReader</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="bioshift.fileio.ucsf.UCSFSpectrumReader.can_read">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">can_read</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#bioshift.fileio.ucsf.UCSFSpectrumReader.can_read" title="Link to this definition">¶</a></dt>
+<dd><p>Used to determine whether a particular spectrum path can be read
+using a UCSFSpectrumReader.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if the provided path is a .ucsf file.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bioshift.fileio.ucsf.UCSFSpectrumReader.from_path">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#bioshift.fileio.ucsf.UCSFSpectrumReader" title="bioshift.fileio.ucsf.UCSFSpectrumReader"><span class="pre">UCSFSpectrumReader</span></a></span></span><a class="headerlink" href="#bioshift.fileio.ucsf.UCSFSpectrumReader.from_path" title="Link to this definition">¶</a></dt>
+<dd><p>Creates an instance of UCSFSpectrumReader from a given path to a
+.ucsf file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Instance of UCSFSpectrumReader supplied with the path to the
+.ucsf file.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bioshift.fileio.ucsf.UCSFSpectrumReader.get_data">
+<span class="sig-name descname"><span class="pre">get_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#bioshift.fileio.ucsf.UCSFSpectrumReader.get_data" title="Link to this definition">¶</a></dt>
+<dd><p>Create a UCSFDataSource object for the new spectrum.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>UCSFDataSource object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bioshift.fileio.ucsf.UCSFSpectrumReader.get_header_size">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_header_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ndim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#bioshift.fileio.ucsf.UCSFSpectrumReader.get_header_size" title="Link to this definition">¶</a></dt>
+<dd><p>Calculates the size of the header in the .ucsf binary file from the
+number of dimensions in the spectrum.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Size of the header in bytes.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bioshift.fileio.ucsf.UCSFSpectrumReader.get_params">
+<span class="sig-name descname"><span class="pre">get_params</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#bioshift.fileio.ucsf.UCSFSpectrumReader.get_params" title="Link to this definition">¶</a></dt>
+<dd><p>Read the spectrum metadata from the .ucsf file header.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>SpectrumParams object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-bioshift.fileio">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-bioshift.fileio" title="Link to this heading">¶</a></h2>
+</section>
+</section>
+
+    </div></div><aside id="right-sidebar" class="hidden text-sm xl:block">
+  <div class="sticky top-16 -mt-10 max-h-[calc(100vh-5rem)] overflow-y-auto pt-6 space-y-2"><p class="font-medium">On this page</p>
+    <ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-bioshift.fileio.azara">bioshift.fileio.azara module</a><ul>
+<li><a class="reference internal" href="#bioshift.fileio.azara.AzaraDataSource"><code class="docutils literal notranslate"><span class="pre">AzaraDataSource</span></code></a><ul>
+<li><a class="reference internal" href="#bioshift.fileio.azara.AzaraDataSource.params"><code class="docutils literal notranslate"><span class="pre">AzaraDataSource.params</span></code></a></li>
+<li><a class="reference internal" href="#bioshift.fileio.azara.AzaraDataSource.memmap"><code class="docutils literal notranslate"><span class="pre">AzaraDataSource.memmap</span></code></a></li>
+<li><a class="reference internal" href="#bioshift.fileio.azara.AzaraDataSource.get_block_index"><code class="docutils literal notranslate"><span class="pre">AzaraDataSource.get_block_index()</span></code></a></li>
+<li><a class="reference internal" href="#id0"><code class="docutils literal notranslate"><span class="pre">AzaraDataSource.memmap</span></code></a></li>
+<li><a class="reference internal" href="#id1"><code class="docutils literal notranslate"><span class="pre">AzaraDataSource.params</span></code></a></li>
+<li><a class="reference internal" href="#bioshift.fileio.azara.AzaraDataSource.read_block"><code class="docutils literal notranslate"><span class="pre">AzaraDataSource.read_block()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bioshift.fileio.azara.AzaraSpectrumReader"><code class="docutils literal notranslate"><span class="pre">AzaraSpectrumReader</span></code></a><ul>
+<li><a class="reference internal" href="#bioshift.fileio.azara.AzaraSpectrumReader.par_path"><code class="docutils literal notranslate"><span class="pre">AzaraSpectrumReader.par_path</span></code></a></li>
+<li><a class="reference internal" href="#bioshift.fileio.azara.AzaraSpectrumReader.spc_path"><code class="docutils literal notranslate"><span class="pre">AzaraSpectrumReader.spc_path</span></code></a></li>
+<li><a class="reference internal" href="#bioshift.fileio.azara.AzaraSpectrumReader.can_read"><code class="docutils literal notranslate"><span class="pre">AzaraSpectrumReader.can_read()</span></code></a></li>
+<li><a class="reference internal" href="#bioshift.fileio.azara.AzaraSpectrumReader.from_path"><code class="docutils literal notranslate"><span class="pre">AzaraSpectrumReader.from_path()</span></code></a></li>
+<li><a class="reference internal" href="#bioshift.fileio.azara.AzaraSpectrumReader.get_data"><code class="docutils literal notranslate"><span class="pre">AzaraSpectrumReader.get_data()</span></code></a></li>
+<li><a class="reference internal" href="#bioshift.fileio.azara.AzaraSpectrumReader.get_params"><code class="docutils literal notranslate"><span class="pre">AzaraSpectrumReader.get_params()</span></code></a></li>
+<li><a class="reference internal" href="#bioshift.fileio.azara.AzaraSpectrumReader.par_from_spc"><code class="docutils literal notranslate"><span class="pre">AzaraSpectrumReader.par_from_spc()</span></code></a></li>
+<li><a class="reference internal" href="#id2"><code class="docutils literal notranslate"><span class="pre">AzaraSpectrumReader.par_path</span></code></a></li>
+<li><a class="reference internal" href="#bioshift.fileio.azara.AzaraSpectrumReader.parse_par_file"><code class="docutils literal notranslate"><span class="pre">AzaraSpectrumReader.parse_par_file()</span></code></a></li>
+<li><a class="reference internal" href="#bioshift.fileio.azara.AzaraSpectrumReader.spc_from_par"><code class="docutils literal notranslate"><span class="pre">AzaraSpectrumReader.spc_from_par()</span></code></a></li>
+<li><a class="reference internal" href="#id3"><code class="docutils literal notranslate"><span class="pre">AzaraSpectrumReader.spc_path</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-bioshift.fileio.loadspectrum">bioshift.fileio.loadspectrum module</a><ul>
+<li><a class="reference internal" href="#bioshift.fileio.loadspectrum.load_spectrum"><code class="docutils literal notranslate"><span class="pre">load_spectrum()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-bioshift.fileio.nmrpipe">bioshift.fileio.nmrpipe module</a><ul>
+<li><a class="reference internal" href="#bioshift.fileio.nmrpipe.NMRPipeSpectrumReader"><code class="docutils literal notranslate"><span class="pre">NMRPipeSpectrumReader</span></code></a><ul>
+<li><a class="reference internal" href="#bioshift.fileio.nmrpipe.NMRPipeSpectrumReader.can_read"><code class="docutils literal notranslate"><span class="pre">NMRPipeSpectrumReader.can_read()</span></code></a></li>
+<li><a class="reference internal" href="#bioshift.fileio.nmrpipe.NMRPipeSpectrumReader.from_path"><code class="docutils literal notranslate"><span class="pre">NMRPipeSpectrumReader.from_path()</span></code></a></li>
+<li><a class="reference internal" href="#bioshift.fileio.nmrpipe.NMRPipeSpectrumReader.get_data"><code class="docutils literal notranslate"><span class="pre">NMRPipeSpectrumReader.get_data()</span></code></a></li>
+<li><a class="reference internal" href="#bioshift.fileio.nmrpipe.NMRPipeSpectrumReader.get_params"><code class="docutils literal notranslate"><span class="pre">NMRPipeSpectrumReader.get_params()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-bioshift.fileio.spectrumdatasource">bioshift.fileio.spectrumdatasource module</a><ul>
+<li><a class="reference internal" href="#bioshift.fileio.spectrumdatasource.SpectrumDataSource"><code class="docutils literal notranslate"><span class="pre">SpectrumDataSource</span></code></a><ul>
+<li><a class="reference internal" href="#bioshift.fileio.spectrumdatasource.SpectrumDataSource.cache"><code class="docutils literal notranslate"><span class="pre">SpectrumDataSource.cache</span></code></a></li>
+<li><a class="reference internal" href="#id4"><code class="docutils literal notranslate"><span class="pre">SpectrumDataSource.cache</span></code></a></li>
+<li><a class="reference internal" href="#bioshift.fileio.spectrumdatasource.SpectrumDataSource.get_data"><code class="docutils literal notranslate"><span class="pre">SpectrumDataSource.get_data()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-bioshift.fileio.spectrumreader">bioshift.fileio.spectrumreader module</a><ul>
+<li><a class="reference internal" href="#bioshift.fileio.spectrumreader.SpectrumReader"><code class="docutils literal notranslate"><span class="pre">SpectrumReader</span></code></a><ul>
+<li><a class="reference internal" href="#bioshift.fileio.spectrumreader.SpectrumReader.can_read"><code class="docutils literal notranslate"><span class="pre">SpectrumReader.can_read()</span></code></a></li>
+<li><a class="reference internal" href="#bioshift.fileio.spectrumreader.SpectrumReader.from_path"><code class="docutils literal notranslate"><span class="pre">SpectrumReader.from_path()</span></code></a></li>
+<li><a class="reference internal" href="#bioshift.fileio.spectrumreader.SpectrumReader.get_data"><code class="docutils literal notranslate"><span class="pre">SpectrumReader.get_data()</span></code></a></li>
+<li><a class="reference internal" href="#bioshift.fileio.spectrumreader.SpectrumReader.get_params"><code class="docutils literal notranslate"><span class="pre">SpectrumReader.get_params()</span></code></a></li>
+<li><a class="reference internal" href="#bioshift.fileio.spectrumreader.SpectrumReader.read"><code class="docutils literal notranslate"><span class="pre">SpectrumReader.read()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-bioshift.fileio.ucsf">bioshift.fileio.ucsf module</a><ul>
+<li><a class="reference internal" href="#bioshift.fileio.ucsf.UCSFDataSource"><code class="docutils literal notranslate"><span class="pre">UCSFDataSource</span></code></a><ul>
+<li><a class="reference internal" href="#bioshift.fileio.ucsf.UCSFDataSource.params"><code class="docutils literal notranslate"><span class="pre">UCSFDataSource.params</span></code></a></li>
+<li><a class="reference internal" href="#bioshift.fileio.ucsf.UCSFDataSource.memmap"><code class="docutils literal notranslate"><span class="pre">UCSFDataSource.memmap</span></code></a></li>
+<li><a class="reference internal" href="#bioshift.fileio.ucsf.UCSFDataSource.get_block_index"><code class="docutils literal notranslate"><span class="pre">UCSFDataSource.get_block_index()</span></code></a></li>
+<li><a class="reference internal" href="#bioshift.fileio.ucsf.UCSFDataSource.read_block"><code class="docutils literal notranslate"><span class="pre">UCSFDataSource.read_block()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bioshift.fileio.ucsf.UCSFSpectrumReader"><code class="docutils literal notranslate"><span class="pre">UCSFSpectrumReader</span></code></a><ul>
+<li><a class="reference internal" href="#bioshift.fileio.ucsf.UCSFSpectrumReader.can_read"><code class="docutils literal notranslate"><span class="pre">UCSFSpectrumReader.can_read()</span></code></a></li>
+<li><a class="reference internal" href="#bioshift.fileio.ucsf.UCSFSpectrumReader.from_path"><code class="docutils literal notranslate"><span class="pre">UCSFSpectrumReader.from_path()</span></code></a></li>
+<li><a class="reference internal" href="#bioshift.fileio.ucsf.UCSFSpectrumReader.get_data"><code class="docutils literal notranslate"><span class="pre">UCSFSpectrumReader.get_data()</span></code></a></li>
+<li><a class="reference internal" href="#bioshift.fileio.ucsf.UCSFSpectrumReader.get_header_size"><code class="docutils literal notranslate"><span class="pre">UCSFSpectrumReader.get_header_size()</span></code></a></li>
+<li><a class="reference internal" href="#bioshift.fileio.ucsf.UCSFSpectrumReader.get_params"><code class="docutils literal notranslate"><span class="pre">UCSFSpectrumReader.get_params()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-bioshift.fileio">Module contents</a></li>
+</ul>
+</div>
+</aside>
+        </main>
+      </div>
+    </div><footer class="py-6 border-t border-border md:py-0">
+    <div class="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
+      <div class="flex flex-col items-center gap-4 px-8 md:flex-row md:gap-2 md:px-0">
+        <p class="text-sm leading-loose text-center text-muted-foreground md:text-left">© 2025, Chloe Fisher&nbsp;Built with <a class="font-medium underline underline-offset-4"
+    href="https://www.sphinx-doc.org"
+    rel="noreferrer">Sphinx 8.2.3</a></p>
+</div>
+</div>
+</footer>
+  </div>
+  
+    <script src="_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script defer="defer" src="_static/theme.js?v=073f68d9"></script>
+  
+</body>
+</html>
