@@ -68,14 +68,16 @@ class AzaraSpectrumReader(SpectrumReader):
             # params to check for a .spc file
             params = AzaraSpectrumReader.parse_par_file(par_path)
 
-            data_file_param = next(p for p in params if p[0] == 'data_file')
+            data_file_param = next(p for p in params if p[0] == 'file')
             spc_file = data_file_param[1].strip()
             potential_spc_paths.append(par_path.parent / Path(spc_file))
         except StopIteration:
             pass
 
-        potential_spc_paths.append(par_path.parent / par_path.stem + '.spc')
-
+        potential_spc_paths.append(par_path.parent / (par_path.stem + '.spc'))
+        potential_spc_paths.append(par_path.parent / par_path.stem)
+        potential_spc_paths.append(par_path.parent / (Path(par_path.stem).stem + '.spc'))
+        
         for spc_path in potential_spc_paths:
             if spc_path.is_file():
                 return spc_path
