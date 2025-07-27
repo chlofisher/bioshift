@@ -1,14 +1,11 @@
 from __future__ import annotations
 from pathlib import Path
 import numpy as np
-from numpy.typing import NDArray
-import math
 
-from bioshift.fileio.spectrumreader import SpectrumReader
-from bioshift.fileio.spectrumdatasource import SpectrumDataSource
-from bioshift.core.spectrumparams import SpectrumParams
-from bioshift.core.spectrumtransform import SpectrumTransform
+from bioshift.core.spectrum import NMRNucleus
 from bioshift.core.spectrumreference import SpectrumReference
+from bioshift.fileio.spectrumreader import SpectrumReader
+from bioshift.fileio.blockedspectrum import BlockedSpectrumDataSource
 
 
 class AzaraSpectrumReader(SpectrumReader):
@@ -21,10 +18,13 @@ class AzaraSpectrumReader(SpectrumReader):
     """
     par_path: Path
     spc_path: Path
+    params: dict
 
     def __init__(self, par_path: Path, spc_path: Path):
         self.par_path = par_path
         self.spc_path = spc_path
+
+        self.params = self.get_params()
 
     @classmethod
     def from_path(cls, path: Path) -> AzaraSpectrumReader:
@@ -76,8 +76,9 @@ class AzaraSpectrumReader(SpectrumReader):
 
         potential_spc_paths.append(par_path.parent / (par_path.stem + '.spc'))
         potential_spc_paths.append(par_path.parent / par_path.stem)
-        potential_spc_paths.append(par_path.parent / (Path(par_path.stem).stem + '.spc'))
-        
+        potential_spc_paths.append(
+            par_path.parent / (Path(par_path.stem).stem + '.spc'))
+
         for spc_path in potential_spc_paths:
             if spc_path.is_file():
                 return spc_path
@@ -114,35 +115,37 @@ class AzaraSpectrumReader(SpectrumReader):
         raise FileNotFoundError(
             f'Could not find valid .par file corresponding to {spc_path}')
 
-    def get_params(self) -> SpectrumParams:
+    def get_params(self) -> dict:
         """Read the spectrum metadata from the .par file.
 
         Returns:
             SpectrumParams object. 
         """
-        params = AzaraSpectrumReader.parse_par_file(self.par_path)
+        params_file = AzaraSpectrumReader.parse_par_file(self.par_path)
+
+        params = {}
 
         # Iterate over all params to get global params
-        for param in params:
+        for param in params_file:
             match param[0]:
                 case 'ndim':
-                    ndim = int(param[1])
-                # case 'file':
-                #     data_file = param[1].strip()
+                    params['ndim'] = int(param[1])
+                case 'file':
+                    params['data_file'] = param[1].strip()
                 case 'head':
-                    header_size = int(param[1])
-                # case 'int':
-                #     integer = True
-                # case 'swap':
-                #     swap = True
-                # case 'big_endian':
-                #     endianness = False
-                # case 'little_endian':
-                #     endianness = True
-                # case 'deflate':
-                #     deflate = int(params[1])
-                # case 'reflate':
-                #     reflate = int(params[1])
+                    params['header_size'] = int(param[1])
+                case 'int':
+                    params['integer'] = True
+                case 'swap':
+                    params['swap'] = True
+                case 'big_endian':
+                    params['endianness'] = False
+                case 'little_endian':
+                    params['endianness'] = True
+                case 'deflate':
+                    params['deflate'] = int(params[1])
+                case 'reflate':
+                    params['reflate'] = int(params[1])
                 case 'blocks':
                     raise ValueError("Azara data must be blocked")
                 case 'varian':
@@ -150,12 +153,16 @@ class AzaraSpectrumReader(SpectrumReader):
                 case _:
                     pass
 
+        params['header_size'] = 0
+
         # Record where 'dim' keywords are found, as delimiters of blocks of
         # axis params, including one after the final line.
         dim_positions = [
-            i for i, param in enumerate(params) if param[0] == 'dim'
+            i for i, param in enumerate(params_file) if param[0] == 'dim'
         ]
-        dim_positions.append(len(params))
+        dim_positions.append(len(params_file))
+
+        ndim = params['ndim']
 
         shape = [0] * ndim
         block_shape = [0] * ndim
@@ -168,7 +175,7 @@ class AzaraSpectrumReader(SpectrumReader):
         # Iterate over each pair of 'dim' positions to get blocks of
         # params associated with each axis.
         for start, stop in zip(dim_positions, dim_positions[1:]):
-            for param in params[start:stop]:
+            for param in params_file[start:stop]:
                 match param[0]:
                     case 'dim':
                         dim = int(param[1])
@@ -194,52 +201,47 @@ class AzaraSpectrumReader(SpectrumReader):
                         pass
 
         # Invert to row-major order
-        shape = np.array(shape[::-1])
-        block_shape = np.array(block_shape[::-1])
-        n_blocks = np.floor_divide(shape, block_shape)
-        nuclei = np.array(nuclei[::-1])
-        spectral_width = np.array(spectral_width[::-1])
-        spectrometer_frequency = np.array(spectrometer_frequency[::-1])
-        ref_ppm = np.array(ref_ppm[::-1])
-        ref_coord = np.array(ref_coord[::-1])
+        params['shape'] = tuple(shape[::-1])
+        params['block_shape'] = tuple(block_shape[::-1])
+        params['nuclei'] = tuple(nuclei[::-1])
+        params['spectral_width'] = tuple(spectral_width[::-1])
+        params['spectrometer_frequency'] = tuple(spectrometer_frequency[::-1])
+        params['ref_ppm'] = tuple(ref_ppm[::-1])
+        params['ref_coord'] = tuple(ref_coord[::-1])
 
-        # Create a SpectrumTransform object from the given reference
-        reference = SpectrumReference(
-            spectrum_shape=shape,
-            spectral_width=spectral_width,
-            spectrometer_frequency=spectrometer_frequency,
-            ref_ppm=ref_ppm,
-            ref_coord=ref_coord
-        )
+        return params
 
-        transform = reference.transform()
+    def get_ndim(self) -> int:
+        return self.params['ndim']
 
-        return SpectrumParams(
-            ndim=ndim,
-            shape=shape,
-            block_shape=block_shape,
-            n_blocks=n_blocks,
-            header_size=0,
-            nuclei=nuclei,
-            transform=transform
-        )
+    def get_nuclei(self) -> tuple[NMRNucleus, ...]:
+        return self.params['nuclei']
 
-    def get_data(self) -> AzaraDataSource:
+    def get_data(self) -> BlockedSpectrumDataSource:
         """Create an AzaraDataSource object for the new spectrum.
 
         Returns:
             AzaraDataSource object.
         """
-        return AzaraDataSource(self.spc_path, self.get_params())
+        return BlockedSpectrumDataSource(
+            path=self.spc_path,
+            shape=self.params['shape'],
+            block_shape=self.params['block_shape'],
+            header_size=self.params['header_size'],
+            dtype=np.float32
+        )
+
+    def get_reference(self) -> SpectrumReference:
+        return SpectrumReference(
+            spectrum_shape=self.params['shape'],
+            spectral_width=self.params['spectral_width'],
+            spectrometer_frequency=self.params['spectrometer_frequency'],
+            ref_coord=self.params['ref_coord'],
+            ref_ppm=self.params['ref_ppm']
+        )
 
     @classmethod
     def can_read(cls, path: Path) -> bool:
-        """Used to determine whether a particular spectrum path should be read 
-        using an AzaraSpectrumReader.
-
-        Returns: 
-            True if the provided path is a .spc or .par file.
-        """
         return path.is_file() and path.suffix in ['.spc', '.par']
 
     @classmethod
@@ -254,89 +256,4 @@ class AzaraSpectrumReader(SpectrumReader):
         return [tuple(line.split(' ')) for line in lines]
 
 
-class AzaraDataSource(SpectrumDataSource):
-    """Concrete implementation of SpectrumDataSource for reading data from 
-    Azara .spc files.
 
-    Attributes:
-        params: Spectrum parameters used to determine how to read the data.
-        memmap: Memory map of the file on disk.
-    """
-    params: SpectrumParams
-    memmap: np.memmap
-
-    def __init__(self, path: Path, params: SpectrumParams):
-        self.params = params
-        self.memmap = np.memmap(path,
-                                dtype=np.float32,
-                                mode='r',
-                                offset=params.header_size)
-        self.cache: NDArray = None
-
-    def _load_data(self) -> NDArray:
-        """
-        Reads the entire spectrum as an ND array of floats.
-
-        Returns:
-            NDArray: N-dimensional array of floats containing the spectrum data.
-        """
-        blocks = np.empty(self.params.n_blocks, dtype=object)
-
-        for idx in np.ndindex(tuple(self.params.n_blocks)):
-            block_index = self.get_block_index(idx)
-            blocks[idx] = self.read_block(block_index)
-
-        data = np.block(blocks.tolist())
-
-        # Truncate the spectrum to remove padding in final block
-        slices = tuple(slice(0, n) for n in self.params.shape)
-        data = data[slices]
-
-        return data
-
-    def read_block(self, index: int) -> NDArray:
-        """
-        Read a single block from the data file, at the given linear index.
-
-        Args:
-            index: Linear index of the block being read in the data file.
-
-        Returns:
-            NDArray: N-dimensional array containing the spectrum values within 
-            the block.
-        """
-        start: int = index * self.params.block_volume
-        end: int = start + self.params.block_volume
-
-        return self.memmap[start:end].reshape(self.params.block_shape)
-
-    def get_block_index(self, idx: tuple[int, ...]) -> int:
-        """Takes an ND coordinate index vector and converts it to the linear 
-        index of the block within the file.
-
-        Args:
-            idx: ND index of the block
-
-        Returns:
-            Corresponding linear block index.
-        """
-
-        n = self.params.n_blocks
-
-        linear_index = 0
-        for axis, index in enumerate(idx):
-            linear_index += index * math.prod(n[axis+1:])
-
-        return linear_index
-
-        # match self.params.ndim:
-        #     case 2:
-        #         return idx[1] + n[1] * idx[0]
-        #     case 3:
-        #         return idx[2] + n[2] * idx[1] + n[2] * n[1] * idx[0]
-        #     case 4:
-        #         return (idx[3] + n[3] * idx[2] + n[3] * n[2] * idx[1]
-        #                 + n[3] * n[2] * n[1] * idx[0])
-        #
-        # raise NotImplementedError(
-        #     'Currently only 2D and 3D spectra are supported.')

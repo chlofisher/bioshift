@@ -1,7 +1,14 @@
 from numpy.typing import NDArray
+from enum import Enum
 
-from bioshift.core.spectrumparams import SpectrumParams
 from bioshift.fileio.spectrumdatasource import SpectrumDataSource
+from bioshift.core.spectrumtransform import SpectrumTransform
+
+
+class NMRNucleus(Enum):
+    HYDROGEN = "1H"
+    NITROGEN = "15N"
+    CARBON = "13C"
 
 
 class Spectrum:
@@ -15,22 +22,21 @@ class Spectrum:
         data: N-dimensional numpy array containing the raw spectrum.
         ndim: Number of dimensions of the spectrum.
     """
+    ndim: int
+    nuclei: tuple[NMRNucleus, ...]
     data_source: SpectrumDataSource
-    params: SpectrumParams
+    transform: SpectrumTransform
 
     data: NDArray
-    ndim: int
 
-    def __init__(self, params: SpectrumParams, data_source: SpectrumDataSource):
-        self.params = params
+    def __init__(self, ndim, nuclei, data_source, transform):
+        self.ndim = ndim
+        self.nuclei = nuclei
         self.data_source = data_source
+        self.transform = transform
 
     def __repr__(self):
         return f'Spectrum({self.data.__repr__()})'
-
-    @property
-    def ndim(self) -> int:
-        return self.params.ndim
 
     @property
     def data(self) -> NDArray:
@@ -45,7 +51,7 @@ class Spectrum:
         Returns:
             N-dimensional spectrum coordinates vector.
         """
-        return self.params.transform.inverse.apply(shift)
+        return self.transform.inverse.apply(shift)
 
     def coord_to_shift(self, coord: NDArray) -> NDArray:
         """Convert array index coordinates to chemical shifts.
@@ -56,4 +62,4 @@ class Spectrum:
         Returns:
             N-dimensional chemical shift vector.
         """
-        return self.params.transform.apply(coord)
+        return self.transform.apply(coord)

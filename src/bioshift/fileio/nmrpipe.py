@@ -3,7 +3,6 @@ from pathlib import Path
 
 from bioshift.fileio.spectrumreader import SpectrumReader
 from bioshift.fileio.spectrumdatasource import SpectrumDataSource
-from bioshift.core.spectrumparams import SpectrumParams
 
 
 class NMRPipeSpectrumReader(SpectrumReader):

@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 from pathlib import Path
 
-from bioshift.core.spectrum import Spectrum
-from bioshift.core.spectrumparams import SpectrumParams
+from bioshift.core.spectrum import Spectrum, NMRNucleus
+from bioshift.core.spectrumreference import SpectrumReference
 from bioshift.fileio.spectrumdatasource import SpectrumDataSource
 
 
@@ -28,27 +28,32 @@ class SpectrumReader(ABC):
         Returns:
             New spectrum object.
         """
-        params = self.get_params()
-        datasource = self.get_data()
+        ndim: int = self.get_ndim()
+        nuclei: tuple[NMRNucleus, ...] = self.get_nuclei()
+        datasource: SpectrumDataSource = self.get_data()
+        reference: SpectrumReference = self.get_reference()
 
-        return Spectrum(params, datasource)
+        return Spectrum(
+            ndim=ndim,
+            nuclei=nuclei,
+            data_source=datasource,
+            transform=reference.transform()
+        )
 
     @abstractmethod
-    def get_params(self) -> SpectrumParams:
-        """Creates a SpectrumParams object for the spectrum.
+    def get_ndim(self) -> int:
+        ...
 
-        Returns:
-            SpectrumParams object containing metadata read from path.
-        """
+    @abstractmethod
+    def get_nuclei(self) -> tuple[NMRNucleus, ...]:
         ...
 
     @abstractmethod
     def get_data(self) -> SpectrumDataSource:
-        """Creates a SpectrumDataSource object for the spectrum.
+        ...
 
-        Returns:
-            SpectrumDataSource object which reads raw spectrum array from disk.
-        """
+    @abstractmethod
+    def get_reference(self) -> SpectrumReference:
         ...
 
     @classmethod
