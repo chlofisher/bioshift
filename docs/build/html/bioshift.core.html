@@ -131,79 +131,35 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
 </section>
-<section id="module-bioshift.core.peakpicking">
-<span id="bioshift-core-peakpicking-module"></span><h2>bioshift.core.peakpicking module<a class="headerlink" href="#module-bioshift.core.peakpicking" title="Link to this heading">¶</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="bioshift.core.peakpicking.DifferenceOfGaussiansPicker">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bioshift.core.peakpicking.</span></span><span class="sig-name descname"><span class="pre">DifferenceOfGaussiansPicker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">threshold</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_distance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#bioshift.core.peakpicking.DifferenceOfGaussiansPicker" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#bioshift.core.peakpicking.PeakPicker" title="bioshift.core.peakpicking.PeakPicker"><code class="xref py py-class docutils literal notranslate"><span class="pre">PeakPicker</span></code></a></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="bioshift.core.peakpicking.DifferenceOfGaussiansPicker.pick_peaks">
-<span class="sig-name descname"><span class="pre">pick_peaks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spectrum</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#bioshift.core.spectrum.Spectrum" title="bioshift.core.spectrum.Spectrum"><span class="pre">Spectrum</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#bioshift.core.peakpicking.PeakList" title="bioshift.core.peakpicking.PeakList"><span class="pre">PeakList</span></a></span></span><a class="headerlink" href="#bioshift.core.peakpicking.DifferenceOfGaussiansPicker.pick_peaks" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="bioshift.core.peakpicking.LocalMaximaPicker">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bioshift.core.peakpicking.</span></span><span class="sig-name descname"><span class="pre">LocalMaximaPicker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">threshold</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_distance</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#bioshift.core.peakpicking.LocalMaximaPicker" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#bioshift.core.peakpicking.PeakPicker" title="bioshift.core.peakpicking.PeakPicker"><code class="xref py py-class docutils literal notranslate"><span class="pre">PeakPicker</span></code></a></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="bioshift.core.peakpicking.LocalMaximaPicker.pick_peaks">
-<span class="sig-name descname"><span class="pre">pick_peaks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spectrum</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#bioshift.core.spectrum.Spectrum" title="bioshift.core.spectrum.Spectrum"><span class="pre">Spectrum</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#bioshift.core.peakpicking.PeakList" title="bioshift.core.peakpicking.PeakList"><span class="pre">PeakList</span></a></span></span><a class="headerlink" href="#bioshift.core.peakpicking.LocalMaximaPicker.pick_peaks" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="bioshift.core.peakpicking.Peak">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bioshift.core.peakpicking.</span></span><span class="sig-name descname"><span class="pre">Peak</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coord</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy.dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">_ScalarT</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shift</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy.dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">_ScalarT</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#bioshift.core.peakpicking.Peak" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="bioshift.core.peakpicking.Peak.coord">
-<span class="sig-name descname"><span class="pre">coord</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">_ScalarT</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#bioshift.core.peakpicking.Peak.coord" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="bioshift.core.peakpicking.Peak.shift">
-<span class="sig-name descname"><span class="pre">shift</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">_ScalarT</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#bioshift.core.peakpicking.Peak.shift" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="bioshift.core.peakpicking.PeakList">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bioshift.core.peakpicking.</span></span><span class="sig-name descname"><span class="pre">PeakList</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">peaks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy.dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">_ScalarT</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spectrum</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#bioshift.core.spectrum.Spectrum" title="bioshift.core.spectrum.Spectrum"><span class="pre">bioshift.core.spectrum.Spectrum</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#bioshift.core.peakpicking.PeakList" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="bioshift.core.peakpicking.PeakList.peaks">
-<span class="sig-name descname"><span class="pre">peaks</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">_ScalarT</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#bioshift.core.peakpicking.PeakList.peaks" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="bioshift.core.peakpicking.PeakList.spectrum">
-<span class="sig-name descname"><span class="pre">spectrum</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#bioshift.core.spectrum.Spectrum" title="bioshift.core.spectrum.Spectrum"><span class="pre">Spectrum</span></a></em><a class="headerlink" href="#bioshift.core.peakpicking.PeakList.spectrum" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="bioshift.core.peakpicking.PeakPicker">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bioshift.core.peakpicking.</span></span><span class="sig-name descname"><span class="pre">PeakPicker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#bioshift.core.peakpicking.PeakPicker" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Protocol</span></code></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="bioshift.core.peakpicking.PeakPicker.pick_peaks">
-<span class="sig-name descname"><span class="pre">pick_peaks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spectrum</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#bioshift.core.spectrum.Spectrum" title="bioshift.core.spectrum.Spectrum"><span class="pre">Spectrum</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#bioshift.core.peakpicking.PeakList" title="bioshift.core.peakpicking.PeakList"><span class="pre">PeakList</span></a></span></span><a class="headerlink" href="#bioshift.core.peakpicking.PeakPicker.pick_peaks" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
+<section id="bioshift-core-peakpicking-module">
+<h2>bioshift.core.peakpicking module<a class="headerlink" href="#bioshift-core-peakpicking-module" title="Link to this heading">¶</a></h2>
 </section>
 <section id="module-bioshift.core.spectrum">
 <span id="bioshift-core-spectrum-module"></span><h2>bioshift.core.spectrum module<a class="headerlink" href="#module-bioshift.core.spectrum" title="Link to this heading">¶</a></h2>
 <dl class="py class">
+<dt class="sig sig-object py" id="bioshift.core.spectrum.NMRNucleus">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bioshift.core.spectrum.</span></span><span class="sig-name descname"><span class="pre">NMRNucleus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#bioshift.core.spectrum.NMRNucleus" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="bioshift.core.spectrum.NMRNucleus.CARBON">
+<span class="sig-name descname"><span class="pre">CARBON</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'13C'</span></em><a class="headerlink" href="#bioshift.core.spectrum.NMRNucleus.CARBON" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="bioshift.core.spectrum.NMRNucleus.HYDROGEN">
+<span class="sig-name descname"><span class="pre">HYDROGEN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'1H'</span></em><a class="headerlink" href="#bioshift.core.spectrum.NMRNucleus.HYDROGEN" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="bioshift.core.spectrum.NMRNucleus.NITROGEN">
+<span class="sig-name descname"><span class="pre">NITROGEN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'15N'</span></em><a class="headerlink" href="#bioshift.core.spectrum.NMRNucleus.NITROGEN" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="bioshift.core.spectrum.Spectrum">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bioshift.core.spectrum.</span></span><span class="sig-name descname"><span class="pre">Spectrum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#bioshift.core.spectrumparams.SpectrumParams" title="bioshift.core.spectrumparams.SpectrumParams"><span class="pre">SpectrumParams</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="bioshift.fileio.html#bioshift.fileio.spectrumdatasource.SpectrumDataSource" title="bioshift.fileio.spectrumdatasource.SpectrumDataSource"><span class="pre">SpectrumDataSource</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#bioshift.core.spectrum.Spectrum" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bioshift.core.spectrum.</span></span><span class="sig-name descname"><span class="pre">Spectrum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ndim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nuclei</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transform</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#bioshift.core.spectrum.Spectrum" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>NMR spectrum object.</p>
 <dl class="py attribute">
@@ -221,11 +177,6 @@
 <dt class="sig sig-object py" id="bioshift.core.spectrum.Spectrum.params">
 <span class="sig-name descname"><span class="pre">params</span></span><a class="headerlink" href="#bioshift.core.spectrum.Spectrum.params" title="Link to this definition">¶</a></dt>
 <dd><p>Object containing spectrum metadata.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="#bioshift.core.spectrumparams.SpectrumParams" title="bioshift.core.spectrumparams.SpectrumParams">bioshift.core.spectrumparams.SpectrumParams</a></p>
-</dd>
-</dl>
 </dd></dl>
 
 <dl class="simple">
@@ -257,14 +208,14 @@ ndim: Number of dimensions of the spectrum.</p>
 <span class="sig-name descname"><span class="pre">data_source</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="bioshift.fileio.html#bioshift.fileio.spectrumdatasource.SpectrumDataSource" title="bioshift.fileio.spectrumdatasource.SpectrumDataSource"><span class="pre">SpectrumDataSource</span></a></em><a class="headerlink" href="#id0" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="py property">
+<dl class="py attribute">
 <dt class="sig sig-object py" id="bioshift.core.spectrum.Spectrum.ndim">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ndim</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#bioshift.core.spectrum.Spectrum.ndim" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">ndim</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#bioshift.core.spectrum.Spectrum.ndim" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="id1">
-<span class="sig-name descname"><span class="pre">params</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#bioshift.core.spectrumparams.SpectrumParams" title="bioshift.core.spectrumparams.SpectrumParams"><span class="pre">SpectrumParams</span></a></em><a class="headerlink" href="#id1" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="bioshift.core.spectrum.Spectrum.nuclei">
+<span class="sig-name descname"><span class="pre">nuclei</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#bioshift.core.spectrum.NMRNucleus" title="bioshift.core.spectrum.NMRNucleus"><span class="pre">NMRNucleus</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#bioshift.core.spectrum.Spectrum.nuclei" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -281,152 +232,22 @@ ndim: Number of dimensions of the spectrum.</p>
 </dl>
 </dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="bioshift.core.spectrum.Spectrum.transform">
+<span class="sig-name descname"><span class="pre">transform</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#bioshift.core.spectrumtransform.SpectrumTransform" title="bioshift.core.spectrumtransform.SpectrumTransform"><span class="pre">SpectrumTransform</span></a></em><a class="headerlink" href="#bioshift.core.spectrum.Spectrum.transform" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 </section>
-<section id="module-bioshift.core.spectrumparams">
-<span id="bioshift-core-spectrumparams-module"></span><h2>bioshift.core.spectrumparams module<a class="headerlink" href="#module-bioshift.core.spectrumparams" title="Link to this heading">¶</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="bioshift.core.spectrumparams.NMRNucleus">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bioshift.core.spectrumparams.</span></span><span class="sig-name descname"><span class="pre">NMRNucleus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#bioshift.core.spectrumparams.NMRNucleus" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="bioshift.core.spectrumparams.NMRNucleus.CARBON">
-<span class="sig-name descname"><span class="pre">CARBON</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'13C'</span></em><a class="headerlink" href="#bioshift.core.spectrumparams.NMRNucleus.CARBON" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="bioshift.core.spectrumparams.NMRNucleus.HYDROGEN">
-<span class="sig-name descname"><span class="pre">HYDROGEN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'1H'</span></em><a class="headerlink" href="#bioshift.core.spectrumparams.NMRNucleus.HYDROGEN" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="bioshift.core.spectrumparams.NMRNucleus.NITROGEN">
-<span class="sig-name descname"><span class="pre">NITROGEN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'15N'</span></em><a class="headerlink" href="#bioshift.core.spectrumparams.NMRNucleus.NITROGEN" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="bioshift.core.spectrumparams.SpectrumParams">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bioshift.core.spectrumparams.</span></span><span class="sig-name descname"><span class="pre">SpectrumParams</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ndim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_shape</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_blocks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nuclei</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#bioshift.core.spectrumparams.NMRNucleus" title="bioshift.core.spectrumparams.NMRNucleus"><span class="pre">NMRNucleus</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transform</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#bioshift.core.spectrumtransform.SpectrumTransform" title="bioshift.core.spectrumtransform.SpectrumTransform"><span class="pre">SpectrumTransform</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">header_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#bioshift.core.spectrumparams.SpectrumParams" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Contains spectrum metadata used to interpret the raw array of data.</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="bioshift.core.spectrumparams.SpectrumParams.ndim">
-<span class="sig-name descname"><span class="pre">ndim</span></span><a class="headerlink" href="#bioshift.core.spectrumparams.SpectrumParams.ndim" title="Link to this definition">¶</a></dt>
-<dd><p>Number of dimensions of the spectrum.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>int</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="bioshift.core.spectrumparams.SpectrumParams.shape">
-<span class="sig-name descname"><span class="pre">shape</span></span><a class="headerlink" href="#bioshift.core.spectrumparams.SpectrumParams.shape" title="Link to this definition">¶</a></dt>
-<dd><p>Number of data points along each axis.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>numpy.ndarray[tuple[Any, …], numpy.dtype[int]]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="bioshift.core.spectrumparams.SpectrumParams.block_shape">
-<span class="sig-name descname"><span class="pre">block_shape</span></span><a class="headerlink" href="#bioshift.core.spectrumparams.SpectrumParams.block_shape" title="Link to this definition">¶</a></dt>
-<dd><p>Number of data points along each axis per block.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>numpy.ndarray[tuple[Any, …], numpy.dtype[int]]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="bioshift.core.spectrumparams.SpectrumParams.n_blocks">
-<span class="sig-name descname"><span class="pre">n_blocks</span></span><a class="headerlink" href="#bioshift.core.spectrumparams.SpectrumParams.n_blocks" title="Link to this definition">¶</a></dt>
-<dd><p>Number of blocks along each axis.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>numpy.ndarray[tuple[Any, …], numpy.dtype[int]]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="bioshift.core.spectrumparams.SpectrumParams.transform">
-<span class="sig-name descname"><span class="pre">transform</span></span><a class="headerlink" href="#bioshift.core.spectrumparams.SpectrumParams.transform" title="Link to this definition">¶</a></dt>
-<dd><p>Transformation object which maps array coordinates to
-chemical shifts.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="#bioshift.core.spectrumtransform.SpectrumTransform" title="bioshift.core.spectrumtransform.SpectrumTransform">bioshift.core.spectrumtransform.SpectrumTransform</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="bioshift.core.spectrumparams.SpectrumParams.header_size">
-<span class="sig-name descname"><span class="pre">header_size</span></span><a class="headerlink" href="#bioshift.core.spectrumparams.SpectrumParams.header_size" title="Link to this definition">¶</a></dt>
-<dd><p>Size of the binary data file header in bytes.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>int</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="id2">
-<span class="sig-name descname"><span class="pre">block_shape</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#id2" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="bioshift.core.spectrumparams.SpectrumParams.block_volume">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">block_volume</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#bioshift.core.spectrumparams.SpectrumParams.block_volume" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="id3">
-<span class="sig-name descname"><span class="pre">header_size</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#id3" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="id4">
-<span class="sig-name descname"><span class="pre">n_blocks</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#id4" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="id5">
-<span class="sig-name descname"><span class="pre">ndim</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#id5" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="bioshift.core.spectrumparams.SpectrumParams.nuclei">
-<span class="sig-name descname"><span class="pre">nuclei</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#bioshift.core.spectrumparams.NMRNucleus" title="bioshift.core.spectrumparams.NMRNucleus"><span class="pre">NMRNucleus</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#bioshift.core.spectrumparams.SpectrumParams.nuclei" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="id6">
-<span class="sig-name descname"><span class="pre">shape</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#id6" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="id7">
-<span class="sig-name descname"><span class="pre">transform</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#bioshift.core.spectrumtransform.SpectrumTransform" title="bioshift.core.spectrumtransform.SpectrumTransform"><span class="pre">SpectrumTransform</span></a></em><a class="headerlink" href="#id7" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
+<section id="bioshift-core-spectrumparams-module">
+<h2>bioshift.core.spectrumparams module<a class="headerlink" href="#bioshift-core-spectrumparams-module" title="Link to this heading">¶</a></h2>
 </section>
 <section id="module-bioshift.core.spectrumreference">
 <span id="bioshift-core-spectrumreference-module"></span><h2>bioshift.core.spectrumreference module<a class="headerlink" href="#module-bioshift.core.spectrumreference" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="bioshift.core.spectrumreference.SpectrumReference">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bioshift.core.spectrumreference.</span></span><span class="sig-name descname"><span class="pre">SpectrumReference</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spectrum_shape</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">_ScalarT</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spectral_width</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">_ScalarT</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spectrometer_frequency</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">_ScalarT</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_coord</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">_ScalarT</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_ppm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">_ScalarT</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#bioshift.core.spectrumreference.SpectrumReference" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bioshift.core.spectrumreference.</span></span><span class="sig-name descname"><span class="pre">SpectrumReference</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spectrum_shape</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spectral_width</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spectrometer_frequency</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_coord</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_ppm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#bioshift.core.spectrumreference.SpectrumReference" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Contains the referencing information required to create the spectrum
 transform.</p>
@@ -436,7 +257,7 @@ transform.</p>
 <dd><p>Number of data points along each axis of the spectrum.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>numpy.ndarray[tuple[Any, …], numpy.dtype[numpy._typing._array_like._ScalarT]]</p>
+<dd class="field-odd"><p>tuple[int]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -447,7 +268,7 @@ transform.</p>
 <dd><p>Width of the spectrum along each axis in Hz.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>numpy.ndarray[tuple[Any, …], numpy.dtype[numpy._typing._array_like._ScalarT]]</p>
+<dd class="field-odd"><p>tuple[float]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -459,7 +280,7 @@ transform.</p>
 in MHz.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>numpy.ndarray[tuple[Any, …], numpy.dtype[numpy._typing._array_like._ScalarT]]</p>
+<dd class="field-odd"><p>tuple[float]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -470,7 +291,7 @@ in MHz.</p>
 <dd><p>Array index coordinate vector of the reference point.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>numpy.ndarray[tuple[Any, …], numpy.dtype[numpy._typing._array_like._ScalarT]]</p>
+<dd class="field-odd"><p>tuple[float]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -481,34 +302,34 @@ in MHz.</p>
 <dd><p>Chemical shift vector of the reference point.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>numpy.ndarray[tuple[Any, …], numpy.dtype[numpy._typing._array_like._ScalarT]]</p>
+<dd class="field-odd"><p>tuple[float]</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="id8">
-<span class="sig-name descname"><span class="pre">ref_coord</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">_ScalarT</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#id8" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id1">
+<span class="sig-name descname"><span class="pre">ref_coord</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#id1" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="id9">
-<span class="sig-name descname"><span class="pre">ref_ppm</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">_ScalarT</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#id9" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id2">
+<span class="sig-name descname"><span class="pre">ref_ppm</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#id2" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="id10">
-<span class="sig-name descname"><span class="pre">spectral_width</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">_ScalarT</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#id10" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id3">
+<span class="sig-name descname"><span class="pre">spectral_width</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#id3" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="id11">
-<span class="sig-name descname"><span class="pre">spectrometer_frequency</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">_ScalarT</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#id11" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id4">
+<span class="sig-name descname"><span class="pre">spectrometer_frequency</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#id4" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="id12">
-<span class="sig-name descname"><span class="pre">spectrum_shape</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">_ScalarT</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#id12" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id5">
+<span class="sig-name descname"><span class="pre">spectrum_shape</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#id5" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -583,13 +404,13 @@ coordinates in the raw spectrum array and chemical shift values.</p>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="id13">
-<span class="sig-name descname"><span class="pre">offset</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">_ScalarT</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#id13" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id6">
+<span class="sig-name descname"><span class="pre">offset</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">_ScalarT</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#id6" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="id14">
-<span class="sig-name descname"><span class="pre">scaling</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">_ScalarT</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#id14" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id7">
+<span class="sig-name descname"><span class="pre">scaling</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">_ScalarT</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#id7" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py property">
@@ -621,32 +442,14 @@ coordinates in the raw spectrum array and chemical shift values.</p>
                 <ul>
 <li><a class="reference internal" href="#">bioshift.core package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#module-bioshift.core.peakpicking">bioshift.core.peakpicking module</a><ul>
-<li><a class="reference internal" href="#bioshift.core.peakpicking.DifferenceOfGaussiansPicker"><code class="docutils literal notranslate"><span class="pre">DifferenceOfGaussiansPicker</span></code></a><ul>
-<li><a class="reference internal" href="#bioshift.core.peakpicking.DifferenceOfGaussiansPicker.pick_peaks"><code class="docutils literal notranslate"><span class="pre">DifferenceOfGaussiansPicker.pick_peaks()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#bioshift.core.peakpicking.LocalMaximaPicker"><code class="docutils literal notranslate"><span class="pre">LocalMaximaPicker</span></code></a><ul>
-<li><a class="reference internal" href="#bioshift.core.peakpicking.LocalMaximaPicker.pick_peaks"><code class="docutils literal notranslate"><span class="pre">LocalMaximaPicker.pick_peaks()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#bioshift.core.peakpicking.Peak"><code class="docutils literal notranslate"><span class="pre">Peak</span></code></a><ul>
-<li><a class="reference internal" href="#bioshift.core.peakpicking.Peak.coord"><code class="docutils literal notranslate"><span class="pre">Peak.coord</span></code></a></li>
-<li><a class="reference internal" href="#bioshift.core.peakpicking.Peak.shift"><code class="docutils literal notranslate"><span class="pre">Peak.shift</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#bioshift.core.peakpicking.PeakList"><code class="docutils literal notranslate"><span class="pre">PeakList</span></code></a><ul>
-<li><a class="reference internal" href="#bioshift.core.peakpicking.PeakList.peaks"><code class="docutils literal notranslate"><span class="pre">PeakList.peaks</span></code></a></li>
-<li><a class="reference internal" href="#bioshift.core.peakpicking.PeakList.spectrum"><code class="docutils literal notranslate"><span class="pre">PeakList.spectrum</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#bioshift.core.peakpicking.PeakPicker"><code class="docutils literal notranslate"><span class="pre">PeakPicker</span></code></a><ul>
-<li><a class="reference internal" href="#bioshift.core.peakpicking.PeakPicker.pick_peaks"><code class="docutils literal notranslate"><span class="pre">PeakPicker.pick_peaks()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li><a class="reference internal" href="#bioshift-core-peakpicking-module">bioshift.core.peakpicking module</a></li>
 <li><a class="reference internal" href="#module-bioshift.core.spectrum">bioshift.core.spectrum module</a><ul>
+<li><a class="reference internal" href="#bioshift.core.spectrum.NMRNucleus"><code class="docutils literal notranslate"><span class="pre">NMRNucleus</span></code></a><ul>
+<li><a class="reference internal" href="#bioshift.core.spectrum.NMRNucleus.CARBON"><code class="docutils literal notranslate"><span class="pre">NMRNucleus.CARBON</span></code></a></li>
+<li><a class="reference internal" href="#bioshift.core.spectrum.NMRNucleus.HYDROGEN"><code class="docutils literal notranslate"><span class="pre">NMRNucleus.HYDROGEN</span></code></a></li>
+<li><a class="reference internal" href="#bioshift.core.spectrum.NMRNucleus.NITROGEN"><code class="docutils literal notranslate"><span class="pre">NMRNucleus.NITROGEN</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#bioshift.core.spectrum.Spectrum"><code class="docutils literal notranslate"><span class="pre">Spectrum</span></code></a><ul>
 <li><a class="reference internal" href="#bioshift.core.spectrum.Spectrum.data_source"><code class="docutils literal notranslate"><span class="pre">Spectrum.data_source</span></code></a></li>
 <li><a class="reference internal" href="#bioshift.core.spectrum.Spectrum.params"><code class="docutils literal notranslate"><span class="pre">Spectrum.params</span></code></a></li>
@@ -654,38 +457,14 @@ coordinates in the raw spectrum array and chemical shift values.</p>
 <li><a class="reference internal" href="#bioshift.core.spectrum.Spectrum.data"><code class="docutils literal notranslate"><span class="pre">Spectrum.data</span></code></a></li>
 <li><a class="reference internal" href="#id0"><code class="docutils literal notranslate"><span class="pre">Spectrum.data_source</span></code></a></li>
 <li><a class="reference internal" href="#bioshift.core.spectrum.Spectrum.ndim"><code class="docutils literal notranslate"><span class="pre">Spectrum.ndim</span></code></a></li>
-<li><a class="reference internal" href="#id1"><code class="docutils literal notranslate"><span class="pre">Spectrum.params</span></code></a></li>
+<li><a class="reference internal" href="#bioshift.core.spectrum.Spectrum.nuclei"><code class="docutils literal notranslate"><span class="pre">Spectrum.nuclei</span></code></a></li>
 <li><a class="reference internal" href="#bioshift.core.spectrum.Spectrum.shift_to_coord"><code class="docutils literal notranslate"><span class="pre">Spectrum.shift_to_coord()</span></code></a></li>
+<li><a class="reference internal" href="#bioshift.core.spectrum.Spectrum.transform"><code class="docutils literal notranslate"><span class="pre">Spectrum.transform</span></code></a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a class="reference internal" href="#module-bioshift.core.spectrumparams">bioshift.core.spectrumparams module</a><ul>
-<li><a class="reference internal" href="#bioshift.core.spectrumparams.NMRNucleus"><code class="docutils literal notranslate"><span class="pre">NMRNucleus</span></code></a><ul>
-<li><a class="reference internal" href="#bioshift.core.spectrumparams.NMRNucleus.CARBON"><code class="docutils literal notranslate"><span class="pre">NMRNucleus.CARBON</span></code></a></li>
-<li><a class="reference internal" href="#bioshift.core.spectrumparams.NMRNucleus.HYDROGEN"><code class="docutils literal notranslate"><span class="pre">NMRNucleus.HYDROGEN</span></code></a></li>
-<li><a class="reference internal" href="#bioshift.core.spectrumparams.NMRNucleus.NITROGEN"><code class="docutils literal notranslate"><span class="pre">NMRNucleus.NITROGEN</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#bioshift.core.spectrumparams.SpectrumParams"><code class="docutils literal notranslate"><span class="pre">SpectrumParams</span></code></a><ul>
-<li><a class="reference internal" href="#bioshift.core.spectrumparams.SpectrumParams.ndim"><code class="docutils literal notranslate"><span class="pre">SpectrumParams.ndim</span></code></a></li>
-<li><a class="reference internal" href="#bioshift.core.spectrumparams.SpectrumParams.shape"><code class="docutils literal notranslate"><span class="pre">SpectrumParams.shape</span></code></a></li>
-<li><a class="reference internal" href="#bioshift.core.spectrumparams.SpectrumParams.block_shape"><code class="docutils literal notranslate"><span class="pre">SpectrumParams.block_shape</span></code></a></li>
-<li><a class="reference internal" href="#bioshift.core.spectrumparams.SpectrumParams.n_blocks"><code class="docutils literal notranslate"><span class="pre">SpectrumParams.n_blocks</span></code></a></li>
-<li><a class="reference internal" href="#bioshift.core.spectrumparams.SpectrumParams.transform"><code class="docutils literal notranslate"><span class="pre">SpectrumParams.transform</span></code></a></li>
-<li><a class="reference internal" href="#bioshift.core.spectrumparams.SpectrumParams.header_size"><code class="docutils literal notranslate"><span class="pre">SpectrumParams.header_size</span></code></a></li>
-<li><a class="reference internal" href="#id2"><code class="docutils literal notranslate"><span class="pre">SpectrumParams.block_shape</span></code></a></li>
-<li><a class="reference internal" href="#bioshift.core.spectrumparams.SpectrumParams.block_volume"><code class="docutils literal notranslate"><span class="pre">SpectrumParams.block_volume</span></code></a></li>
-<li><a class="reference internal" href="#id3"><code class="docutils literal notranslate"><span class="pre">SpectrumParams.header_size</span></code></a></li>
-<li><a class="reference internal" href="#id4"><code class="docutils literal notranslate"><span class="pre">SpectrumParams.n_blocks</span></code></a></li>
-<li><a class="reference internal" href="#id5"><code class="docutils literal notranslate"><span class="pre">SpectrumParams.ndim</span></code></a></li>
-<li><a class="reference internal" href="#bioshift.core.spectrumparams.SpectrumParams.nuclei"><code class="docutils literal notranslate"><span class="pre">SpectrumParams.nuclei</span></code></a></li>
-<li><a class="reference internal" href="#id6"><code class="docutils literal notranslate"><span class="pre">SpectrumParams.shape</span></code></a></li>
-<li><a class="reference internal" href="#id7"><code class="docutils literal notranslate"><span class="pre">SpectrumParams.transform</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li><a class="reference internal" href="#bioshift-core-spectrumparams-module">bioshift.core.spectrumparams module</a></li>
 <li><a class="reference internal" href="#module-bioshift.core.spectrumreference">bioshift.core.spectrumreference module</a><ul>
 <li><a class="reference internal" href="#bioshift.core.spectrumreference.SpectrumReference"><code class="docutils literal notranslate"><span class="pre">SpectrumReference</span></code></a><ul>
 <li><a class="reference internal" href="#bioshift.core.spectrumreference.SpectrumReference.spectrum_shape"><code class="docutils literal notranslate"><span class="pre">SpectrumReference.spectrum_shape</span></code></a></li>
@@ -693,11 +472,11 @@ coordinates in the raw spectrum array and chemical shift values.</p>
 <li><a class="reference internal" href="#bioshift.core.spectrumreference.SpectrumReference.spectrometer_frequency"><code class="docutils literal notranslate"><span class="pre">SpectrumReference.spectrometer_frequency</span></code></a></li>
 <li><a class="reference internal" href="#bioshift.core.spectrumreference.SpectrumReference.ref_coord"><code class="docutils literal notranslate"><span class="pre">SpectrumReference.ref_coord</span></code></a></li>
 <li><a class="reference internal" href="#bioshift.core.spectrumreference.SpectrumReference.ref_ppm"><code class="docutils literal notranslate"><span class="pre">SpectrumReference.ref_ppm</span></code></a></li>
-<li><a class="reference internal" href="#id8"><code class="docutils literal notranslate"><span class="pre">SpectrumReference.ref_coord</span></code></a></li>
-<li><a class="reference internal" href="#id9"><code class="docutils literal notranslate"><span class="pre">SpectrumReference.ref_ppm</span></code></a></li>
-<li><a class="reference internal" href="#id10"><code class="docutils literal notranslate"><span class="pre">SpectrumReference.spectral_width</span></code></a></li>
-<li><a class="reference internal" href="#id11"><code class="docutils literal notranslate"><span class="pre">SpectrumReference.spectrometer_frequency</span></code></a></li>
-<li><a class="reference internal" href="#id12"><code class="docutils literal notranslate"><span class="pre">SpectrumReference.spectrum_shape</span></code></a></li>
+<li><a class="reference internal" href="#id1"><code class="docutils literal notranslate"><span class="pre">SpectrumReference.ref_coord</span></code></a></li>
+<li><a class="reference internal" href="#id2"><code class="docutils literal notranslate"><span class="pre">SpectrumReference.ref_ppm</span></code></a></li>
+<li><a class="reference internal" href="#id3"><code class="docutils literal notranslate"><span class="pre">SpectrumReference.spectral_width</span></code></a></li>
+<li><a class="reference internal" href="#id4"><code class="docutils literal notranslate"><span class="pre">SpectrumReference.spectrometer_frequency</span></code></a></li>
+<li><a class="reference internal" href="#id5"><code class="docutils literal notranslate"><span class="pre">SpectrumReference.spectrum_shape</span></code></a></li>
 <li><a class="reference internal" href="#bioshift.core.spectrumreference.SpectrumReference.transform"><code class="docutils literal notranslate"><span class="pre">SpectrumReference.transform()</span></code></a></li>
 </ul>
 </li>
@@ -709,8 +488,8 @@ coordinates in the raw spectrum array and chemical shift values.</p>
 <li><a class="reference internal" href="#bioshift.core.spectrumtransform.SpectrumTransform.offset"><code class="docutils literal notranslate"><span class="pre">SpectrumTransform.offset</span></code></a></li>
 <li><a class="reference internal" href="#bioshift.core.spectrumtransform.SpectrumTransform.apply"><code class="docutils literal notranslate"><span class="pre">SpectrumTransform.apply()</span></code></a></li>
 <li><a class="reference internal" href="#bioshift.core.spectrumtransform.SpectrumTransform.inverse"><code class="docutils literal notranslate"><span class="pre">SpectrumTransform.inverse</span></code></a></li>
-<li><a class="reference internal" href="#id13"><code class="docutils literal notranslate"><span class="pre">SpectrumTransform.offset</span></code></a></li>
-<li><a class="reference internal" href="#id14"><code class="docutils literal notranslate"><span class="pre">SpectrumTransform.scaling</span></code></a></li>
+<li><a class="reference internal" href="#id6"><code class="docutils literal notranslate"><span class="pre">SpectrumTransform.offset</span></code></a></li>
+<li><a class="reference internal" href="#id7"><code class="docutils literal notranslate"><span class="pre">SpectrumTransform.scaling</span></code></a></li>
 <li><a class="reference internal" href="#bioshift.core.spectrumtransform.SpectrumTransform.shape"><code class="docutils literal notranslate"><span class="pre">SpectrumTransform.shape</span></code></a></li>
 </ul>
 </li>

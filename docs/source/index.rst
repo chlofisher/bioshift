@@ -7,6 +7,9 @@ bioshift documentation
 .. automodule:: bioshift.fileio
     :members:
 
+.. automodule:: bioshift.analysis
+    :members:
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
