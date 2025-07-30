@@ -1,4 +1,5 @@
 from __future__ import annotations
+from typing import Any
 from pathlib import Path
 import struct
 import numpy as np
@@ -24,20 +25,16 @@ class UCSFSpectrumReader(SpectrumReader):
 
     @classmethod
     def from_path(cls, path: Path) -> UCSFSpectrumReader:
-        """Creates an instance of UCSFSpectrumReader from a given path to a 
-        .ucsf file.
-
-        Returns:
-            Instance of UCSFSpectrumReader supplied with the path to the 
-            .ucsf file.
-        """
         return cls(path)
 
-    def get_params(self):
+    def get_params(self) -> dict[str, Any]:
         """Read the spectrum metadata from the .ucsf file header.
 
         Returns:
-            SpectrumParams object.
+            Dictionary of params. Must always have keys 'ndim', 'header_size',
+            'shape', 'block_shape', 'nuclei', 'ref_ppm', 'ref_coord',
+            'spectrometer_frequency', 'spectral_width'.
+            May also have keys 'integer', 'swap', 'endianness'.
         """
 
         params = {}
@@ -49,14 +46,34 @@ class UCSFSpectrumReader(SpectrumReader):
             params['ndim'] = ndim
 
             file.seek(0)
-            header_bytes: bytes = file.read(self.get_header_size(ndim))
+            header_size = self.get_header_size(ndim)
+            params['header_size'] = header_size
+            header_bytes: bytes = file.read(header_size)
 
         global_header = struct.unpack('>10sBBxB', header_bytes[:14])
 
-        params['file_type'] = global_header[0].rstrip(b'\x00').decode('ascii')
+        file_type = global_header[0].rstrip(b'\x00').decode('ascii')
+        if file_type != 'UCSF NMR':
+            raise ValueError(
+                f"""Invalid file type '{file_type}' in
+                {self.path} header. Expecting 'UCSF NMR.'"""
+            )
+
         # Ignore global_header[1] as this is the ndim we found earlier
-        params['n_components'] = int(global_header[2])
-        params['version'] = int(global_header[3])
+
+        n_components = int(global_header[2])
+        if n_components != 1:
+            raise ValueError(
+                f"""Invalid number of components {n_components}
+                found in {self.path} header. Only real data is supported."""
+            )
+
+        version = int(global_header[3])
+        if version != 2:
+            raise ValueError(
+                f"""Invalid format version {version} found in {self.path}.
+                Expecting version 2."""
+            )
 
         shape = [None] * ndim
         block_shape = [None] * ndim
@@ -106,21 +123,16 @@ class UCSFSpectrumReader(SpectrumReader):
         )
 
     def get_data(self) -> BlockedSpectrumDataSource:
-        """Create a BlockedSpectrumDataSource object for the new spectrum.
-
-        Returns:
-            UCSFDataSource object.
-        """
         return BlockedSpectrumDataSource(
             path=self.path,
             shape=self.params['shape'],
             block_shape=self.params['block_shape'],
-            header_size=self.get_header_size(self.params['ndim']),
+            header_size=self.params['header_size'],
             dtype=np.dtype('>f4')
         )
 
     def get_header_size(self, ndim):
-        """Calculates the size of the header in the .ucsf binary file from the 
+        """Calculates the size of the header in the .ucsf binary file from the
         number of dimensions in the spectrum.
 
         Returns:

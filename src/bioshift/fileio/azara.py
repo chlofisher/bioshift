@@ -1,4 +1,6 @@
 from __future__ import annotations
+from warnings import warn
+from typing import Any
 from pathlib import Path
 import numpy as np
 
@@ -9,12 +11,14 @@ from bioshift.fileio.blockedspectrum import BlockedSpectrumDataSource
 
 
 class AzaraSpectrumReader(SpectrumReader):
-    """Implementation of SpectrumReader for Azara spectra stored in .par and 
-    .spc file pairs.
+    """Implementation of SpectrumReader for Azara spectra stored in .par and
+     .spc file pairs.
 
     Attributes:
         par_path: Path to the .par file.
         spc_path: Path to the .spc file.
+        params: Dictionary containing key-value pairs obtained from the .par
+         file.
     """
     par_path: Path
     spc_path: Path
@@ -28,14 +32,13 @@ class AzaraSpectrumReader(SpectrumReader):
 
     @classmethod
     def from_path(cls, path: Path) -> AzaraSpectrumReader:
-        """Creates an instance of AzaraSpectrumReader from a given .spc or 
-        .par path. Given a .par file it will find the corresponding .spc and 
-        vice-versa. 
+        """Creates an instance of AzaraSpectrumReader from a given .spc or
+         .par path. Given a .par file it will find the corresponding .spc and
+         vice-versa.
 
         Returns:
-            Instance of AzaraSpectrumReader supplied with paths for both the 
-            .spc and .par files.
-
+            Instance of AzaraSpectrumReader supplied with paths for both the
+             .spc and .par files.
         """
         if path.suffix == '.par':
             par_path = path
@@ -48,9 +51,9 @@ class AzaraSpectrumReader(SpectrumReader):
 
     @classmethod
     def spc_from_par(cls, par_path: Path) -> Path:
-        """Finds a corresponding .spc file from a .par file. First checks for 
-        a .spc file specified in the .par file, failing that checks for a .spc 
-        with a matching name.
+        """Finds a corresponding .spc file from a .par file. First checks for
+         a .spc file specified in the .par file, failing that checks for a .spc
+         with a matching name.
 
         Args:
             par_path: Path to the .par file.
@@ -88,8 +91,8 @@ class AzaraSpectrumReader(SpectrumReader):
 
     @classmethod
     def par_from_spc(cls, spc_path: Path) -> Path:
-        """Finds a corresponding .par file from a .spc file. Given 
-        spectrum.spc, checks spectrum.spc.par and spectrum.par.
+        """Finds a corresponding .par file from a .spc file. Given
+         spectrum.spc, checks spectrum.spc.par and spectrum.par.
 
         Args:
             spc_path: Path to the .spc file.
@@ -115,52 +118,73 @@ class AzaraSpectrumReader(SpectrumReader):
         raise FileNotFoundError(
             f'Could not find valid .par file corresponding to {spc_path}')
 
-    def get_params(self) -> dict:
-        """Read the spectrum metadata from the .par file.
+    def get_params(self) -> dict[str, Any]:
+        """Get a dictionary of parameters from the .par file for use in
+         constructing the spectrum.
 
         Returns:
-            SpectrumParams object. 
-        """
-        params_file = AzaraSpectrumReader.parse_par_file(self.par_path)
+            Dictionary of params. Must always have keys 'ndim', 'header_size',
+             'shape', 'block_shape', 'nuclei', 'ref_ppm', 'ref_coord',
+             'spectrometer_frequency', 'spectral_width'.
+             May also have keys 'integer', 'swap', 'endianness'.
 
-        params = {}
+        Raises:
+            ValueError: if unsupported keys 'varian', 'blocks', 'sigmas',
+             'params' are detected. .par files containing these keys are
+             intended for internal use within Azara only.
+        """
+        raw_params = AzaraSpectrumReader.parse_par_file(self.par_path)
+
+        params = {'header_size': 0, 'dtype': np.float32}
+
+        def unsupported_key_error(key):
+            return ValueError(
+                f"""Unsupported key '{key}' found in {self.par_path}.
+                 Azara data must be blocked."""
+            )
 
         # Iterate over all params to get global params
-        for param in params_file:
-            match param[0]:
+        for param in raw_params:
+            key = param[0]
+            value = param[1] if len(param) >= 2 else None
+
+            match key:
                 case 'ndim':
-                    params['ndim'] = int(param[1])
+                    params['ndim'] = int(value)
                 case 'file':
-                    params['data_file'] = param[1].strip()
+                    params['data_file'] = value.strip()
                 case 'head':
-                    params['header_size'] = int(param[1])
+                    params['header_size'] = int(value)
                 case 'int':
                     params['integer'] = True
-                case 'swap':
-                    params['swap'] = True
+                    params['dtype'] = np.int32
+                    warn(f"""Key 'int' found in {
+                         self.par_path}. Attempting to interpret data as integer.""")
                 case 'big_endian':
                     params['endianness'] = False
+                    params['dtype'] = np.dtype('>f4')
                 case 'little_endian':
                     params['endianness'] = True
-                case 'deflate':
-                    params['deflate'] = int(params[1])
-                case 'reflate':
-                    params['reflate'] = int(params[1])
-                case 'blocks':
-                    raise ValueError("Azara data must be blocked")
+                    params['dtype'] = np.float32
+                case 'swap' | 'deflate' | 'reflate':
+                    params[key] = value
+                    warn(f"""Ignoring parameter '{
+                         key}' in Azara params file {self.par_path}""")
                 case 'varian':
-                    pass  # Ignore this parameter
-                case _:
-                    pass
-
-        params['header_size'] = 0
+                    params['varian'] = value
+                    raise unsupported_key_error('varian')
+                case 'blocks':
+                    params['blocks'] = value
+                    raise unsupported_key_error('blocks')
+                case other:
+                    warn(f'Ignoring key {other} in {self.par_path}')
 
         # Record where 'dim' keywords are found, as delimiters of blocks of
         # axis params, including one after the final line.
         dim_positions = [
-            i for i, param in enumerate(params_file) if param[0] == 'dim'
+            i for i, param in enumerate(raw_params) if param[0] == 'dim'
         ]
-        dim_positions.append(len(params_file))
+        dim_positions.append(len(raw_params))
 
         ndim = params['ndim']
 
@@ -175,30 +199,33 @@ class AzaraSpectrumReader(SpectrumReader):
         # Iterate over each pair of 'dim' positions to get blocks of
         # params associated with each axis.
         for start, stop in zip(dim_positions, dim_positions[1:]):
-            for param in params_file[start:stop]:
-                match param[0]:
+            for param in raw_params[start:stop]:
+                key = param[0]
+                value = param[1] if len(param >= 2) else None
+
+                match key:
                     case 'dim':
-                        dim = int(param[1])
+                        dim = int(value)
                     case 'npts':
-                        shape[dim - 1] = int(param[1])
+                        shape[dim - 1] = int(value)
                     case 'block':
-                        block_shape[dim - 1] = int(param[1])
+                        block_shape[dim - 1] = int(value)
                     case 'sw':
-                        spectral_width[dim - 1] = float(param[1])
+                        spectral_width[dim - 1] = float(value)
                     case 'sf':
-                        spectrometer_frequency[dim - 1] = float(param[1])
+                        spectrometer_frequency[dim - 1] = float(value)
                     case 'refppm':
-                        ref_ppm[dim - 1] = float(param[1])
+                        ref_ppm[dim - 1] = float(value)
                     case 'refpt':
-                        ref_coord[dim - 1] = float(param[1])
+                        ref_coord[dim - 1] = float(value)
                     case 'nuc':
-                        nuclei[dim - 1] = param[1].strip()
+                        nuclei[dim - 1] = value.strip()
                     case 'params':
-                        pass
+                        raise unsupported_key_error('sigmas')
                     case 'sigmas':
-                        pass
-                    case _:
-                        pass
+                        raise unsupported_key_error('sigmas')
+                    case other:
+                        warn(f'Ignoring key {other} in {self.path}')
 
         # Invert to row-major order
         params['shape'] = tuple(shape[::-1])
@@ -218,17 +245,12 @@ class AzaraSpectrumReader(SpectrumReader):
         return self.params['nuclei']
 
     def get_data(self) -> BlockedSpectrumDataSource:
-        """Create an AzaraDataSource object for the new spectrum.
-
-        Returns:
-            AzaraDataSource object.
-        """
         return BlockedSpectrumDataSource(
             path=self.spc_path,
             shape=self.params['shape'],
             block_shape=self.params['block_shape'],
             header_size=self.params['header_size'],
-            dtype=np.float32
+            dtype=self.params['dtype']
         )
 
     def get_reference(self) -> SpectrumReference:
@@ -253,7 +275,4 @@ class AzaraSpectrumReader(SpectrumReader):
         lines = [line for line in lines if line[0] != '!']
         lines = [line for line in lines if line and not line.isspace()]
 
-        return [tuple(line.split(' ')) for line in lines]
-
-
-
+        return [tuple(line.split(' ', 1)) for line in lines]
