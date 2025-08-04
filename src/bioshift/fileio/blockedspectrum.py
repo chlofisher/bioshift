@@ -17,20 +17,13 @@ class BlockedSpectrumDataSource(SpectrumDataSource):
     memmap: np.memmap
     cache: Optional[NDArray] = None
 
-    def __init__(self, path, shape, block_shape, dtype: np.dtype,
-                 header_size):
-
+    def __init__(self, path, shape, block_shape, dtype: np.dtype, header_size):
         self.shape = shape
         self.block_shape = block_shape
         self.block_volume = math.prod(self.block_shape)
         self.n_blocks = tuple(math.ceil(n / k) for n, k in zip(shape, block_shape))
 
-        self.memmap = np.memmap(
-            path,
-            dtype=dtype,
-            mode='r',
-            offset=header_size
-        )
+        self.memmap = np.memmap(path, dtype=dtype, mode="r", offset=header_size)
 
         self.cache = None
 
@@ -65,7 +58,7 @@ class BlockedSpectrumDataSource(SpectrumDataSource):
             index: Linear index of the block being read in the data file.
 
         Returns:
-            NDArray: N-dimensional array containing the spectrum values within 
+            NDArray: N-dimensional array containing the spectrum values within
             the block.
         """
         start: int = index * self.block_volume
@@ -74,7 +67,7 @@ class BlockedSpectrumDataSource(SpectrumDataSource):
         return self.memmap[start:end].reshape(self.block_shape)
 
     def get_block_index(self, idx: tuple[int, ...]) -> int:
-        # """Takes an ND coordinate index vector and converts it to the linear 
+        # """Takes an ND coordinate index vector and converts it to the linear
         # index of the block within the file.
         #
         # Args:
@@ -90,4 +83,4 @@ class BlockedSpectrumDataSource(SpectrumDataSource):
         #     linear_index += index * math.prod(n[axis+1:])
         #
         # return linear_index
-        return np.ravel_multi_index(idx, self.n_blocks, order='C')
+        return np.ravel_multi_index(idx, self.n_blocks, order="C")

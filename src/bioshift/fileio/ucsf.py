@@ -5,7 +5,7 @@ import struct
 import numpy as np
 
 from bioshift.core.spectrum import NMRNucleus
-from bioshift.core.spectrumreference import SpectrumReference
+from bioshift.core.spectrumtransform import SpectrumTransform
 from bioshift.fileio.blockedspectrum import BlockedSpectrumDataSource
 from bioshift.fileio.spectrumreader import SpectrumReader
 
@@ -15,7 +15,6 @@ AXIS_HEADER_SIZE = 128
 
 
 class UCSFSpectrumReader(SpectrumReader):
-
     path: Path
     params: dict
 
@@ -39,21 +38,21 @@ class UCSFSpectrumReader(SpectrumReader):
 
         params = {}
 
-        with open(self.path, 'rb') as file:
+        with open(self.path, "rb") as file:
             file.seek(10)
             # Get number of dimensions first to determine header size
             ndim: int = int.from_bytes(file.read(1))
-            params['ndim'] = ndim
+            params["ndim"] = ndim
 
             file.seek(0)
             header_size = self.get_header_size(ndim)
-            params['header_size'] = header_size
+            params["header_size"] = header_size
             header_bytes: bytes = file.read(header_size)
 
-        global_header = struct.unpack('>10sBBxB', header_bytes[:14])
+        global_header = struct.unpack(">10sBBxB", header_bytes[:14])
 
-        file_type = global_header[0].rstrip(b'\x00').decode('ascii')
-        if file_type != 'UCSF NMR':
+        file_type = global_header[0].rstrip(b"\x00").decode("ascii")
+        if file_type != "UCSF NMR":
             raise ValueError(
                 f"""Invalid file type '{file_type}' in
                 {self.path} header. Expecting 'UCSF NMR.'"""
@@ -87,48 +86,48 @@ class UCSFSpectrumReader(SpectrumReader):
             stop = GLOBAL_HEADER_SIZE + (i + 1) * AXIS_HEADER_SIZE
 
             axis_header_bytes = header_bytes[start:stop]
-            axis_header = struct.unpack('>6s2xi4xifff', axis_header_bytes[:32])
+            axis_header = struct.unpack(">6s2xi4xifff", axis_header_bytes[:32])
 
-            nuclei[i] = axis_header[0].rstrip(b'\x00').decode('ascii')
+            nuclei[i] = axis_header[0].rstrip(b"\x00").decode("ascii")
             shape[i] = int(axis_header[1])
             block_shape[i] = int(axis_header[2])
             spectrometer_frequency[i] = float(axis_header[3])
             spectral_width[i] = float(axis_header[4])
             center_shift[i] = float(axis_header[5])
 
-        params['shape'] = tuple(shape)
-        params['block_shape'] = tuple(block_shape)
-        params['nuclei'] = tuple(nuclei)
+        params["shape"] = tuple(shape)
+        params["block_shape"] = tuple(block_shape)
+        params["nuclei"] = tuple(nuclei)
 
-        params['spectrometer_frequency'] = tuple(spectrometer_frequency)
-        params['spectral_width'] = tuple(spectral_width)
-        params['ref_ppm'] = tuple(center_shift)
-        params['ref_coord'] = tuple(n/2 for n in shape)
+        params["spectrometer_frequency"] = tuple(spectrometer_frequency)
+        params["spectral_width"] = tuple(spectral_width)
+        params["ref_ppm"] = tuple(center_shift)
+        params["ref_coord"] = tuple(n / 2 for n in shape)
 
         return params
 
     def get_ndim(self) -> int:
-        return self.params['ndim']
+        return self.params["ndim"]
 
     def get_nuclei(self) -> tuple[NMRNucleus, ...]:
-        return self.params['nuclei']
+        return self.params["nuclei"]
 
-    def get_reference(self) -> SpectrumReference:
-        return SpectrumReference(
-            spectrum_shape=self.params['shape'],
-            spectral_width=self.params['spectral_width'],
-            spectrometer_frequency=self.params['spectrometer_frequency'],
-            ref_coord=self.params['ref_coord'],
-            ref_ppm=self.params['ref_ppm']
+    def get_transform(self) -> SpectrumTransform:
+        return SpectrumTransform.from_reference(
+            shape=self.params["shape"],
+            spectral_width=self.params["spectral_width"],
+            spectrometer_frequency=self.params["spectrometer_frequency"],
+            ref_coord=self.params["ref_coord"],
+            ref_shift=self.params["ref_ppm"],
         )
 
     def get_data(self) -> BlockedSpectrumDataSource:
         return BlockedSpectrumDataSource(
             path=self.path,
-            shape=self.params['shape'],
-            block_shape=self.params['block_shape'],
-            header_size=self.params['header_size'],
-            dtype=np.dtype('>f4')
+            shape=self.params["shape"],
+            block_shape=self.params["block_shape"],
+            header_size=self.params["header_size"],
+            dtype=np.dtype(">f4"),
         )
 
     def get_header_size(self, ndim):
@@ -142,4 +141,4 @@ class UCSFSpectrumReader(SpectrumReader):
 
     @classmethod
     def can_read(cls, path: Path) -> bool:
-        return path.suffix == '.ucsf'
+        return path.suffix == ".ucsf"

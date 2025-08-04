@@ -1,11 +1,11 @@
 from __future__ import annotations
-import numpy as np
 from numpy.typing import NDArray
 from enum import Enum
-from functools import partial
 
 from bioshift.fileio.spectrumdatasource import (
-    SpectrumDataSource, TransformedDataSource, SumDataSource
+    SpectrumDataSource,
+    TransformedDataSource,
+    SumDataSource,
 )
 from bioshift.core.spectrumtransform import SpectrumTransform
 
@@ -27,12 +27,14 @@ class Spectrum:
         data: N-dimensional numpy array containing the raw spectrum.
         ndim: Number of dimensions of the spectrum.
     """
+
     ndim: int
     nuclei: tuple[NMRNucleus, ...]
     data_source: SpectrumDataSource
     transform: SpectrumTransform
 
     data: NDArray
+    shape: tuple[int, ...]
 
     def __init__(self, ndim, nuclei, data_source, transform):
         self.ndim = ndim
@@ -41,46 +43,72 @@ class Spectrum:
         self.transform = transform
 
     def __repr__(self):
-        return f'Spectrum({self.data.__repr__()})'
+        return f"Spectrum({self.data.__repr__()})"
 
     def __add__(self, value: Spectrum) -> Spectrum:
+        if value.ndim != self.ndim:
+            raise ValueError("Mismatched spectrum dimensions.")
+
         new_data_source = SumDataSource(
-            source1=self.data_source, source2=value.data_source)
+            source1=self.data_source, source2=value.data_source
+        )
 
         return Spectrum(
             ndim=self.ndim,
             nuclei=self.nuclei,
             data_source=new_data_source,
-            transform=self.transform
+            transform=self.transform,
         )
 
     def __sub__(self, value: Spectrum) -> Spectrum:
+        if value.ndim != self.ndim:
+            raise ValueError("Mismatched spectrum dimensions.")
+
         new_data_source = SumDataSource(
-            source1=self.data_source, source2=(-value).data_source)
+            source1=self.data_source, source2=(-value).data_source
+        )
 
         return Spectrum(
             ndim=self.ndim,
             nuclei=self.nuclei,
             data_source=new_data_source,
-            transform=self.transform
+            transform=self.transform,
         )
 
     def __neg__(self) -> Spectrum:
         new_data_source = TransformedDataSource(
-            parent=self.data_source,
-            func=lambda arr: -arr
+            parent=self.data_source, func=lambda arr: -arr
         )
 
         return Spectrum(
             ndim=self.ndim,
             nuclei=self.nuclei,
             data_source=new_data_source,
-            transform=self.transform
+            transform=self.transform,
         )
+
+    def __mul__(self, other) -> Spectrum:
+        new_data_source = TransformedDataSource(
+            parent=self.data_source, func=lambda arr: arr * other
+        )
+
+        return Spectrum(
+            ndim=self.ndim,
+            nuclei=self.nuclei,
+            data_source=new_data_source,
+            transform=self.transform,
+        )
+
+    def __rmul__(self, other) -> Spectrum:
+        return self.__mul__(other)
 
     @property
     def data(self) -> NDArray:
         return self.data_source.get_data()
+
+    @property
+    def shape(self) -> NDArray:
+        return self.data.shape
 
     def shift_to_coord(self, shift: NDArray) -> NDArray:
         """Convert chemical shift to array index coordinates.

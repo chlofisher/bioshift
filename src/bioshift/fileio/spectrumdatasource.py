@@ -9,6 +9,7 @@ class SpectrumDataSource(ABC):
     Attributes:
         cache: Stores a cache of the raw spectrum array after it is loaded.
     """
+
     cache: NDArray = None
 
     def get_data(self) -> NDArray:
