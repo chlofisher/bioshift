@@ -1,6 +1,5 @@
 from typing import Self
 from numpy.typing import NDArray
-from enum import Enum
 
 from bioshift.core.spectrumdatasource import (
     SpectrumDataSource,
@@ -12,17 +11,20 @@ from bioshift.core.nucleus import NMRNucleus
 
 
 class Spectrum:
-    """NMR spectrum object.
+    """NMR spectrum object
 
     Attributes:
-        data_source: Object responsible for loading spectrum data from disk.
-        params: Object containing spectrum metadata.
+        data_source: Object responsible for lazy-loading and parsing spectrum data.
+        nuclei: The type of nucleus (13C, 1H, etc.) associated with each axis.
+        transform: Object storing the transformation from array coordinate space to chemical shift space.
 
     Properties:
         data: N-dimensional numpy array containing the raw spectrum.
         ndim: Number of dimensions of the spectrum.
+        shape: Number of data points along each axis of the spectrum.
     """
 
+    name: str
     ndim: int
     nuclei: tuple[NMRNucleus, ...]
     data_source: SpectrumDataSource
@@ -31,21 +33,37 @@ class Spectrum:
     data: NDArray
     shape: tuple[int, ...]
 
-    def __init__(self, ndim, nuclei, data_source, transform):
+    def __init__(self, ndim, nuclei, data_source, transform, name=""):
         self.ndim = ndim
         self.nuclei = nuclei
         self.data_source = data_source
         self.transform = transform
 
     def __repr__(self):
-        return f"Spectrum({self.data.__repr__()})"
+        return (
+            f"{self.__class__.__name__}(\n"
+            f"  axes={str(self.nuclei)},\n"
+            f"  source={self.data_source.__repr__()},\n"
+            f")"
+        )
 
-    def __add__(self, value: Self) -> Self:
-        if value.ndim != self.ndim:
+    def add(self, other: Self) -> Self:
+        """
+        Return a new spectrum equal to the pointwise sum of two spectra.
+
+        Args:
+            other: The spectrum to add.
+        Returns:
+            Spectrum: A new spectrum whose values are the sum of those of the two previous spectra.
+        Raises:
+            ValueError: If the shapes of the two spectra do not match
+        """
+
+        if other.shape != self.shape:
             raise ValueError("Mismatched spectrum dimensions.")
 
         new_data_source = SumDataSource(
-            source1=self.data_source, source2=value.data_source
+            source1=self.data_source, source2=other.data_source
         )
 
         return Spectrum(
@@ -55,12 +73,22 @@ class Spectrum:
             transform=self.transform,
         )
 
-    def __sub__(self, value: Self) -> Self:
-        if value.ndim != self.ndim:
+    def subtract(self, other: Self) -> Self:
+        """
+        Return a new spectrum equal to the pointwise difference of two spectra.
+
+        Args:
+            other: The spectrum to subtract.
+        Returns:
+            Spectrum: A new spectrum whose values are the difference of those of the two previous spectra.
+        Raises:
+            ValueError: If the shapes of the two spectra do not match
+        """
+        if other.shape != self.shape:
             raise ValueError("Mismatched spectrum dimensions.")
 
         new_data_source = SumDataSource(
-            source1=self.data_source, source2=(-value).data_source
+            source1=self.data_source, source2=(-other).data_source
         )
 
         return Spectrum(
@@ -71,6 +99,12 @@ class Spectrum:
         )
 
     def __neg__(self) -> Self:
+        """
+        Implements the `-` operator.
+
+        Returns: 
+            Spectrum: A new spectrum with negated values.
+        """
         new_data_source = TransformedDataSource(
             parent=self.data_source, func=lambda arr: -arr
         )
@@ -82,7 +116,18 @@ class Spectrum:
             transform=self.transform,
         )
 
-    def __mul__(self, other) -> Self:
+    def multiply(self, other) -> Self:
+        """
+        Return a new spectrum equal to the pointwise product of two spectra.
+
+        Args:
+            other: The spectrum to multiply by.
+        Returns:
+            Spectrum: A new spectrum whose values are the product of those of the two previous spectra.
+        Raises:
+            ValueError: If the shapes of the two spectra do not match
+        """
+        
         new_data_source = TransformedDataSource(
             parent=self.data_source, func=lambda arr: arr * other
         )
@@ -94,9 +139,6 @@ class Spectrum:
             transform=self.transform,
         )
 
-    def __rmul__(self, other) -> SelfL
-        return self.__mul__(other)
-
     @property
     def data(self) -> NDArray:
         return self.data_source.get_data()
@@ -106,24 +148,23 @@ class Spectrum:
         return self.data.shape
 
     def shift_to_coord(self, shift: NDArray) -> NDArray:
-        """Convert chemical shift to array index coordinates.
-
+        """
+        Convert between chemical shift and grid coordinate systems. Index coordinates are interpolated between integer values.
 
         Args:
-            shift: N-dimensional chemical shift vector.
-
+            shift: ND array of chemical shifts.
         Returns:
-            N-dimensional spectrum coordinates vector.
+            NDArray: ND array of grid coordinates.
         """
         return self.transform.inverse.apply(shift)
 
     def coord_to_shift(self, coord: NDArray) -> NDArray:
-        """Convert array index coordinates to chemical shifts.
+        """
+        Convert between grid and chemical shift coordinate systems. 
 
         Args:
-            shift: N-dimensional spectrum coordinates vector.
-
+            shift: ND array of grid coordinates.
         Returns:
-            N-dimensional chemical shift vector.
+            NDArray: ND array of chemical shifts.
         """
         return self.transform.apply(coord)

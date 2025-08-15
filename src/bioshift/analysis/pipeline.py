@@ -1,51 +1,9 @@
-from typing import Callable
+import numpy as np
+from typing import Protocol, Callable, Any
 from pathlib import Path
 import yaml
 
-import bioshift.analysis.filters as filters
-
-function_registry: dict[str, Callable] = {
-    "normalize": filters.normalize,
-    "threshold": filters.threshold,
-    "gaussian": filters.gaussian,
-    "add": (lambda a, b: a + b),
-    "subtract": (lambda a, b: a - b),
-    "multiply": (lambda a, b: a * b),
-    "divide": (lambda a, b: a / b),
-    "difference_of_gaussians": filters.difference_of_gaussians,
-}
-
-
-class Node:
-    name: str
-    input_keys: list[str]
-    output_keys: list[str]
-    param_keys: dict[str, str]
-    func: Callable
-
-    def __init__(self, name: str, node_dict: dict):
-        self.name = name
-        self.input_keys = node_dict["inputs"] if "inputs" in node_dict else []
-        self.output_keys = node_dict["outputs"] if "outputs" in node_dict else [name]
-        self.param_keys = node_dict["params"] if "params" in node_dict else {}
-        self.func = function_registry[node_dict["func"]]
-
-    def run(self, context):
-        args = [context[key] for key in self.input_keys]
-        kwargs = {
-            param_key: context[context_key]
-            for param_key, context_key in self.param_keys.items()
-        }
-
-        result = self.func(*args, **kwargs)
-
-        if isinstance(result, tuple):
-            return {
-                output_key: val for output_key, val in zip(self.output_keys, result)
-            }
-        else:
-            return {self.output_keys[0]: result}
-
+from bioshift.analysis.node import Node
 
 class Pipeline:
     nodes: dict[str, Node]
@@ -64,7 +22,8 @@ class Pipeline:
         dependencies = {}
 
         for name, node_params in yamldict.items():
-            node = Node(name, node_params)
+            NodeType = node_registry[node_params["type"]]
+            node = NodeType(name, node_params)
             nodes[name] = node
 
         for name, node in nodes.items():
@@ -80,7 +39,8 @@ class Pipeline:
         return cls(nodes, dependencies)
 
     def topological_sort(self) -> list[str]:
-        dependencies = {name: deps.copy() for name, deps in self.dependencies.items()}
+        dependencies = {name: deps.copy()
+                        for name, deps in self.dependencies.items()}
 
         in_degree = {name: len(deps) for name, deps in dependencies.items()}
 

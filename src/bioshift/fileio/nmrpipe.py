@@ -2,7 +2,7 @@ from typing import Self
 from pathlib import Path
 
 from bioshift.fileio.spectrumreader import SpectrumReader
-from bioshift.fileio.spectrumdatasource import SpectrumDataSource
+from bioshift.core.spectrumdatasource import SpectrumDataSource
 
 
 class NMRPipeSpectrumReader(SpectrumReader):
@@ -13,7 +13,7 @@ class NMRPipeSpectrumReader(SpectrumReader):
     def from_path(cls, path: Path) -> Self:
         return cls(path)
 
-    def get_params(self) -> SpectrumParams:
+    def get_params(self):
         raise NotImplementedError()
 
     def get_data(self) -> SpectrumDataSource:
