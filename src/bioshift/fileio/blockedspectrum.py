@@ -3,7 +3,7 @@ import math
 from numpy.typing import NDArray
 from typing import Optional
 
-from bioshift.fileio.spectrumdatasource import SpectrumDataSource
+from bioshift.core.spectrumdatasource import SpectrumDataSource
 
 
 class BlockedSpectrumDataSource(SpectrumDataSource):
@@ -28,12 +28,6 @@ class BlockedSpectrumDataSource(SpectrumDataSource):
         self.cache = None
 
     def _load_data(self) -> NDArray:
-        """
-        Reads the entire spectrum as an ND array of floats.
-
-        Returns:
-            NDArray: N-dimensional array of floats containing the spectrum data.
-        """
         blocks = np.empty(self.n_blocks, dtype=object)
 
         for idx in np.ndindex(tuple(self.n_blocks)):
@@ -51,36 +45,10 @@ class BlockedSpectrumDataSource(SpectrumDataSource):
         return data
 
     def read_block(self, index: int) -> NDArray:
-        """
-        Read a single block from the data file, at the given linear index.
-
-        Args:
-            index: Linear index of the block being read in the data file.
-
-        Returns:
-            NDArray: N-dimensional array containing the spectrum values within
-            the block.
-        """
         start: int = index * self.block_volume
         end: int = start + self.block_volume
 
         return self.memmap[start:end].reshape(self.block_shape)
 
     def get_block_index(self, idx: tuple[int, ...]) -> int:
-        # """Takes an ND coordinate index vector and converts it to the linear
-        # index of the block within the file.
-        #
-        # Args:
-        #     idx: ND index of the block
-        #
-        # Returns:
-        #     Corresponding linear block index.
-        # """
-        # n = self.n_blocks
-        #
-        # linear_index = 0
-        # for axis, index in enumerate(idx):
-        #     linear_index += index * math.prod(n[axis+1:])
-        #
-        # return linear_index
         return np.ravel_multi_index(idx, self.n_blocks, order="C")

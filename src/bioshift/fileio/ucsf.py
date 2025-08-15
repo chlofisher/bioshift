@@ -1,5 +1,4 @@
-from __future__ import annotations
-from typing import Any
+from typing import Any, Self
 from pathlib import Path
 import struct
 import numpy as np
@@ -23,7 +22,7 @@ class UCSFSpectrumReader(SpectrumReader):
         self.params = self.get_params()
 
     @classmethod
-    def from_path(cls, path: Path) -> UCSFSpectrumReader:
+    def from_path(cls, path: Path) -> Self:
         return cls(path)
 
     def get_params(self) -> dict[str, Any]:
@@ -131,12 +130,6 @@ class UCSFSpectrumReader(SpectrumReader):
         )
 
     def get_header_size(self, ndim):
-        """Calculates the size of the header in the .ucsf binary file from the
-        number of dimensions in the spectrum.
-
-        Returns:
-            Size of the header in bytes.
-        """
         return GLOBAL_HEADER_SIZE + AXIS_HEADER_SIZE * ndim
 
     @classmethod

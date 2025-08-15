@@ -1,4 +1,4 @@
-from __future__ import annotations
+from typing import Self
 from warnings import warn
 from typing import Any
 from pathlib import Path
@@ -11,16 +11,6 @@ from bioshift.fileio.blockedspectrum import BlockedSpectrumDataSource
 
 
 class AzaraSpectrumReader(SpectrumReader):
-    """Implementation of SpectrumReader for Azara spectra stored in .par and
-     .spc file pairs.
-
-    Attributes:
-        par_path: Path to the .par file.
-        spc_path: Path to the .spc file.
-        params: Dictionary containing key-value pairs obtained from the .par
-         file.
-    """
-
     par_path: Path
     spc_path: Path
     params: dict
@@ -32,15 +22,7 @@ class AzaraSpectrumReader(SpectrumReader):
         self.params = self.get_params()
 
     @classmethod
-    def from_path(cls, path: Path) -> AzaraSpectrumReader:
-        """Creates an instance of AzaraSpectrumReader from a given .spc or
-         .par path. Given a .par file it will find the corresponding .spc and
-         vice-versa.
-
-        Returns:
-            Instance of AzaraSpectrumReader supplied with paths for both the
-             .spc and .par files.
-        """
+    def from_path(cls, path: Path) -> Self:
         if path.suffix == ".par":
             par_path = path
             spc_path = cls.spc_from_par(par_path)

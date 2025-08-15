@@ -1,4 +1,4 @@
-from __future__ import annotations
+from typing import Self
 from pathlib import Path
 
 from bioshift.fileio.spectrumreader import SpectrumReader
@@ -10,7 +10,7 @@ class NMRPipeSpectrumReader(SpectrumReader):
         self.path = path
 
     @classmethod
-    def from_path(cls, path: Path) -> NMRPipeSpectrumReader:
+    def from_path(cls, path: Path) -> Self:
         return cls(path)
 
     def get_params(self) -> SpectrumParams:

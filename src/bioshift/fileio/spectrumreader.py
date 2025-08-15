@@ -3,7 +3,7 @@ from pathlib import Path
 
 from bioshift.core.spectrum import Spectrum, NMRNucleus
 from bioshift.core.spectrumtransform import SpectrumTransform
-from bioshift.fileio.spectrumdatasource import SpectrumDataSource
+from bioshift.core.spectrumdatasource import SpectrumDataSource
 
 
 class SpectrumReader(ABC):

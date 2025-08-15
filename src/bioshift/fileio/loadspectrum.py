@@ -11,15 +11,6 @@ REGISTRY = [AzaraSpectrumReader, UCSFSpectrumReader, NMRPipeSpectrumReader]
 
 
 def load_spectrum(path: str | PathLike) -> Spectrum:
-    """Helper function to dynamically dispatch a concrete SpectrumReader to
-    read a spectrum from a path.
-
-    Args:
-        path: Path to spectrum on disk.
-
-    Returns:
-        Spectrum loaded from the path.
-    """
     path = Path(path)
 
     if not path.exists():

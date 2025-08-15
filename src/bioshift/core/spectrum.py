@@ -1,19 +1,14 @@
-from __future__ import annotations
+from typing import Self
 from numpy.typing import NDArray
 from enum import Enum
 
-from bioshift.fileio.spectrumdatasource import (
+from bioshift.core.spectrumdatasource import (
     SpectrumDataSource,
     TransformedDataSource,
     SumDataSource,
 )
 from bioshift.core.spectrumtransform import SpectrumTransform
-
-
-class NMRNucleus(Enum):
-    HYDROGEN = "1H"
-    NITROGEN = "15N"
-    CARBON = "13C"
+from bioshift.core.nucleus import NMRNucleus
 
 
 class Spectrum:
@@ -45,7 +40,7 @@ class Spectrum:
     def __repr__(self):
         return f"Spectrum({self.data.__repr__()})"
 
-    def __add__(self, value: Spectrum) -> Spectrum:
+    def __add__(self, value: Self) -> Self:
         if value.ndim != self.ndim:
             raise ValueError("Mismatched spectrum dimensions.")
 
@@ -60,7 +55,7 @@ class Spectrum:
             transform=self.transform,
         )
 
-    def __sub__(self, value: Spectrum) -> Spectrum:
+    def __sub__(self, value: Self) -> Self:
         if value.ndim != self.ndim:
             raise ValueError("Mismatched spectrum dimensions.")
 
@@ -75,7 +70,7 @@ class Spectrum:
             transform=self.transform,
         )
 
-    def __neg__(self) -> Spectrum:
+    def __neg__(self) -> Self:
         new_data_source = TransformedDataSource(
             parent=self.data_source, func=lambda arr: -arr
         )
@@ -87,7 +82,7 @@ class Spectrum:
             transform=self.transform,
         )
 
-    def __mul__(self, other) -> Spectrum:
+    def __mul__(self, other) -> Self:
         new_data_source = TransformedDataSource(
             parent=self.data_source, func=lambda arr: arr * other
         )
@@ -99,7 +94,7 @@ class Spectrum:
             transform=self.transform,
         )
 
-    def __rmul__(self, other) -> Spectrum:
+    def __rmul__(self, other) -> SelfL
         return self.__mul__(other)
 
     @property
