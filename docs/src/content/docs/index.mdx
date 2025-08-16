@@ -1,0 +1,36 @@
+---
+title: BioShift
+description: Python library for biomolecular NMR spectra.
+template: splash
+hero:
+  tagline: Python library for biomolecular NMR spectra.
+# image:
+#   file: ../../assets/houston.webp
+  actions:
+    - text: Get started
+      link: /guides/getting_started/
+      icon: right-arrow
+    - text: View on Github
+      link: https://github.com/chlofisher/bioshift
+      icon: external
+      variant: minimal
+banner:
+    content: This is a banner!
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+## Features
+
+<CardGrid>
+	<Card title="Import spectra" icon="seti:csv">
+        Supports Sparky, NMRPipe and Azara spectrum formats.
+	</Card>
+	<Card title="Declarative pipelines" icon="seti:json">
+        Define reusable analysis pipelines using readable YAML files.
+	</Card>
+	<Card title="Pick peaks" icon="forward-slash">
+        Choose from several different peakpicking algorithms.
+	</Card>
+</CardGrid>
+
