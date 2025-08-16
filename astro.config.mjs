@@ -6,14 +6,14 @@ import starlight from '@astrojs/starlight';
 export default defineConfig({
 	integrations: [
 		starlight({
-			title: 'My Docs',
-			social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/withastro/starlight' }],
+			title: 'BioShift',
+			social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/chlofisher/bioshift' }],
 			sidebar: [
 				{
 					label: 'Guides',
 					items: [
 						// Each item here is one entry in the navigation menu.
-						{ label: 'Example Guide', slug: 'guides/example' },
+						{ label: 'Getting Started', slug: 'guides/getting_started' },
 					],
 				},
 				{
@@ -21,6 +21,9 @@ export default defineConfig({
 					autogenerate: { directory: 'reference' },
 				},
 			],
+            editLink: {
+                baseUrl: 'https://github.com/chlofisher/bioshift/edit/docs'
+            },
 		}),
 	],
 });
