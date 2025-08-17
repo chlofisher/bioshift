@@ -4,13 +4,13 @@ from numpy.typing import NDArray
 
 
 class SpectrumDataSource(ABC):
-    cache: NDArray = None
+    _cache: NDArray = None
 
     def get_data(self) -> NDArray:
-        if self.cache is None:
-            self.cache = self._load_data()
+        if self._cache is None:
+            self._cache = self._load_data()
 
-        return self.cache
+        return self._cache
 
     @abstractmethod
     def _load_data(self) -> NDArray: ...
