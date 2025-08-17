@@ -1,5 +1,6 @@
 from typing import Self
 from numpy.typing import NDArray
+from os import PathLike
 
 from bioshift.core.spectrumdatasource import (
     SpectrumDataSource,
@@ -12,10 +13,16 @@ from bioshift.core.nucleus import NMRNucleus
 
 class Spectrum:
     """
-    NMR spectrum object.
+    NMR spectrum. 
+
     The recommended way of creating Spectrum instances from spectrum files 
     is by using the `Spectrum.load()` function. This automatically determines
-    the format of the spectrum and selects the correct SpectrumReader 
+    the format of the spectrum and selects the correct SpectrumReader.
+
+    Example usage:
+    ```python
+    spectrum = Spectrum.load('spectrum_file.ucsf')
+    ```
     """
 
     ndim: int
@@ -62,6 +69,11 @@ class Spectrum:
             f"  source={self.data_source.__repr__()},\n"
             f")"
         )
+
+    @classmethod
+    def load(cls, path: str | PathLike) -> Self:
+        from bioshift.fileio.loadspectrum import load_spectrum
+        return load_spectrum(path)
 
     def add(self, other: Self) -> Self:
         """
@@ -114,23 +126,23 @@ class Spectrum:
             transform=self.transform,
         )
 
-    def __neg__(self) -> Self:
-        """@public
-        Implements the `-` operator.
-
-        Returns:
-            A new Spectrum with negated values.
-        """
-        new_data_source = TransformedDataSource(
-            parent=self.data_source, func=lambda arr: -arr
-        )
-
-        return Spectrum(
-            ndim=self.ndim,
-            nuclei=self.nuclei,
-            data_source=new_data_source,
-            transform=self.transform,
-        )
+    # def __neg__(self) -> Self:
+    #     """
+    #     Implements the `-` operator.
+    #
+    #     Returns:
+    #         A new Spectrum with negated values.
+    #     """
+    #     new_data_source = TransformedDataSource(
+    #         parent=self.data_source, func=lambda arr: -arr
+    #     )
+    #
+    #     return Spectrum(
+    #         ndim=self.ndim,
+    #         nuclei=self.nuclei,
+    #         data_source=new_data_source,
+    #         transform=self.transform,
+    #     )
 
     def multiply(self, other) -> Self:
         """
