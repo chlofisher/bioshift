@@ -95,13 +95,13 @@ def _parse_par_file(par_path: Path) -> list[tuple[str]]:
 class AzaraSpectrumReader(SpectrumReader):
     par_path: Path
     spc_path: Path
-    params: dict
+    _params: dict
 
     def __init__(self, par_path: Path, spc_path: Path):
         self.par_path = par_path
         self.spc_path = spc_path
 
-        self.params = self._get_params()
+        self._params = self._get_params()
 
     @classmethod
     def from_path(cls, path: Path) -> Self:
@@ -237,27 +237,27 @@ class AzaraSpectrumReader(SpectrumReader):
         return params
 
     def get_ndim(self) -> int:
-        return self.params["ndim"]
+        return self._params["ndim"]
 
     def get_nuclei(self) -> tuple[NMRNucleus, ...]:
-        return self.params["nuclei"]
+        return self._params["nuclei"]
 
     def get_data(self) -> BlockedSpectrumDataSource:
         return BlockedSpectrumDataSource(
             path=self.spc_path,
-            shape=self.params["shape"],
-            block_shape=self.params["block_shape"],
-            header_size=self.params["header_size"],
-            dtype=self.params["dtype"],
+            shape=self._params["shape"],
+            block_shape=self._params["block_shape"],
+            header_size=self._params["header_size"],
+            dtype=self._params["dtype"],
         )
 
     def get_transform(self) -> SpectrumTransform:
         return SpectrumTransform.from_reference(
-            shape=self.params["shape"],
-            spectral_width=self.params["spectral_width"],
-            spectrometer_frequency=self.params["spectrometer_frequency"],
-            ref_coord=self.params["ref_coord"],
-            ref_shift=self.params["ref_ppm"],
+            shape=self._params["shape"],
+            spectral_width=self._params["spectral_width"],
+            spectrometer_frequency=self._params["spectrometer_frequency"],
+            ref_coord=self._params["ref_coord"],
+            ref_shift=self._params["ref_ppm"],
         )
 
     @classmethod
