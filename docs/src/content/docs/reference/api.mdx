@@ -8,10 +8,16 @@ title: Public API
 ```python
 class Spectrum:
 ```
-NMR spectrum object.
+NMR spectrum. 
+
 The recommended way of creating Spectrum instances from spectrum files 
 is by using the `Spectrum.load()` function. This automatically determines
-the format of the spectrum and selects the correct SpectrumReader
+the format of the spectrum and selects the correct SpectrumReader.
+
+Example usage:
+```python
+spectrum = Spectrum.load('spectrum_file.ucsf')
+```
 ##### ndim
 ```python
 ndim: int
@@ -49,6 +55,12 @@ shape: numpy.ndarray[tuple[typing.Any, ...], numpy.dtype[~_ScalarT]]
 ```
 Returns:
 Shape of the underlying data array.
+##### load
+```python
+@classmethod
+def load(cls, path: str | os.PathLike) -> Self:
+```
+
 ##### add
 ```python
 def add(self, other: Self) -> Self:
@@ -325,9 +337,4 @@ Read a peak list from a CSV file.
 
 ###### Returns:
 > PeakList object.
-
-### load_spectrum
-```python
-def load_spectrum(path: str | os.PathLike) -> bioshift.core.spectrum.Spectrum:
-```
 
