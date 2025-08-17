@@ -1,8 +1,7 @@
 ---
-title: API
+title: bioshift
 ---
 
-# bioshift
 
 
 ---
@@ -25,37 +24,42 @@ NMR spectrum object
 > ndim: Number of dimensions of the spectrum.
 > shape: Number of data points along each axis of the spectrum.
 
+#### name
+```python
+name: str
+```
 
----
-### name
+#### ndim
+```python
+ndim: int
+```
 
+#### nuclei
+```python
+nuclei: tuple[bioshift.core.nucleus.NMRNucleus, ...]
+```
 
----
-### ndim
+#### data_source
+```python
+data_source: bioshift.core.spectrumdatasource.SpectrumDataSource
+```
 
+#### transform
+```python
+transform: bioshift.core.spectrumtransform.SpectrumTransform
+```
 
----
-### nuclei
+#### data
+```python
+data: numpy.ndarray[tuple[typing.Any, ...], numpy.dtype[~_ScalarT]]
+```
 
+#### shape
+```python
+shape: numpy.ndarray[tuple[typing.Any, ...], numpy.dtype[~_ScalarT]]
+```
 
----
-### data_source
-
-
----
-### transform
-
-
----
-### data
-
-
----
-### shape
-
-
----
-### add
+#### add
 ```python
 def add(self, other: Self) -> Self:
 ```
@@ -75,9 +79,7 @@ Return a new spectrum equal to the pointwise sum of two spectra.
  - **ValueError:**  If the shapes of the two spectra do not match
 
 
-
----
-### subtract
+#### subtract
 ```python
 def subtract(self, other: Self) -> Self:
 ```
@@ -97,9 +99,7 @@ Return a new spectrum equal to the pointwise difference of two spectra.
  - **ValueError:**  If the shapes of the two spectra do not match
 
 
-
----
-### multiply
+#### multiply
 ```python
 def multiply(self, other) -> Self:
 ```
@@ -119,9 +119,7 @@ Return a new spectrum equal to the pointwise product of two spectra.
  - **ValueError:**  If the shapes of the two spectra do not match
 
 
-
----
-### shift_to_coord
+#### shift_to_coord
 ```python
 def shift_to_coord(
     self,
@@ -139,9 +137,7 @@ Convert between chemical shift and grid coordinate systems. Index coordinates ar
 ###### Returns:
 > NDArray: ND array of grid coordinates.
 
-
----
-### coord_to_shift
+#### coord_to_shift
 ```python
 def coord_to_shift(
     self,
@@ -166,17 +162,20 @@ Convert between grid and chemical shift coordinate systems.
 class NMRNucleus(enum.Enum):
 ```
 
+#### HYDROGEN
+```python
+HYDROGEN = <NMRNucleus.HYDROGEN: '1H'>
+```
 
----
-### HYDROGEN
+#### NITROGEN
+```python
+NITROGEN = <NMRNucleus.NITROGEN: '15N'>
+```
 
-
----
-### NITROGEN
-
-
----
-### CARBON
+#### CARBON
+```python
+CARBON = <NMRNucleus.CARBON: '13C'>
+```
 
 
 ---
@@ -197,51 +196,52 @@ coordinates in the raw spectrum array and chemical shift values.
 ###### Properties:
 > inverse: The inverse of the transform.
 
+#### ndim
+```python
+ndim: int
+```
 
----
-### ndim
+#### shape
+```python
+shape: numpy.ndarray[tuple[typing.Any, ...], numpy.dtype[~_ScalarT]]
+```
 
+#### bounds
+```python
+bounds
+```
 
----
-### shape
+#### scaling
+```python
+scaling: numpy.ndarray[tuple[typing.Any, ...], numpy.dtype[~_ScalarT]]
+```
 
+#### offset
+```python
+offset: numpy.ndarray[tuple[typing.Any, ...], numpy.dtype[~_ScalarT]]
+```
 
----
-### bounds
+#### inverse_scaling
+```python
+inverse_scaling
+```
 
+#### inverse_offset
+```python
+inverse_offset
+```
 
----
-### scaling
-
-
----
-### offset
-
-
----
-### inverse_scaling
-
-
----
-### inverse_offset
-
-
----
-### grid_to_shift
+#### grid_to_shift
 ```python
 def grid_to_shift(self, x):
 ```
 
-
----
-### shift_to_grid
+#### shift_to_grid
 ```python
 def shift_to_grid(self, x):
 ```
 
-
----
-### from_reference
+#### from_reference
 ```python
 @classmethod
 def from_reference(
@@ -261,13 +261,15 @@ def from_reference(
 class Peak:
 ```
 
+#### position
+```python
+position: numpy.ndarray[tuple[typing.Any, ...], numpy.dtype[~_ScalarT]]
+```
 
----
-### position
-
-
----
-### width
+#### width
+```python
+width: numpy.ndarray[tuple[typing.Any, ...], numpy.dtype[~_ScalarT]]
+```
 
 
 ---
@@ -276,24 +278,22 @@ class Peak:
 class PeakList:
 ```
 
+#### positions
+```python
+positions: numpy.ndarray[tuple[typing.Any, ...], numpy.dtype[~_ScalarT]]
+```
 
----
-### positions
+#### widths
+```python
+widths: numpy.ndarray[tuple[typing.Any, ...], numpy.dtype[~_ScalarT]]
+```
 
-
----
-### widths
-
-
----
-### write_csv
+#### write_csv
 ```python
 def write_csv(self, path):
 ```
 
-
----
-### from_csv
+#### from_csv
 ```python
 def from_csv(path):
 ```
@@ -305,5 +305,3 @@ def from_csv(path):
 def load_spectrum(path: str | os.PathLike) -> bioshift.core.spectrum.Spectrum:
 ```
 
-
----
