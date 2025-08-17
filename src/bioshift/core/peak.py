@@ -1,17 +1,65 @@
+from os import PathLike
 import numpy as np
 from numpy.typing import NDArray
 from dataclasses import dataclass
+from typing import Self
 import csv
 
 
 @dataclass
 class Peak:
+    """
+    Class to store the chemical shift and width of a peak.
+    """
+
     position: NDArray
     width: NDArray
 
 
 @dataclass
 class PeakList:
+    """
+    Stores an array of positions and widths to represent a set of peaks.
+    PeakLists can be iterated over or indexed as if they were a collection of Peak objects.
+
+    Usage:
+    ```python
+    positions = np.array([
+        [0.6, 2.5, 1.6],
+        [15.6, 20.1, 8.5]
+    ])
+    widths = np.array([
+            [1.2, 0.8, 1.],
+            [2.5, 2.8, 2.9]
+    ])
+
+    peaklist = PeakList(positions, widths)
+
+    print(len(peaklist))
+    # output: 2
+
+    print(peak[0])
+    # output:
+    #   Peak(
+    #       position=array([0.6, 2.5, 1.6]),
+    #       width=array([1.2, 0.8, 1. ])
+    #   )
+
+    for peak in peaklist:
+        print(peak)
+
+    # output:
+    #   Peak(
+    #       position=array([0.6, 2.5, 1.6]),
+    #       width=array([1.2, 0.8, 1. ])
+    #   )
+    #   Peak(
+    #       position=array([15.6, 20.1,  8.5]),
+    #       width=array([2.5, 2.8, 2.9])
+    #   )
+    ```
+    """
+
     positions: NDArray
     widths: NDArray
 
@@ -32,21 +80,32 @@ class PeakList:
         elif isinstance(key, int):
             return Peak(self.positions[key, :], self.widths[key, :])
 
-    def write_csv(self, path):
+    def write_csv(self, path: str | PathLike):
+        """
+        Save the peak list to a CSV file at the given path.
+
+        Args:
+            path: Path to the destination file.
+        """
         ndim = self.positions.shape[1]
         with open(path, "w") as file:
-            fieldnames = (
-                [f"shift[{i}]" for i in range(ndim)]
-                + [f"width[{i}]" for i in range(ndim)]
-            )
-            
+            fieldnames = [f"shift[{i}]" for i in range(ndim)] + [
+                f"width[{i}]" for i in range(ndim)
+            ]
+
             writer = csv.writer(file)
             writer.writerow(fieldnames)
             for peak in self:
                 row = peak.position.tolist() + peak.width.tolist()
                 writer.writerow(row)
 
-    def from_csv(path):
+    def from_csv(path) -> Self:
+        """
+        Read a peak list from a CSV file.
+
+        Returns:
+            PeakList object.
+        """
         with open(path, "r") as file:
             reader = csv.reader(file)
             header = next(reader)
@@ -59,7 +118,4 @@ class PeakList:
                 positions.append(row[:ndim])
                 widths.append(row[ndim:])
 
-        return PeakList(
-            positions=np.array(positions),
-            widths=np.array(widths)
-        )
+        return PeakList(positions=np.array(positions), widths=np.array(widths))

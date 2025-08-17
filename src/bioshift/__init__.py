@@ -10,5 +10,5 @@ __all__ = [
     "SpectrumTransform",
     "Peak",
     "PeakList",
-    "load_spectrum"
+    "load_spectrum",
 ]

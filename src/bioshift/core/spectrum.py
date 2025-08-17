@@ -11,29 +11,45 @@ from bioshift.core.nucleus import NMRNucleus
 
 
 class Spectrum:
-    """NMR spectrum object
-
-    Attributes:
-        data_source: Object responsible for lazy-loading and parsing spectrum data.
-        nuclei: The type of nucleus (13C, 1H, etc.) associated with each axis.
-        transform: Object storing the transformation from array coordinate space to chemical shift space.
-
-    Properties:
-        data: N-dimensional numpy array containing the raw spectrum.
-        ndim: Number of dimensions of the spectrum.
-        shape: Number of data points along each axis of the spectrum.
+    """
+    NMR spectrum object.
+    The recommended way of creating Spectrum instances from spectrum files 
+    is by using the `Spectrum.load()` function. This automatically determines
+    the format of the spectrum and selects the correct SpectrumReader 
     """
 
-    name: str
     ndim: int
+    """Number of dimensions of the spectrum."""
+
     nuclei: tuple[NMRNucleus, ...]
+    """The type of nucleus (13C, 1H, etc.) associated with each axis."""
+
     data_source: SpectrumDataSource
+    """Object responsible for lazy-loading and parsing spectrum data."""
+
     transform: SpectrumTransform
+    """Object storing the transformation from array coordinate space to chemical shift space."""
 
-    data: NDArray
-    shape: tuple[int, ...]
+    @property
+    def data(self) -> NDArray:
+        """
+        Get an N-dimensional array of data from the data source object.
+        SpectrumDataSource implements caching to minimise time spent reading from disk.
 
-    def __init__(self, ndim, nuclei, data_source, transform, name=""):
+        Returns:
+            ND array of floating-point spectrum data.
+        """
+        return self.data_source.get_data()
+
+    @property
+    def shape(self) -> NDArray:
+        """
+        Returns:
+            Shape of the underlying data array.
+        """
+        return self.transform.shape
+
+    def __init__(self, ndim, nuclei, data_source, transform):
         self.ndim = ndim
         self.nuclei = nuclei
         self.data_source = data_source
@@ -54,7 +70,7 @@ class Spectrum:
         Args:
             other: The spectrum to add.
         Returns:
-            Spectrum: A new spectrum whose values are the sum of those of the two previous spectra.
+            A new Spectrum whose values are the sum of those of the two previous spectra.
         Raises:
             ValueError: If the shapes of the two spectra do not match
         """
@@ -80,7 +96,7 @@ class Spectrum:
         Args:
             other: The spectrum to subtract.
         Returns:
-            Spectrum: A new spectrum whose values are the difference of those of the two previous spectra.
+            A new Spectrum whose values are the difference of those of the two previous spectra.
         Raises:
             ValueError: If the shapes of the two spectra do not match
         """
@@ -99,11 +115,11 @@ class Spectrum:
         )
 
     def __neg__(self) -> Self:
-        """
+        """@public
         Implements the `-` operator.
 
-        Returns: 
-            Spectrum: A new spectrum with negated values.
+        Returns:
+            A new Spectrum with negated values.
         """
         new_data_source = TransformedDataSource(
             parent=self.data_source, func=lambda arr: -arr
@@ -123,11 +139,11 @@ class Spectrum:
         Args:
             other: The spectrum to multiply by.
         Returns:
-            Spectrum: A new spectrum whose values are the product of those of the two previous spectra.
+            A new Spectrum whose values are the product of those of the two previous spectra.
         Raises:
             ValueError: If the shapes of the two spectra do not match
         """
-        
+
         new_data_source = TransformedDataSource(
             parent=self.data_source, func=lambda arr: arr * other
         )
@@ -138,33 +154,3 @@ class Spectrum:
             data_source=new_data_source,
             transform=self.transform,
         )
-
-    @property
-    def data(self) -> NDArray:
-        return self.data_source.get_data()
-
-    @property
-    def shape(self) -> NDArray:
-        return self.data.shape
-
-    def shift_to_coord(self, shift: NDArray) -> NDArray:
-        """
-        Convert between chemical shift and grid coordinate systems. Index coordinates are interpolated between integer values.
-
-        Args:
-            shift: ND array of chemical shifts.
-        Returns:
-            NDArray: ND array of grid coordinates.
-        """
-        return self.transform.inverse.apply(shift)
-
-    def coord_to_shift(self, coord: NDArray) -> NDArray:
-        """
-        Convert between grid and chemical shift coordinate systems. 
-
-        Args:
-            shift: ND array of grid coordinates.
-        Returns:
-            NDArray: ND array of chemical shifts.
-        """
-        return self.transform.apply(coord)

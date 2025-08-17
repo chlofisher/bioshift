@@ -5,22 +5,21 @@ from numpy.typing import NDArray
 class SpectrumTransform:
     """Represents a diagonal affine transformation used to map between
     coordinates in the raw spectrum array and chemical shift values.
-
-    Attributes:
-        scaling: Vector of scaling factors for each axis.
-        offset: Offset vector.
-
-    Properties:
-        inverse: The inverse of the transform.
     """
 
     ndim: int
+    """Number of dimensions in the spectrum."""
+
     shape: NDArray
+    """Shape of the underlying data array."""
 
     bounds: NDArray
 
     scaling: NDArray
+    """Vector of diagonal components of the affine transformation matrix. 
+    Components are scaling values along each axis."""
     offset: NDArray
+    """Constant offset vector for the affine transformation."""
 
     inverse_scaling: NDArray
     inverse_offset: NDArray
@@ -61,28 +60,76 @@ class SpectrumTransform:
 
     @property
     def bounds(self):
+        """Bounds of the spectrum (in array grid coordinates)."""
         array_bounds = np.vstack((np.zeros(self.ndim), self.shape))
 
         return self.grid_to_shift(array_bounds)
 
     @property
     def inverse_scaling(self):
+        """Vector containing the diagonal entries of the affine transformation matrix for
+        the inverse transform. Used to convert from chemical shifts to grid coords."""
         return 1 / self.scaling
 
     @property
     def inverse_offset(self):
+        """Vector offset for the inverse transform.
+        Used to convert from chemical shifts to grid coords."""
         return -self.offset / self.scaling
 
-    def grid_to_shift(self, x):
+    def grid_to_shift(self, x: NDArray):
+        """
+        Convert a grid coord to a chemical shift.
+
+        Args:
+            x:
+                Array containing grid coordinates of points in the spectrum.
+                Must be broadcastable to (ndim,).
+        Returns:
+            Array of corresponding chemical shift values
+        """
         return x * self.scaling + self.offset
 
     def shift_to_grid(self, x):
+        """Convert a grid coord to a chemical shift.
+        Args:
+            x: Array containing chemical shift coordinates. Must be broadcastable to (ndim,).
+        Returns:
+            Array of corresponding grid coordinates.
+        """
         return x * self.inverse_scaling + self.inverse_offset
 
     @classmethod
     def from_reference(
-        cls, shape, spectral_width, spectrometer_frequency, ref_coord, ref_shift
+        cls, 
+        shape: NDArray, 
+        spectral_width: NDArray, 
+        spectrometer_frequency: NDArray, 
+        ref_coord: NDArray, 
+        ref_shift: NDArray
     ):
+        """
+        Create a SpectrumTransform from spectrum referencing information.
+        All arguments must be NDArrays with shape `(ndim,)`
+
+        Args:
+            shape : 
+                Number of data points along each axis of the spectrum.
+            spectral_width:
+                Difference in chemical shift across the width of the spectrum along each axis, 
+                measured in Hz.
+            spectrometer_frequency:
+                Frequency of spectrometer along each axis, measured in MHz.
+                Required to convert spectral width into ppm.
+            ref_coord:
+                Grid coordinates of a reference point in the spectrum.
+            ref_shift:
+                Chemical shift vector of the point located at the reference coordinate.
+        Returns:
+            `SpectrumTransform` object with scaling and offset vectors calculated
+            from the reference data.
+        """
+
         w = np.array(spectral_width)
         N = np.array(shape)
         f = np.array(spectrometer_frequency)
