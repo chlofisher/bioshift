@@ -22,7 +22,7 @@ export default defineConfig({
 				},
 			],
             editLink: {
-                baseUrl: 'https://github.com/chlofisher/bioshift/edit/docs'
+                baseUrl: 'https://github.com/chlofisher/bioshift/edit/main/docs'
             },
             customCss: [
                 './src/styles/style.css'
