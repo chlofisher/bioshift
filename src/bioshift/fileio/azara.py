@@ -10,71 +10,49 @@ from bioshift.fileio.spectrumreader import SpectrumReader
 from bioshift.fileio.blockedspectrum import BlockedSpectrumDataSource
 
 
-class AzaraSpectrumReader(SpectrumReader):
-    par_path: Path
-    spc_path: Path
-    params: dict
+def _spc_from_par(par_path: Path) -> Path:
+    """Finds a corresponding .spc file from a .par file. First checks for
+     a .spc file specified in the .par file, failing that checks for a .spc
+     with a matching name.
 
-    def __init__(self, par_path: Path, spc_path: Path):
-        self.par_path = par_path
-        self.spc_path = spc_path
+    Args:
+        par_path: Path to the .par file.
 
-        self.params = self.get_params()
+    Returns:
+        Path to a .spc file.
 
-    @classmethod
-    def from_path(cls, path: Path) -> Self:
-        if path.suffix == ".par":
-            par_path = path
-            spc_path = cls.spc_from_par(par_path)
-        elif path.suffix == ".spc":
-            spc_path = path
-            par_path = cls.par_from_spc(spc_path)
+    Raises:
+        FileNotFoundError: if a .spc file can not be found
+    """
+    potential_spc_paths = []
 
-        return cls(par_path, spc_path)
+    try:
+        # Need to peek ahead at the .par file before fully loading the
+        # params to check for a .spc file
+        params = _parse_par_file(par_path)
 
-    @classmethod
-    def spc_from_par(cls, par_path: Path) -> Path:
-        """Finds a corresponding .spc file from a .par file. First checks for
-         a .spc file specified in the .par file, failing that checks for a .spc
-         with a matching name.
+        data_file_param = next(p for p in params if p[0] == "file")
+        spc_file = data_file_param[1].strip()
+        potential_spc_paths.append(par_path.parent / Path(spc_file))
+    except StopIteration:
+        pass
 
-        Args:
-            par_path: Path to the .par file.
+    potential_spc_paths.append(par_path.parent / (par_path.stem + ".spc"))
+    potential_spc_paths.append(par_path.parent / par_path.stem)
+    potential_spc_paths.append(
+        par_path.parent / (Path(par_path.stem).stem + ".spc")
+    )
 
-        Returns:
-            Path to a .spc file.
+    for spc_path in potential_spc_paths:
+        if spc_path.is_file():
+            return spc_path
 
-        Raises:
-            FileNotFoundError: if a .spc file can not be found
-        """
-        potential_spc_paths = []
+    raise FileNotFoundError(
+        f"Could not find .spc file corresponding to {par_path}")
 
-        try:
-            # Need to peek ahead at the .par file before fully loading the
-            # params to check for a .spc file
-            params = AzaraSpectrumReader.parse_par_file(par_path)
 
-            data_file_param = next(p for p in params if p[0] == "file")
-            spc_file = data_file_param[1].strip()
-            potential_spc_paths.append(par_path.parent / Path(spc_file))
-        except StopIteration:
-            pass
-
-        potential_spc_paths.append(par_path.parent / (par_path.stem + ".spc"))
-        potential_spc_paths.append(par_path.parent / par_path.stem)
-        potential_spc_paths.append(
-            par_path.parent / (Path(par_path.stem).stem + ".spc")
-        )
-
-        for spc_path in potential_spc_paths:
-            if spc_path.is_file():
-                return spc_path
-
-        raise FileNotFoundError(f"Could not find .spc file corresponding to {par_path}")
-
-    @classmethod
-    def par_from_spc(cls, spc_path: Path) -> Path:
-        """Finds a corresponding .par file from a .spc file. Given
+def _par_from_spc(spc_path: Path) -> Path:
+    """Finds a corresponding .par file from a .spc file. Given
          spectrum.spc, checks spectrum.spc.par and spectrum.par.
 
         Args:
@@ -86,23 +64,58 @@ class AzaraSpectrumReader(SpectrumReader):
         Raises:
             FileNotFoundError: if a .par file can not be found
         """
-        potential_par_paths = []
+    potential_par_paths = []
 
-        # e.g. spectrum.spc.par
-        potential_par_paths.append(spc_path.parent / (spc_path.name + ".par"))
+    # e.g. spectrum.spc.par
+    potential_par_paths.append(spc_path.parent / (spc_path.name + ".par"))
 
-        # e.g. spectrum.par
-        potential_par_paths.append(spc_path.parent / (spc_path.stem + ".par"))
+    # e.g. spectrum.par
+    potential_par_paths.append(spc_path.parent / (spc_path.stem + ".par"))
 
-        for par_path in potential_par_paths:
-            if par_path.is_file():
-                return par_path
+    for par_path in potential_par_paths:
+        if par_path.is_file():
+            return par_path
 
-        raise FileNotFoundError(
-            f"Could not find valid .par file corresponding to {spc_path}"
-        )
+    raise FileNotFoundError(
+        f"Could not find valid .par file corresponding to {spc_path}"
+    )
 
-    def get_params(self) -> dict[str, Any]:
+
+def _parse_par_file(par_path: Path) -> list[tuple[str]]:
+    with open(par_path) as file:
+        lines = file.readlines()
+
+    # Strip comments and empty lines
+    lines = [line for line in lines if line[0] != "!"]
+    lines = [line for line in lines if line and not line.isspace()]
+
+    return [tuple(line.split(" ", 1)) for line in lines]
+
+
+class AzaraSpectrumReader(SpectrumReader):
+    par_path: Path
+    spc_path: Path
+    params: dict
+
+    def __init__(self, par_path: Path, spc_path: Path):
+        self.par_path = par_path
+        self.spc_path = spc_path
+
+        self.params = self._get_params()
+
+    @classmethod
+    def from_path(cls, path: Path) -> Self:
+        if path.suffix == ".par":
+            par_path = path
+            spc_path = _spc_from_par(par_path)
+        elif path.suffix == ".spc":
+            spc_path = path
+            par_path = _par_from_spc(spc_path)
+
+        return cls(par_path, spc_path)
+
+    # TODO Break up this huge function.
+    def _get_params(self) -> dict[str, Any]:
         """Get a dictionary of parameters from the .par file for use in
          constructing the spectrum.
 
@@ -117,7 +130,7 @@ class AzaraSpectrumReader(SpectrumReader):
              'params' are detected. .par files containing these keys are
              intended for internal use within Azara only.
         """
-        raw_params = AzaraSpectrumReader.parse_par_file(self.par_path)
+        raw_params = _parse_par_file(self.par_path)
 
         params = {"header_size": 0, "dtype": np.float32}
 
@@ -169,7 +182,8 @@ class AzaraSpectrumReader(SpectrumReader):
 
         # Record where 'dim' keywords are found, as delimiters of blocks of
         # axis params, including one after the final line.
-        dim_positions = [i for i, param in enumerate(raw_params) if param[0] == "dim"]
+        dim_positions = [i for i, param in enumerate(
+            raw_params) if param[0] == "dim"]
         dim_positions.append(len(raw_params))
 
         ndim = params["ndim"]
@@ -249,14 +263,3 @@ class AzaraSpectrumReader(SpectrumReader):
     @classmethod
     def can_read(cls, path: Path) -> bool:
         return path.is_file() and path.suffix in [".spc", ".par"]
-
-    @classmethod
-    def parse_par_file(cls, par_path: Path) -> list[tuple[str]]:
-        with open(par_path) as file:
-            lines = file.readlines()
-
-        # Strip comments and empty lines
-        lines = [line for line in lines if line[0] != "!"]
-        lines = [line for line in lines if line and not line.isspace()]
-
-        return [tuple(line.split(" ", 1)) for line in lines]
