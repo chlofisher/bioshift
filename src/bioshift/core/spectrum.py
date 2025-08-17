@@ -72,6 +72,16 @@ class Spectrum:
 
     @classmethod
     def load(cls, path: str | PathLike) -> Self:
+        """
+        Create a spectrum from a path to a spectrum file. 
+        Automatically determines the file format and dispatches the correct spectrum reader.
+
+        Args:
+            path: Path to the spectrum file.
+        Returns:
+            Spectrum object
+        """
+
         from bioshift.fileio.loadspectrum import load_spectrum
         return load_spectrum(path)
 
