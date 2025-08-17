@@ -12,9 +12,6 @@ class SpectrumReader(ABC):
     implemented by concrete SpectrumReaders.
     """
 
-    @abstractmethod
-    def __init__(self, path: Path): ...
-
     @classmethod
     @abstractmethod
     def from_path(cls, path: Path): ...
