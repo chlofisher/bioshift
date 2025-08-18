@@ -4,10 +4,9 @@ from os import PathLike
 from bioshift.core.spectrum import Spectrum
 from bioshift.fileio.azara import AzaraSpectrumReader
 from bioshift.fileio.ucsf import UCSFSpectrumReader
-from bioshift.fileio.nmrpipe import NMRPipeSpectrumReader
 
 
-REGISTRY = [AzaraSpectrumReader, UCSFSpectrumReader, NMRPipeSpectrumReader]
+REGISTRY = [AzaraSpectrumReader, UCSFSpectrumReader]
 
 
 def load_spectrum(path: str | PathLike) -> Spectrum:
