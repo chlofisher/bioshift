@@ -25,8 +25,8 @@ def _gaussian_model(
 
     k = ndim * n_peaks
 
-    positions, widths = unflatten_params(params_array, ndim, n_peaks)
-    positions = params_array[:k].reshape((-1, 1, ndim), order="F")
+    shifts, widths = unflatten_params(params_array, ndim, n_peaks)
+    shifts = params_array[:k].reshape((-1, 1, ndim), order="F")
     widths = params_array[k : 2 * k].reshape((-1, 1, ndim), order="F")
 
     x_exp = x.transpose()[None, :, :]  # (1, n_datapoints, ndim)
@@ -34,7 +34,7 @@ def _gaussian_model(
 
     # (n_peaks, n_datapoints)
     # print(f"widths: {np.array(widths)}")
-    scaled_magnitude = jnp.sum(((x_exp - positions) / widths) ** 2, axis=2)
+    scaled_magnitude = jnp.sum(((x_exp - shifts) / widths) ** 2, axis=2)
     exponent = LN2 * scaled_magnitude
 
     mask = exponent <= 5
@@ -87,8 +87,8 @@ def _jacobian_model(
     return jacobian
 
 
-def flatten_params(positions: NDArray, widths: NDArray) -> NDArray:
-    return np.concatenate(positions.ravel(), widths.ravel())
+def flatten_params(shifts: NDArray, widths: NDArray) -> NDArray:
+    return np.concatenate(shifts.ravel(), widths.ravel())
 
 
 def unflatten_params(
@@ -96,17 +96,17 @@ def unflatten_params(
 ) -> tuple[NDArray, NDArray]:
 
     k = ndim * n_peaks
-    positions = params[:k].reshape((-1, ndim), order="F")
+    shifts = params[:k].reshape((-1, ndim), order="F")
     widths = params[k : 2 * k].reshape((-1, ndim), order="F")
 
-    return positions, widths
+    return shifts, widths
 
 
 def fit(
     spectrum: Spectrum,
     intensities: NDArray,
     initial_peaks: NDArray,
-    max_position_change: tuple[int],
+    max_shift_change: tuple[int],
 ) -> PeakList:
     n_peaks = initial_peaks.shape[1]
 
@@ -127,14 +127,14 @@ def fit(
     xdata_decimated = xdata[:, ::10]
     ydata_decimated = ydata[::10]
 
-    initial_positions = initial_peaks.ravel()
+    initial_shifts = initial_peaks.ravel()
     initial_widths = np.ones(n_peaks * ndim) * 0.05
 
-    pos_min = initial_positions - np.concatenate(
-        [np.ones(n_peaks) * delta for delta in max_position_change]
+    pos_min = initial_shifts - np.concatenate(
+        [np.ones(n_peaks) * delta for delta in max_shift_change]
     )
-    pos_max = initial_positions + np.concatenate(
-        [np.ones(n_peaks) * delta for delta in max_position_change]
+    pos_max = initial_shifts + np.concatenate(
+        [np.ones(n_peaks) * delta for delta in max_shift_change]
     )
 
     width_min = np.zeros(ndim * n_peaks)
@@ -146,7 +146,7 @@ def fit(
 
     bounds = (min, max)
 
-    p0 = np.concatenate((initial_positions, initial_widths))
+    p0 = np.concatenate((initial_shifts, initial_widths))
 
     model = jit(
         partial(
@@ -174,7 +174,7 @@ def fit(
     # residual = (spectrum.data - fitted_spectrum) ** 2
 
     k = ndim * n_peaks
-    positions = popt[:k].reshape((-1, ndim), order="F")
+    shifts = popt[:k].reshape((-1, ndim), order="F")
     widths = popt[k : 2 * k].reshape((-1, ndim), order="F")
 
-    return PeakList(positions=positions, widths=widths)
+    return PeakList(shifts=shifts, widths=widths)

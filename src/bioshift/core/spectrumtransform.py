@@ -101,22 +101,22 @@ class SpectrumTransform:
 
     @classmethod
     def from_reference(
-        cls, 
-        shape: NDArray, 
-        spectral_width: NDArray, 
-        spectrometer_frequency: NDArray, 
-        ref_coord: NDArray, 
-        ref_shift: NDArray
+        cls,
+        shape: NDArray,
+        spectral_width: NDArray,
+        spectrometer_frequency: NDArray,
+        ref_coord: NDArray,
+        ref_shift: NDArray,
     ):
         """
         Create a SpectrumTransform from spectrum referencing information.
         All arguments must be NDArrays with shape `(ndim,)`
 
         Args:
-            shape : 
+            shape :
                 Number of data points along each axis of the spectrum.
             spectral_width:
-                Difference in chemical shift across the width of the spectrum along each axis, 
+                Difference in chemical shift across the width of the spectrum along each axis,
                 measured in Hz.
             spectrometer_frequency:
                 Frequency of spectrometer along each axis, measured in MHz.

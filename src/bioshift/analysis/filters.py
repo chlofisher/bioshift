@@ -6,7 +6,7 @@ import scipy
 from functools import wraps, partial
 
 from bioshift.core.spectrum import Spectrum
-from bioshift.fileio.spectrumdatasource import TransformedDataSource
+from bioshift.core.spectrumdatasource import TransformedDataSource
 
 
 # spectrum_filter converts functions on NDArrays to functions on Spectra.

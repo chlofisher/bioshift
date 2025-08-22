@@ -12,8 +12,10 @@ from bioshift.fileio.spectrumreader import SpectrumReader
 GLOBAL_HEADER_SIZE = 180
 AXIS_HEADER_SIZE = 128
 
+
 def _get_header_size(ndim):
-        return GLOBAL_HEADER_SIZE + AXIS_HEADER_SIZE * ndim
+    return GLOBAL_HEADER_SIZE + AXIS_HEADER_SIZE * ndim
+
 
 class UCSFSpectrumReader(SpectrumReader):
     path: Path

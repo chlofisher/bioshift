@@ -39,31 +39,28 @@ def _spc_from_par(par_path: Path) -> Path:
 
     potential_spc_paths.append(par_path.parent / (par_path.stem + ".spc"))
     potential_spc_paths.append(par_path.parent / par_path.stem)
-    potential_spc_paths.append(
-        par_path.parent / (Path(par_path.stem).stem + ".spc")
-    )
+    potential_spc_paths.append(par_path.parent / (Path(par_path.stem).stem + ".spc"))
 
     for spc_path in potential_spc_paths:
         if spc_path.is_file():
             return spc_path
 
-    raise FileNotFoundError(
-        f"Could not find .spc file corresponding to {par_path}")
+    raise FileNotFoundError(f"Could not find .spc file corresponding to {par_path}")
 
 
 def _par_from_spc(spc_path: Path) -> Path:
     """Finds a corresponding .par file from a .spc file. Given
-         spectrum.spc, checks spectrum.spc.par and spectrum.par.
+     spectrum.spc, checks spectrum.spc.par and spectrum.par.
 
-        Args:
-            spc_path: Path to the .spc file.
+    Args:
+        spc_path: Path to the .spc file.
 
-        Returns:
-            Path to a .par file.
+    Returns:
+        Path to a .par file.
 
-        Raises:
-            FileNotFoundError: if a .par file can not be found
-        """
+    Raises:
+        FileNotFoundError: if a .par file can not be found
+    """
     potential_par_paths = []
 
     # e.g. spectrum.spc.par
@@ -182,8 +179,7 @@ class AzaraSpectrumReader(SpectrumReader):
 
         # Record where 'dim' keywords are found, as delimiters of blocks of
         # axis params, including one after the final line.
-        dim_positions = [i for i, param in enumerate(
-            raw_params) if param[0] == "dim"]
+        dim_positions = [i for i, param in enumerate(raw_params) if param[0] == "dim"]
         dim_positions.append(len(raw_params))
 
         ndim = params["ndim"]

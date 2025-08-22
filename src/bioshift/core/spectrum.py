@@ -14,9 +14,9 @@ from bioshift.core.nucleus import NMRNucleus
 
 class Spectrum:
     """
-    NMR spectrum. 
+    NMR spectrum.
 
-    The recommended way of creating Spectrum instances from spectrum files 
+    The recommended way of creating Spectrum instances from spectrum files
     is by using the `Spectrum.load()` function. This automatically determines
     the format of the spectrum and selects the correct SpectrumReader.
 
@@ -77,23 +77,21 @@ class Spectrum:
     def __array_ufunc__(self, ufunc, method, *inputs, **kwargs):
         if method == "__call__":
             new_data_source = TransformedDataSource(
-                parent=self.data_source, 
-                ufunc=ufunc
+                parent=self.data_source, ufunc=ufunc
             )
             return self.__class__(
-                ndim = self.ndim,
-                nuclei = self.nuclei,
-                transform = self.transform,
-                data_source = new_data_source
+                ndim=self.ndim,
+                nuclei=self.nuclei,
+                transform=self.transform,
+                data_source=new_data_source,
             )
         else:
             return NotImplemented
-            
 
     @classmethod
     def load(cls, path: str | PathLike) -> Self:
         """
-        Create a spectrum from a path to a spectrum file. 
+        Create a spectrum from a path to a spectrum file.
         Automatically determines the file format and dispatches the correct spectrum reader.
 
         Args:
@@ -103,6 +101,7 @@ class Spectrum:
         """
 
         from bioshift.fileio.loadspectrum import load_spectrum
+
         return load_spectrum(path)
 
     def add(self, other: Self) -> Self:

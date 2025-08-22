@@ -22,26 +22,23 @@ class XEASYSpectrumReader(SpectrumReader):
         return params
 
     @classmethod
-    def from_path(cls, path: Path):
-        ...
+    def from_path(cls, path: Path): ...
 
     @classmethod
     def can_read(cls, path: Path) -> bool:
         return path.suffixes[0] == "3D"
 
-    def get_data(self):
-        ...
+    def get_data(self): ...
 
     def get_ndim(self):
         return int(self.params["Number of dimensions"])
 
-    def get_nuclei(self):
-        ...
+    def get_nuclei(self): ...
 
     # TODO Figure out a way to get full referencing information for XEASY
     # spectra. Since the .3D.param file does not contain the reference
-    # point or shift, the transform can not be determined solely from the 
-    # spectrum. 
+    # point or shift, the transform can not be determined solely from the
+    # spectrum.
     def get_transform(self):
         shape = self._get_shape()
 
@@ -82,12 +79,8 @@ class XEASYSpectrumReader(SpectrumReader):
 
         return tuple(frequency)
 
-    def _get_spectral_width(self):
-        ...
+    def _get_spectral_width(self): ...
 
-    def _get_ref_coord(self):
-        ...
+    def _get_ref_coord(self): ...
 
-    def _get_ref_shift(self):
-        ...
-
+    def _get_ref_shift(self): ...

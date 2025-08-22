@@ -12,19 +12,19 @@ class Peak:
     Class to store the chemical shift and width of a peak.
     """
 
-    position: NDArray
+    shift: NDArray
     width: NDArray
 
 
 @dataclass
 class PeakList:
     """
-    Stores an array of positions and widths to represent a set of peaks.
+    Stores an array of shifts and widths to represent a set of peaks.
     PeakLists can be iterated over or indexed as if they were a collection of Peak objects.
 
     Usage:
     ```python
-    positions = np.array([
+    shifts = np.array([
         [0.6, 2.5, 1.6],
         [15.6, 20.1, 8.5]
     ])
@@ -33,7 +33,7 @@ class PeakList:
             [2.5, 2.8, 2.9]
     ])
 
-    peaklist = PeakList(positions, widths)
+    peaklist = PeakList(shifts, widths)
 
     print(len(peaklist))
     # output: 2
@@ -41,7 +41,7 @@ class PeakList:
     print(peak[0])
     # output:
     #   Peak(
-    #       position=array([0.6, 2.5, 1.6]),
+    #       shift=array([0.6, 2.5, 1.6]),
     #       width=array([1.2, 0.8, 1. ])
     #   )
 
@@ -50,35 +50,38 @@ class PeakList:
 
     # output:
     #   Peak(
-    #       position=array([0.6, 2.5, 1.6]),
+    #       shift=array([0.6, 2.5, 1.6]),
     #       width=array([1.2, 0.8, 1. ])
     #   )
     #   Peak(
-    #       position=array([15.6, 20.1,  8.5]),
+    #       shift=array([15.6, 20.1,  8.5]),
     #       width=array([2.5, 2.8, 2.9])
     #   )
     ```
     """
 
-    positions: NDArray
-    widths: NDArray
+    shifts: NDArray
+    widths: NDArray | None
 
     def __iter__(self):
-        return iter(Peak(pos, width) for pos, width in zip(self.positions, self.widths))
+        if self.widths is not None:
+            return iter(Peak(shift, width) for shift, width in zip(self.shifts, self.widths))
+        else:
+            return iter(Peak(shift, None) for shift in self.shifts)
 
     def __len__(self):
-        return self.positions.shape[0]
+        return self.shifts.shape[0]
 
     def __getitem__(self, key: slice | int):
         peaks = [
             Peak(pos, width)
-            for pos, width in zip(self.positions[key, :], self.widths[key, :])
+            for pos, width in zip(self.shifts[key, :], self.widths[key, :])
         ]
 
         if isinstance(key, slice):
             return peaks
         elif isinstance(key, int):
-            return Peak(self.positions[key, :], self.widths[key, :])
+            return Peak(self.shifts[key, :], self.widths[key, :])
 
     def write_csv(self, path: str | PathLike):
         """
@@ -87,7 +90,7 @@ class PeakList:
         Args:
             path: Path to the destination file.
         """
-        ndim = self.positions.shape[1]
+        ndim = self.shifts.shape[1]
         with open(path, "w") as file:
             fieldnames = [f"shift[{i}]" for i in range(ndim)] + [
                 f"width[{i}]" for i in range(ndim)
@@ -96,7 +99,7 @@ class PeakList:
             writer = csv.writer(file)
             writer.writerow(fieldnames)
             for peak in self:
-                row = peak.position.tolist() + peak.width.tolist()
+                row = peak.shift.tolist() + peak.width.tolist()
                 writer.writerow(row)
 
     def from_csv(path) -> Self:
@@ -110,12 +113,12 @@ class PeakList:
             reader = csv.reader(file)
             header = next(reader)
 
-            positions = []
+            shifts = []
             widths = []
             for row in reader:
                 row = [float(val) for val in row]
                 ndim = len(row) // 2
-                positions.append(row[:ndim])
+                shifts.append(row[:ndim])
                 widths.append(row[ndim:])
 
-        return PeakList(positions=np.array(positions), widths=np.array(widths))
+        return PeakList(shifts=np.array(shifts), widths=np.array(widths))
