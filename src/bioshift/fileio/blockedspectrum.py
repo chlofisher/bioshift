@@ -17,6 +17,10 @@ class BlockedSpectrumDataSource(SpectrumDataSource):
     _memmap: np.memmap
     _cache: Optional[NDArray] = None
 
+    @property
+    def dtype(self):
+        return self._memmap.dtype
+
     def __init__(self, path, shape, block_shape, dtype: np.dtype, header_size):
         self.shape = shape
         self.block_shape = block_shape

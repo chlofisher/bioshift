@@ -1,12 +1,12 @@
-from typing import Protocol, Callable
+from typing import Protocol, Callable, Any
 
 
 class Node(Protocol):
 
-
     def __init__(self, name: str, nod_dict: dict): ...
 
     def run(self, context): ...
+
 
 class NodeInstance:
     name: str
@@ -22,8 +22,7 @@ class FunctionNode:
     def __init__(self, name: str, node_dict: dict):
         self.name = name
         self.input_keys = node_dict["inputs"] if "inputs" in node_dict else []
-        self.output_keys = node_dict["outputs"] if "outputs" in node_dict else [
-            name]
+        self.output_keys = node_dict["outputs"] if "outputs" in node_dict else [name]
         self.param_keys = node_dict["params"] if "params" in node_dict else {}
         self.func = functionregistry.get_function(node_dict["func"])
 

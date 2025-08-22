@@ -1,5 +1,6 @@
 from typing import Callable
 
+
 class NodeRegistry:
     functions: dict[str, Callable]
 

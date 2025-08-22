@@ -5,6 +5,7 @@ import yaml
 
 from bioshift.analysis.node import Node
 
+
 class Pipeline:
     nodes: dict[str, Node]
     dependencies: dict[str, set[str]]
@@ -39,8 +40,7 @@ class Pipeline:
         return cls(nodes, dependencies)
 
     def topological_sort(self) -> list[str]:
-        dependencies = {name: deps.copy()
-                        for name, deps in self.dependencies.items()}
+        dependencies = {name: deps.copy() for name, deps in self.dependencies.items()}
 
         in_degree = {name: len(deps) for name, deps in dependencies.items()}
 

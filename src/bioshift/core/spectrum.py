@@ -1,5 +1,6 @@
 from typing import Self
 from numpy.typing import NDArray
+from numbers import Number
 from os import PathLike
 
 from bioshift.core.spectrumdatasource import (
@@ -37,16 +38,16 @@ class Spectrum:
     transform: SpectrumTransform
     """Object storing the transformation from array coordinate space to chemical shift space."""
 
-    @property
-    def data(self) -> NDArray:
-        """
-        Get an N-dimensional array of data from the data source object.
-        SpectrumDataSource implements caching to minimise time spent reading from disk.
-
-        Returns:
-            ND array of floating-point spectrum data.
-        """
-        return self.data_source.get_data()
+    # @property
+    # def data(self) -> NDArray:
+    #     """
+    #     Get an N-dimensional array of data from the data source object.
+    #     SpectrumDataSource implements caching to minimise time spent reading from disk.
+    #
+    #     Returns:
+    #         ND array of floating-point spectrum data.
+    #     """
+    #     return self.data_source.get_data()
 
     @property
     def shape(self) -> NDArray:
@@ -69,6 +70,25 @@ class Spectrum:
             f"  source={self.data_source.__repr__()},\n"
             f")"
         )
+
+    def __array__(self, dtype=None, copy=None):
+        return self.data_source.get_data()
+
+    def __array_ufunc__(self, ufunc, method, *inputs, **kwargs):
+        if method == "__call__":
+            new_data_source = TransformedDataSource(
+                parent=self.data_source, 
+                ufunc=ufunc
+            )
+            return self.__class__(
+                ndim = self.ndim,
+                nuclei = self.nuclei,
+                transform = self.transform,
+                data_source = new_data_source
+            )
+        else:
+            return NotImplemented
+            
 
     @classmethod
     def load(cls, path: str | PathLike) -> Self:

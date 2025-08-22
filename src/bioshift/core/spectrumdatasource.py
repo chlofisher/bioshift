@@ -4,6 +4,7 @@ from numpy.typing import NDArray
 
 
 class SpectrumDataSource(ABC):
+    dtype: str
     _cache: NDArray = None
 
     def get_data(self) -> NDArray:
@@ -23,6 +24,7 @@ class TransformedDataSource(SpectrumDataSource):
     def __init__(self, parent, func):
         self.parent = parent
         self.func = func
+        self.dtype = parent.dtype
 
     def _load_data(self) -> NDArray:
         return self.func(self.parent.get_data())
@@ -32,6 +34,11 @@ class SumDataSource(SpectrumDataSource):
     def __init__(self, source1, source2):
         self.source1 = source1
         self.source2 = source2
+
+        if source1.dtype != source2.dtype:
+            raise ValueError("Mismatched dtypes")
+
+        self.dtype = source1.dtype
 
     def _load_data(self):
         return self.source1.get_data() + self.source2.get_data()
