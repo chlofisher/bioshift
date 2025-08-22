@@ -5,7 +5,6 @@ import skimage
 import scipy
 from functools import wraps, partial
 
-from bioshift.analysis.pipeline import functionregistry
 from bioshift.core.spectrum import Spectrum
 from bioshift.fileio.spectrumdatasource import TransformedDataSource
 
@@ -32,7 +31,6 @@ def spectrum_filter(func: Callable):
 
 # Can't use spectrum_filter decorator as the scaled sigma values depend on the
 # spectrum transform.
-@functionregistry.register()
 def gaussian(input: Spectrum, sigma: tuple[float, ...]) -> Spectrum:
     if len(sigma) != input.ndim:
         raise ValueError(
@@ -48,43 +46,36 @@ def gaussian(input: Spectrum, sigma: tuple[float, ...]) -> Spectrum:
     return spectrum_filter(func=gaussian_filter)(input)
 
 
-@functionregistry.register()
 @spectrum_filter
 def laplacian(input: NDArray) -> NDArray:
     return scipy.ndimage.laplace(input)
 
 
-@functionregistry.register()
 @spectrum_filter
 def threshold(input: NDArray, level: float) -> NDArray:
     return np.where(np.abs(input) < level, 0, input)
 
 
-@functionregistry.register()
 @spectrum_filter
 def normalize(input: NDArray) -> NDArray:
     return input / np.abs(input).max()
 
 
-@functionregistry.register()
 @spectrum_filter
 def abs(input: NDArray) -> NDArray:
     return np.abs(input)
 
 
-@functionregistry.register()
 @spectrum_filter
 def positive(input: NDArray) -> NDArray:
     return np.where(input > 0, input, 0)
 
 
-@functionregistry.register()
 @spectrum_filter
 def negative(input: NDArray) -> NDArray:
     return np.where(input < 0, input, 0)
 
 
-@functionregistry.register()
 def crop(input: Spectrum, bounds: list[tuple[float, float], ...]) -> Spectrum:
     if len(bounds != input.ndim):
         raise ValueError(
@@ -104,7 +95,6 @@ def crop(input: Spectrum, bounds: list[tuple[float, float], ...]) -> Spectrum:
     return result
 
 
-@functionregistry.register()
 def difference_of_gaussians(
     input: Spectrum, sigma: tuple[float, ...], k: float
 ) -> Spectrum:
