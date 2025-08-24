@@ -88,6 +88,10 @@ class Spectrum:
         else:
             return NotImplemented
 
+    @property
+    def array(self) -> NDArray:
+        return self.__array__()
+
     @classmethod
     def load(cls, path: str | PathLike) -> Self:
         """
