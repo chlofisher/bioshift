@@ -1,12 +1,12 @@
 from typing import Self
 from numpy.typing import NDArray
-from numbers import Number
 from os import PathLike
 
 from bioshift.core.spectrumdatasource import (
     SpectrumDataSource,
     TransformedDataSource,
     SumDataSource,
+    SliceDataSource
 )
 from bioshift.core.spectrumtransform import SpectrumTransform
 from bioshift.core.nucleus import NMRNucleus
@@ -37,17 +37,6 @@ class Spectrum:
 
     transform: SpectrumTransform
     """Object storing the transformation from array coordinate space to chemical shift space."""
-
-    # @property
-    # def data(self) -> NDArray:
-    #     """
-    #     Get an N-dimensional array of data from the data source object.
-    #     SpectrumDataSource implements caching to minimise time spent reading from disk.
-    #
-    #     Returns:
-    #         ND array of floating-point spectrum data.
-    #     """
-    #     return self.data_source.get_data()
 
     @property
     def shape(self) -> NDArray:
@@ -145,11 +134,17 @@ class Spectrum:
         Raises:
             ValueError: If the shapes of the two spectra do not match
         """
-        if other.shape != self.shape:
-            raise ValueError("Mismatched spectrum dimensions.")
+        return self.add(-other)
 
-        new_data_source = SumDataSource(
-            source1=self.data_source, source2=(-other).data_source
+    def __neg__(self) -> Self:
+        """
+        Implements the `-` operator.
+
+        Returns:
+            A new Spectrum with negated values.
+        """
+        new_data_source = TransformedDataSource(
+            parent=self.data_source, func=lambda arr: -arr
         )
 
         return Spectrum(
@@ -158,24 +153,6 @@ class Spectrum:
             data_source=new_data_source,
             transform=self.transform,
         )
-
-    # def __neg__(self) -> Self:
-    #     """
-    #     Implements the `-` operator.
-    #
-    #     Returns:
-    #         A new Spectrum with negated values.
-    #     """
-    #     new_data_source = TransformedDataSource(
-    #         parent=self.data_source, func=lambda arr: -arr
-    #     )
-    #
-    #     return Spectrum(
-    #         ndim=self.ndim,
-    #         nuclei=self.nuclei,
-    #         data_source=new_data_source,
-    #         transform=self.transform,
-    #     )
 
     def multiply(self, other) -> Self:
         """
@@ -198,4 +175,24 @@ class Spectrum:
             nuclei=self.nuclei,
             data_source=new_data_source,
             transform=self.transform,
+        )
+
+    def slice(self, axis: int, shift_level: float):
+        level = shift_level * \
+            self.transform.inverse_scaling[axis] + \
+            self.transform.inverse_offset[axis]
+
+        slice_data_source = SliceDataSource(
+            parent=self.data_source,
+            axis=axis,
+            level=level
+        )
+
+        nuclei = tuple(nuc for i, nuc in enumerate(self.nuclei) if i != axis)
+
+        return Spectrum(
+            ndim=self.ndim-1,
+            nuclei=nuclei,
+            data_source=slice_data_source,
+            transform=self.transform.slice(axis)
         )

@@ -1,4 +1,5 @@
 import numpy as np
+from typing import Self
 from numpy.typing import NDArray
 
 
@@ -59,25 +60,25 @@ class SpectrumTransform:
         self.offset = np.array(offset, dtype=np.float32).copy()
 
     @property
-    def bounds(self):
+    def bounds(self) -> NDArray:
         """Bounds of the spectrum (in array grid coordinates)."""
         array_bounds = np.vstack((np.zeros(self.ndim), self.shape))
 
         return self.grid_to_shift(array_bounds)
 
     @property
-    def inverse_scaling(self):
+    def inverse_scaling(self) -> NDArray:
         """Vector containing the diagonal entries of the affine transformation matrix for
         the inverse transform. Used to convert from chemical shifts to grid coords."""
         return 1 / self.scaling
 
     @property
-    def inverse_offset(self):
+    def inverse_offset(self) -> NDArray:
         """Vector offset for the inverse transform.
         Used to convert from chemical shifts to grid coords."""
         return -self.offset / self.scaling
 
-    def grid_to_shift(self, x: NDArray):
+    def grid_to_shift(self, x: NDArray) -> NDArray:
         """
         Convert a grid coord to a chemical shift.
 
@@ -90,7 +91,7 @@ class SpectrumTransform:
         """
         return x * self.scaling + self.offset
 
-    def shift_to_grid(self, x):
+    def shift_to_grid(self, x) -> NDArray:
         """Convert a grid coord to a chemical shift.
         Args:
             x: Array containing chemical shift coordinates. Must be broadcastable to (ndim,).
@@ -107,7 +108,7 @@ class SpectrumTransform:
         spectrometer_frequency: NDArray,
         ref_coord: NDArray,
         ref_shift: NDArray,
-    ):
+    ) -> Self:  
         """
         Create a SpectrumTransform from spectrum referencing information.
         All arguments must be NDArrays with shape `(ndim,)`
@@ -141,3 +142,15 @@ class SpectrumTransform:
         offset = delta_0 - scaling * i_0
 
         return cls(ndim=len(shape), shape=shape, scaling=scaling, offset=offset)
+
+    def slice(self, axis: int) -> Self:
+        new_shape = tuple(n for i, n in enumerate(self.shape) if i != axis)
+        new_scaling = np.delete(self.scaling, axis)
+        new_offset = np.delete(self.offset, axis)
+
+        return SpectrumTransform(
+            ndim=self.ndim - 1,
+            shape=new_shape,
+            scaling=new_scaling,
+            offset=new_offset
+        )
