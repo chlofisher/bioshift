@@ -2,15 +2,15 @@
 title: Public API
 ---
 
-# bioshift
+import { Card } from '@astrojs/starlight/components';
 
-### Spectrum
+## Spectrum
 ```python
 class Spectrum:
 ```
-NMR spectrum. 
+NMR spectrum.
 
-The recommended way of creating Spectrum instances from spectrum files 
+The recommended way of creating Spectrum instances from spectrum files
 is by using the `Spectrum.load()` function. This automatically determines
 the format of the spectrum and selects the correct SpectrumReader.
 
@@ -18,50 +18,55 @@ Example usage:
 ```python
 spectrum = Spectrum.load('spectrum_file.ucsf')
 ```
-##### ndim
+#### ndim
 ```python
 ndim: int
 ```
 Number of dimensions of the spectrum.
-##### nuclei
+#### nuclei
 ```python
 nuclei: tuple[bioshift.core.nucleus.NMRNucleus, ...]
 ```
 The type of nucleus (13C, 1H, etc.) associated with each axis.
-##### data_source
+#### data_source
 ```python
 data_source: bioshift.core.spectrumdatasource.SpectrumDataSource
 ```
 Object responsible for lazy-loading and parsing spectrum data.
-##### transform
+#### transform
 ```python
 transform: bioshift.core.spectrumtransform.SpectrumTransform
 ```
 Object storing the transformation from array coordinate space to chemical shift space.
-##### data
-```python
-data: numpy.ndarray[tuple[typing.Any, ...], numpy.dtype[~_ScalarT]]
-```
-Get an N-dimensional array of data from the data source object.
-SpectrumDataSource implements caching to minimise time spent reading from disk.
-
-
-###### Returns:
-> ND array of floating-point spectrum data.
-
-##### shape
+#### shape
 ```python
 shape: numpy.ndarray[tuple[typing.Any, ...], numpy.dtype[~_ScalarT]]
 ```
 Returns:
 Shape of the underlying data array.
-##### load
+#### array
+```python
+array: numpy.ndarray[tuple[typing.Any, ...], numpy.dtype[~_ScalarT]]
+```
+
+#### load
 ```python
 @classmethod
 def load(cls, path: str | os.PathLike) -> Self:
 ```
+Create a spectrum from a path to a spectrum file.
+Automatically determines the file format and dispatches the correct spectrum reader.
 
-##### add
+
+###### Arguments:
+ - **path:**  Path to the spectrum file.
+
+
+
+###### Returns:
+> Spectrum object
+
+#### add
 ```python
 def add(self, other: Self) -> Self:
 ```
@@ -81,7 +86,7 @@ Return a new spectrum equal to the pointwise sum of two spectra.
  - **ValueError:**  If the shapes of the two spectra do not match
 
 
-##### subtract
+#### subtract
 ```python
 def subtract(self, other: Self) -> Self:
 ```
@@ -101,7 +106,7 @@ Return a new spectrum equal to the pointwise difference of two spectra.
  - **ValueError:**  If the shapes of the two spectra do not match
 
 
-##### multiply
+#### multiply
 ```python
 def multiply(self, other) -> Self:
 ```
@@ -121,76 +126,92 @@ Return a new spectrum equal to the pointwise product of two spectra.
  - **ValueError:**  If the shapes of the two spectra do not match
 
 
-### NMRNucleus
+#### slice
+```python
+def slice(self, axis: int, z: float):
+```
+Take a slice from the spectrum along the specified axis.
+
+
+###### Arguments:
+ - **axis:**  The index of the axis perpendicular to the slice plane.
+ - **z:**  The chemical shift of the plane along the specified axis.
+
+
+
+###### Returns:
+> A new spectrum, with one fewer dimension.
+
+## NMRNucleus
 ```python
 class NMRNucleus(enum.Enum):
 ```
 Enum representing the NMR-active nucleus associated with a particular chemical shift value.
-##### HYDROGEN
+#### HYDROGEN
 ```python
 HYDROGEN = <NMRNucleus.HYDROGEN: '1H'>
 ```
 
-##### NITROGEN
+#### NITROGEN
 ```python
 NITROGEN = <NMRNucleus.NITROGEN: '15N'>
 ```
 
-##### CARBON
+#### CARBON
 ```python
 CARBON = <NMRNucleus.CARBON: '13C'>
 ```
 
-### SpectrumTransform
+## SpectrumTransform
 ```python
 class SpectrumTransform:
 ```
 Represents a diagonal affine transformation used to map between
 coordinates in the raw spectrum array and chemical shift values.
-##### ndim
+#### ndim
 ```python
 ndim: int
 ```
 Number of dimensions in the spectrum.
-##### shape
+#### shape
 ```python
 shape: numpy.ndarray[tuple[typing.Any, ...], numpy.dtype[~_ScalarT]]
 ```
 Shape of the underlying data array.
-##### bounds
+#### bounds
 ```python
-bounds
+bounds: numpy.ndarray[tuple[typing.Any, ...], numpy.dtype[~_ScalarT]]
 ```
 Bounds of the spectrum (in array grid coordinates).
-##### scaling
+#### scaling
 ```python
 scaling: numpy.ndarray[tuple[typing.Any, ...], numpy.dtype[~_ScalarT]]
 ```
 Vector of diagonal components of the affine transformation matrix. 
 Components are scaling values along each axis.
-##### offset
+#### offset
 ```python
 offset: numpy.ndarray[tuple[typing.Any, ...], numpy.dtype[~_ScalarT]]
 ```
 Constant offset vector for the affine transformation.
-##### inverse_scaling
+#### inverse_scaling
 ```python
-inverse_scaling
+inverse_scaling: numpy.ndarray[tuple[typing.Any, ...], numpy.dtype[~_ScalarT]]
 ```
 Vector containing the diagonal entries of the affine transformation matrix for
 the inverse transform. Used to convert from chemical shifts to grid coords.
-##### inverse_offset
+#### inverse_offset
 ```python
-inverse_offset
+inverse_offset: numpy.ndarray[tuple[typing.Any, ...], numpy.dtype[~_ScalarT]]
 ```
 Vector offset for the inverse transform.
 Used to convert from chemical shifts to grid coords.
-##### grid_to_shift
+#### grid_to_shift
 ```python
 def grid_to_shift(
     self,
     x: numpy.ndarray[tuple[typing.Any, ...], numpy.dtype[~_ScalarT]]
-):
+) -> numpy.ndarray[tuple[typing.Any, ...], numpy.dtype[~_ScalarT]]:
 ```
 Convert a grid coord to a chemical shift.
 
@@ -204,9 +225,9 @@ Convert a grid coord to a chemical shift.
 ###### Returns:
 > Array of corresponding chemical shift values
 
-##### shift_to_grid
+#### shift_to_grid
 ```python
-def shift_to_grid(self, x):
+def shift_to_grid(self, x) -> numpy.ndarray[tuple[typing.Any, ...], numpy.dtype[~_ScalarT]]:
 ```
 Convert a grid coord to a chemical shift.
 
@@ -218,7 +239,7 @@ Convert a grid coord to a chemical shift.
 ###### Returns:
 > Array of corresponding grid coordinates.
 
-##### from_reference
+#### from_reference
 ```python
 @classmethod
 def from_reference(
@@ -228,15 +249,15 @@ def from_reference(
     spectrometer_frequency: numpy.ndarray[tuple[typing.Any, ...], numpy.dtype[~_ScalarT]],
     ref_coord: numpy.ndarray[tuple[typing.Any, ...], numpy.dtype[~_ScalarT]],
     ref_shift: numpy.ndarray[tuple[typing.Any, ...], numpy.dtype[~_ScalarT]]
-):
+) -> Self:
 ```
 Create a SpectrumTransform from spectrum referencing information.
 All arguments must be NDArrays with shape `(ndim,)`
 
 
 ###### Arguments:
- - **shape :**   Number of data points along each axis of the spectrum.
- - **spectral_width:**  Difference in chemical shift across the width of the spectrum along each axis, 
+ - **shape :**  Number of data points along each axis of the spectrum.
+ - **spectral_width:**  Difference in chemical shift across the width of the spectrum along each axis,
    measured in Hz.
  - **spectrometer_frequency:**  Frequency of spectrometer along each axis, measured in MHz.
    Required to convert spectral width into ppm.
@@ -249,31 +270,36 @@ All arguments must be NDArrays with shape `(ndim,)`
 > `SpectrumTransform` object with scaling and offset vectors calculated
 > from the reference data.
 
-### Peak
+#### slice
+```python
+def slice(self, axis: int) -> Self:
+```
+
+## Peak
 ```python
 class Peak:
 ```
 Class to store the chemical shift and width of a peak.
-##### position
+#### shift
 ```python
-position: numpy.ndarray[tuple[typing.Any, ...], numpy.dtype[~_ScalarT]]
+shift: numpy.ndarray[tuple[typing.Any, ...], numpy.dtype[~_ScalarT]]
 ```
 
-##### width
+#### width
 ```python
 width: numpy.ndarray[tuple[typing.Any, ...], numpy.dtype[~_ScalarT]]
 ```
 
-### PeakList
+## PeakList
 ```python
 class PeakList:
 ```
-Stores an array of positions and widths to represent a set of peaks.
+Stores an array of shifts and widths to represent a set of peaks.
 PeakLists can be iterated over or indexed as if they were a collection of Peak objects.
 
 Usage:
 ```python
-positions = np.array([
+shifts = np.array([
     [0.6, 2.5, 1.6],
     [15.6, 20.1, 8.5]
 ])
@@ -282,7 +308,7 @@ widths = np.array([
         [2.5, 2.8, 2.9]
 ])
 
-peaklist = PeakList(positions, widths)
+peaklist = PeakList(shifts, widths)
 
 print(len(peaklist))
 # output: 2
@@ -290,7 +316,7 @@ print(len(peaklist))
 print(peak[0])
 # output:
 #   Peak(
-#       position=array([0.6, 2.5, 1.6]),
+#       shift=array([0.6, 2.5, 1.6]),
 #       width=array([1.2, 0.8, 1. ])
 #   )
 
@@ -299,25 +325,25 @@ for peak in peaklist:
 
 # output:
 #   Peak(
-#       position=array([0.6, 2.5, 1.6]),
+#       shift=array([0.6, 2.5, 1.6]),
 #       width=array([1.2, 0.8, 1. ])
 #   )
 #   Peak(
-#       position=array([15.6, 20.1,  8.5]),
+#       shift=array([15.6, 20.1,  8.5]),
 #       width=array([2.5, 2.8, 2.9])
 #   )
 ```
-##### positions
+#### shifts
 ```python
-positions: numpy.ndarray[tuple[typing.Any, ...], numpy.dtype[~_ScalarT]]
+shifts: numpy.ndarray[tuple[typing.Any, ...], numpy.dtype[~_ScalarT]]
 ```
 
-##### widths
+#### widths
 ```python
-widths: numpy.ndarray[tuple[typing.Any, ...], numpy.dtype[~_ScalarT]]
+widths: numpy.ndarray[tuple[typing.Any, ...], numpy.dtype[~_ScalarT]] | None
 ```
 
-##### write_csv
+#### write_csv
 ```python
 def write_csv(self, path: str | os.PathLike):
 ```
@@ -328,7 +354,7 @@ Save the peak list to a CSV file at the given path.
  - **path:**  Path to the destination file.
 
 
-##### from_csv
+#### from_csv
 ```python
 def from_csv(path) -> Self:
 ```

@@ -177,8 +177,17 @@ class Spectrum:
             transform=self.transform,
         )
 
-    def slice(self, axis: int, shift_level: float):
-        level = shift_level * \
+    def slice(self, axis: int, z: float):
+        """
+        Take a slice from the spectrum along the specified axis.
+        
+        Args:
+            axis: The index of the axis perpendicular to the slice plane.
+            z: The chemical shift of the plane along the specified axis.
+        Returns:
+            A new spectrum, with one fewer dimension.
+        """
+        level = z * \
             self.transform.inverse_scaling[axis] + \
             self.transform.inverse_offset[axis]
 

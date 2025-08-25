@@ -27,3 +27,7 @@
 	--sl-color-gray-7: #f5f6f9;
 	--sl-color-black: #ffffff;
 }
+
+article.card {
+  box-shadow: 0 4px 4px hsla(0, 0%, 0%, 0.1);
+}
