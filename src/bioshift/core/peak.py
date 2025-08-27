@@ -65,7 +65,9 @@ class PeakList:
 
     def __iter__(self):
         if self.widths is not None:
-            return iter(Peak(shift, width) for shift, width in zip(self.shifts, self.widths))
+            return iter(
+                Peak(shift, width) for shift, width in zip(self.shifts, self.widths)
+            )
         else:
             return iter(Peak(shift, None) for shift in self.shifts)
 

@@ -31,13 +31,12 @@ class SliceDataSource(SpectrumDataSource):
     def _load_data(self) -> NDArray:
         parent_data = self.parent.get_data()
 
-        floor = math.floor(self.level),
-        ceil = math.ceil(self.level),
+        floor = (math.floor(self.level),)
+        ceil = (math.ceil(self.level),)
         frac = self.level - floor
 
         below = parent_data.take(floor, axis=self.axis).squeeze(self.axis)
         above = parent_data.take(ceil, axis=self.axis).squeeze(self.axis)
-        print(below.shape)
 
         return below * (1 - frac) + above * frac
 

@@ -44,7 +44,7 @@ def init_protein_structure(sequence: Seq, name: str = "protein_structure"):
     atom_serial = 1
 
     for i, residue_name in enumerate(sequence):
-        residue_id = (" ", i+1, " ")
+        residue_id = (" ", i + 1, " ")
         residue = PDB.Residue.Residue(residue_id, residue_name, segid)
         chain.add(residue)
 
@@ -77,7 +77,7 @@ class Assignment:
     peak: Peak
     confidence: float
 
-    def __init__(self, atom: PDB.Atom.Atom, peak: Peak, confidence: float=1):
+    def __init__(self, atom: PDB.Atom.Atom, peak: Peak, confidence: float = 1):
         self.atom = atom
         self.peak = peak
         self.confidence = confidence

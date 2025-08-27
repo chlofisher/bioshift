@@ -44,8 +44,6 @@ class BlockedSpectrumDataSource(SpectrumDataSource):
         slices = tuple(slice(0, n) for n in self.shape)
         data = data[slices]
 
-        print(data.shape)
-
         return data
 
     def _read_block(self, index: int) -> NDArray:

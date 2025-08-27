@@ -6,7 +6,7 @@ from bioshift.core.spectrumdatasource import (
     SpectrumDataSource,
     TransformedDataSource,
     SumDataSource,
-    SliceDataSource
+    SliceDataSource,
 )
 from bioshift.core.spectrumtransform import SpectrumTransform
 from bioshift.core.nucleus import NMRNucleus
@@ -180,28 +180,27 @@ class Spectrum:
     def slice(self, axis: int, z: float):
         """
         Take a slice from the spectrum along the specified axis.
-        
+
         Args:
             axis: The index of the axis perpendicular to the slice plane.
             z: The chemical shift of the plane along the specified axis.
         Returns:
             A new spectrum, with one fewer dimension.
         """
-        level = z * \
-            self.transform.inverse_scaling[axis] + \
-            self.transform.inverse_offset[axis]
+        level = (
+            z * self.transform.inverse_scaling[axis]
+            + self.transform.inverse_offset[axis]
+        )
 
         slice_data_source = SliceDataSource(
-            parent=self.data_source,
-            axis=axis,
-            level=level
+            parent=self.data_source, axis=axis, level=level
         )
 
         nuclei = tuple(nuc for i, nuc in enumerate(self.nuclei) if i != axis)
 
         return Spectrum(
-            ndim=self.ndim-1,
+            ndim=self.ndim - 1,
             nuclei=nuclei,
             data_source=slice_data_source,
-            transform=self.transform.slice(axis)
+            transform=self.transform.slice(axis),
         )
