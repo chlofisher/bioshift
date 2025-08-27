@@ -63,6 +63,7 @@ class SpectrumTransform:
     def bounds(self) -> NDArray:
         """Bounds of the spectrum (in array grid coordinates)."""
         array_bounds = np.vstack((np.zeros(self.ndim), self.shape))
+        array_bounds[1] -= 1
 
         return self.grid_to_shift(array_bounds)
 
@@ -108,7 +109,7 @@ class SpectrumTransform:
         spectrometer_frequency: NDArray,
         ref_coord: NDArray,
         ref_shift: NDArray,
-    ) -> Self:  
+    ) -> Self:
         """
         Create a SpectrumTransform from spectrum referencing information.
         All arguments must be NDArrays with shape `(ndim,)`
@@ -149,8 +150,5 @@ class SpectrumTransform:
         new_offset = np.delete(self.offset, axis)
 
         return SpectrumTransform(
-            ndim=self.ndim - 1,
-            shape=new_shape,
-            scaling=new_scaling,
-            offset=new_offset
+            ndim=self.ndim - 1, shape=new_shape, scaling=new_scaling, offset=new_offset
         )

@@ -16,12 +16,14 @@ dependencies = [
     "scipy>=1.16.0",
 ]
 
+[project.optional-dependencies]
+plot = [
+    "matplotlib>=3.10.5",
+    "pyside6>=6.9.1",
+]
+
 [dependency-groups]
 dev = [
-    "matplotlib>=3.10.3",
-    "pdoc>=15.0.4",
-    "pdoc-md",
-    "pyqt5>=5.15.11",
     "pytest>=8.4.1",
 ]
 
@@ -31,6 +33,3 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build]
 sources = ["src"]
-
-[tool.uv.sources]
-pdoc-md = { path = "../pdoc-md" }
