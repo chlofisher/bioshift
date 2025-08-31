@@ -24,6 +24,7 @@ plot = [
 
 [dependency-groups]
 dev = [
+    "pdoc>=15.0.4",
     "pytest>=8.4.1",
 ]
 

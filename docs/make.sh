@@ -1,3 +1,4 @@
 #!/usr/bin/env bash
-uv run pdoc-md bioshift > docs/src/content/docs/reference/api.mdx
-# uv run pdoc-md bioshift.experimental > docs/src/content/docs/reference/experimental.mdx
+DOCS_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+
+uv run $DOCS_DIR/markdowndocs.py bioshift > $DOCS_DIR/src/content/docs/reference/api.mdx
