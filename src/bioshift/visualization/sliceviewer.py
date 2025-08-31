@@ -1,5 +1,5 @@
 from bioshift.core import Spectrum
-from bioshift.visualization import plot_spectrum_heatmap
+from bioshift.visualization import plot_spectrum_heatmap,  plot_spectrum_contour
 from matplotlib import pyplot as plt
 import matplotlib
 import numpy as np
@@ -14,15 +14,18 @@ class SliceViewer:
     z_max: float
     slice_axis: int
 
-    _slice_cache: dict[float, Spectrum]
-
     def __init__(
         self,
         spectrum,
         slice_axis=0,
         z0=None,
         step=None,
+        norm=None,
+        **kwargs
     ):
+        if spectrum.ndim != 3:
+            raise ValueError("Spectrum must be 3D for slice plot.")
+
         fig, ax = plt.subplots()
 
         transform = spectrum.transform
@@ -30,10 +33,14 @@ class SliceViewer:
         z_max = transform.bounds[1][slice_axis]
 
         if z0 is None:
-            z0 = (z_min + z_max) / 2
+            z0 = z_min
 
         if step is None:
             step = transform.scaling[slice_axis]
+
+        max = np.max(np.abs(spectrum.array)) * 0.5
+        if norm is None:
+            norm = matplotlib.colors.CenteredNorm(vcenter=0, halfrange=max)
 
         self.spectrum = spectrum
         self.ax = ax
@@ -43,22 +50,19 @@ class SliceViewer:
         self.z_min = z_min
         self.z_max = z_max
         self.step = step
+        self.norm = norm
+        self.kwargs = kwargs
         self._slice_cache = {}
 
     def _get_slice(self) -> Spectrum:
-        if self.z in self._slice_cache:
-            return self._slice_cache[self.z]
-
         slice = self.spectrum.slice(axis=self.slice_axis, z=self.z)
-        self._slice_cache[self.z] = slice
-
         return slice
 
     def _process_key(self, event):
         fig = event.canvas.figure
-        if event.key == '1':
+        if event.key == "up":
             self._previous_slice()
-        elif event.key == '2':
+        elif event.key == "down":
             self._next_slice()
         fig.canvas.draw()
 
@@ -76,5 +80,8 @@ class SliceViewer:
 
     def plot(self):
         slice: Spectrum = self._get_slice()
-        plot_spectrum_heatmap(slice, ax=self.ax)
-        self.fig.canvas.mpl_connect('key_press_event', self._process_key)
+
+        plot_spectrum_heatmap(slice, ax=self.ax, norm=self.norm, **self.kwargs)
+        # plot_spectrum_heatmap(slice, ax=self.ax, **self.kwargs)
+
+        self.fig.canvas.mpl_connect("key_press_event", self._process_key)

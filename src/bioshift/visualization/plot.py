@@ -1,5 +1,7 @@
-import numpy as np
+import matplotlib
+from matplotlib.colors import CenteredNorm
 from matplotlib import pyplot as plt
+import numpy as np
 from bioshift.core import Spectrum, NMRNucleus
 
 
@@ -7,7 +9,13 @@ def _axis_label(nuc: NMRNucleus) -> str:
     return f"{nuc} [ppm]"
 
 
-def plot_spectrum_heatmap(spectrum: Spectrum, ax=None, **kwargs):
+def plot_spectrum_heatmap(
+    spectrum: Spectrum,
+    norm=CenteredNorm(0),
+    ax=None,
+    aspect="auto",
+    **kwargs,
+):
     if spectrum.ndim != 2:
         raise ValueError("Spectrum must be 2D for heatmap plot.")
 
@@ -26,10 +34,11 @@ def plot_spectrum_heatmap(spectrum: Spectrum, ax=None, **kwargs):
 
     intensity = spectrum.array[::, ::-1]
 
-    ax.imshow(
+    im = ax.imshow(
         intensity,
         extent=[min_shift[1], max_shift[1], min_shift[0], max_shift[0]],
-        aspect="auto",
+        aspect=aspect,
+        norm=norm,
         **kwargs,
     )
 
@@ -38,6 +47,8 @@ def plot_spectrum_heatmap(spectrum: Spectrum, ax=None, **kwargs):
 
     ax.set_xlabel(_axis_label(spectrum.nuclei[1]))
     ax.set_ylabel(_axis_label(spectrum.nuclei[0]))
+
+    ax.get_figure().colorbar(im)
 
     return ax
 
