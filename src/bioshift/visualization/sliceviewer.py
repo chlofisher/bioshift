@@ -1,5 +1,5 @@
 from bioshift.core import Spectrum
-from bioshift.visualization import plot_spectrum_heatmap,  plot_spectrum_contour
+from bioshift.visualization import plot_spectrum_heatmap, plot_spectrum_contour
 from matplotlib import pyplot as plt
 import matplotlib
 import numpy as np
@@ -14,15 +14,7 @@ class SliceViewer:
     z_max: float
     slice_axis: int
 
-    def __init__(
-        self,
-        spectrum,
-        slice_axis=0,
-        z0=None,
-        step=None,
-        norm=None,
-        **kwargs
-    ):
+    def __init__(self, spectrum, slice_axis=0, z0=None, step=None, **kwargs):
         if spectrum.ndim != 3:
             raise ValueError("Spectrum must be 3D for slice plot.")
 
@@ -38,10 +30,6 @@ class SliceViewer:
         if step is None:
             step = transform.scaling[slice_axis]
 
-        max = np.max(np.abs(spectrum.array)) * 0.5
-        if norm is None:
-            norm = matplotlib.colors.CenteredNorm(vcenter=0, halfrange=max)
-
         self.spectrum = spectrum
         self.ax = ax
         self.fig = fig
@@ -50,9 +38,9 @@ class SliceViewer:
         self.z_min = z_min
         self.z_max = z_max
         self.step = step
-        self.norm = norm
         self.kwargs = kwargs
-        self._slice_cache = {}
+
+        self.fig.canvas.mpl_connect("key_press_event", self._process_key)
 
     def _get_slice(self) -> Spectrum:
         slice = self.spectrum.slice(axis=self.slice_axis, z=self.z)
@@ -74,14 +62,54 @@ class SliceViewer:
         self.z = np.clip(self.z + self.step, self.z_min, self.z_max)
         self._update()
 
+
+class HeatmapSliceViewer(SliceViewer):
+    def __init__(self, spectrum, slice_axis=0, z0=None, step=None, norm=None, **kwargs):
+        max = np.max(np.abs(spectrum.array))
+        if norm is None:
+            norm = matplotlib.colors.CenteredNorm(vcenter=0, halfrange=max * 0.5)
+
+        self.norm = norm
+
+        super().__init__(spectrum, slice_axis, z0, step, **kwargs)
+
     def _update(self):
         slice = self._get_slice()
         self.ax.images[0].set_array(slice.array[::, ::-1])
 
     def plot(self):
         slice: Spectrum = self._get_slice()
-
         plot_spectrum_heatmap(slice, ax=self.ax, norm=self.norm, **self.kwargs)
-        # plot_spectrum_heatmap(slice, ax=self.ax, **self.kwargs)
 
-        self.fig.canvas.mpl_connect("key_press_event", self._process_key)
+        return self.ax
+
+
+class ContourSliceViewer(SliceViewer):
+    def __init__(
+        self, spectrum, threshold, slice_axis=0, z0=None, step=None, norm=None, **kwargs
+    ):
+        self.threshold = threshold
+
+        super().__init__(spectrum, slice_axis, z0, step, **kwargs)
+
+    def _update(self):
+        slice = self._get_slice()
+
+        for collection in self.ax.collections:
+            collection.remove()
+
+        plot_spectrum_contour(
+            slice,
+            threshold=self.threshold,
+            ax=self.ax,
+            invert_axes=False,
+            **self.kwargs,
+        )
+
+    def plot(self):
+        slice: Spectrum = self._get_slice()
+        plot_spectrum_contour(
+            slice, threshold=self.threshold, ax=self.ax, invert_axes=True, **self.kwargs
+        )
+
+        return self.ax

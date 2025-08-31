@@ -12,4 +12,4 @@ from .plot import (
     plot_spectrum_line,
 )
 
-from .sliceviewer import SliceViewer
+from .sliceviewer import SliceViewer, HeatmapSliceViewer, ContourSliceViewer

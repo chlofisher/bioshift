@@ -54,7 +54,13 @@ def plot_spectrum_heatmap(
 
 
 def plot_spectrum_contour(
-    spectrum: Spectrum, threshold=500, ax=None, levels=25, linewidths=0.65, **kwargs
+    spectrum: Spectrum,
+    threshold,
+    ax=None,
+    levels=25,
+    linewidths=0.65,
+    invert_axes=True,
+    **kwargs,
 ):
     if spectrum.ndim != 2:
         raise ValueError("Spectrum must be 2D for contour plot.")
@@ -92,10 +98,11 @@ def plot_spectrum_contour(
 
         levels = np.concatenate((negative_contours, positive_contours))
 
-    ax.contour(X, Y, intensity, levels=levels, linewidths=linewidths, **kwargs)
+    ax.contourf(X, Y, intensity, levels=levels, linewidths=linewidths, **kwargs)
 
-    ax.invert_xaxis()
-    ax.invert_yaxis()
+    if invert_axes:
+        ax.invert_xaxis()
+        ax.invert_yaxis()
 
     ax.set_xlabel(_axis_label(spectrum.nuclei[1]))
     ax.set_ylabel(_axis_label(spectrum.nuclei[0]))
