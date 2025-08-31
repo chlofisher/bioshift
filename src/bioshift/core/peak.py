@@ -11,7 +11,6 @@ class Peak:
     """
     Class to store the chemical shift and width of a peak.
     """
-
     shift: NDArray
     width: NDArray
 

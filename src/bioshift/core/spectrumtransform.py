@@ -63,7 +63,6 @@ class SpectrumTransform:
     def bounds(self) -> NDArray:
         """Bounds of the spectrum (in array grid coordinates)."""
         array_bounds = np.vstack((np.zeros(self.ndim), self.shape))
-        array_bounds[1] -= 1
 
         return self.grid_to_shift(array_bounds)
 

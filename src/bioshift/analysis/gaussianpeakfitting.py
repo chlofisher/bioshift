@@ -25,7 +25,7 @@ def _gaussian_model(
 
     k = ndim * n_peaks
 
-    shifts, widths = unflatten_params(params_array, ndim, n_peaks)
+    shifts, widths = _unflatten_params(params_array, ndim, n_peaks)
     shifts = params_array[:k].reshape((-1, 1, ndim), order="F")
     widths = params_array[k : 2 * k].reshape((-1, 1, ndim), order="F")
 
@@ -87,11 +87,11 @@ def _jacobian_model(
     return jacobian
 
 
-def flatten_params(shifts: NDArray, widths: NDArray) -> NDArray:
+def _flatten_params(shifts: NDArray, widths: NDArray) -> NDArray:
     return np.concatenate(shifts.ravel(), widths.ravel())
 
 
-def unflatten_params(
+def _unflatten_params(
     params: NDArray, ndim: int, n_peaks: int
 ) -> tuple[NDArray, NDArray]:
 
@@ -104,11 +104,10 @@ def unflatten_params(
 
 def fit(
     spectrum: Spectrum,
-    intensities: NDArray,
-    initial_peaks: NDArray,
+    initial_peaks: PeakList,
     max_shift_change: tuple[int],
 ) -> PeakList:
-    n_peaks = initial_peaks.shape[1]
+    n_peaks = len(initial_peaks)
 
     transform = spectrum.transform
     ndim = transform.ndim
@@ -122,13 +121,15 @@ def fit(
     mesh = np.meshgrid(*axes, indexing="ij")
 
     xdata = np.vstack([m.ravel() for m in mesh])
-    ydata = spectrum.data.ravel()
+    ydata = spectrum.array.ravel()
 
     xdata_decimated = xdata[:, ::10]
     ydata_decimated = ydata[::10]
 
-    initial_shifts = initial_peaks.ravel()
-    initial_widths = np.ones(n_peaks * ndim) * 0.05
+    initial_shifts = initial_peaks.shifts.T.ravel()
+    initial_widths = initial_peaks.widths.T.ravel()
+
+    p0 = np.concatenate((initial_shifts, initial_widths))
 
     pos_min = initial_shifts - np.concatenate(
         [np.ones(n_peaks) * delta for delta in max_shift_change]
@@ -139,14 +140,13 @@ def fit(
 
     width_min = np.zeros(ndim * n_peaks)
     width_max = pos_max - pos_min
-    # width_max = np.ones(ndim * n_peaks) * np.inf
 
     min = np.concatenate((pos_min, width_min))
     max = np.concatenate((pos_max, width_max))
 
     bounds = (min, max)
 
-    p0 = np.concatenate((initial_shifts, initial_widths))
+    intensities = np.ones(n_peaks)
 
     model = jit(
         partial(
