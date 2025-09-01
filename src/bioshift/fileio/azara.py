@@ -1,4 +1,4 @@
-from typing import Self
+from __future__ import annotations
 from warnings import warn
 from typing import Any
 from pathlib import Path
@@ -101,7 +101,7 @@ class AzaraSpectrumReader(SpectrumReader):
         self._params = self._get_params()
 
     @classmethod
-    def from_path(cls, path: Path) -> Self:
+    def from_path(cls, path: Path) -> AzaraSpectrumReader:
         if path.suffix == ".par":
             par_path = path
             spc_path = _spc_from_par(par_path)

@@ -1,8 +1,8 @@
+from __future__ import annotations
 from os import PathLike
 import numpy as np
 from numpy.typing import NDArray
 from dataclasses import dataclass
-from typing import Self
 import csv
 
 
@@ -11,6 +11,7 @@ class Peak:
     """
     Class to store the chemical shift and width of a peak.
     """
+
     shift: NDArray
     width: NDArray
 
@@ -103,7 +104,7 @@ class PeakList:
                 row = peak.shift.tolist() + peak.width.tolist()
                 writer.writerow(row)
 
-    def from_csv(path) -> Self:
+    def from_csv(path) -> PeakList:
         """
         Read a peak list from a CSV file.
 

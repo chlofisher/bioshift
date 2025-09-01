@@ -1,4 +1,4 @@
-from typing import Self
+from __future__ import annotations
 from numpy.typing import NDArray
 from os import PathLike
 
@@ -82,7 +82,7 @@ class Spectrum:
         return self.__array__()
 
     @classmethod
-    def load(cls, path: str | PathLike) -> Self:
+    def load(cls, path: str | PathLike) -> Spectrum:
         """
         Create a spectrum from a path to a spectrum file.
         Automatically determines the file format and dispatches the correct spectrum reader.
@@ -97,7 +97,7 @@ class Spectrum:
 
         return load_spectrum(path)
 
-    def add(self, other: Self) -> Self:
+    def add(self, other: Spectrum) -> Spectrum:
         """
         Return a new spectrum equal to the pointwise sum of two spectra.
 
@@ -123,7 +123,7 @@ class Spectrum:
             transform=self.transform,
         )
 
-    def subtract(self, other: Self) -> Self:
+    def subtract(self, other: Spectrum) -> Spectrum:
         """
         Return a new spectrum equal to the pointwise difference of two spectra.
 
@@ -136,7 +136,7 @@ class Spectrum:
         """
         return self.add(-other)
 
-    def __neg__(self) -> Self:
+    def __neg__(self) -> Spectrum:
         """
         Implements the `-` operator.
 
@@ -154,7 +154,7 @@ class Spectrum:
             transform=self.transform,
         )
 
-    def multiply(self, other) -> Self:
+    def multiply(self, other) -> Spectrum:
         """
         Return a new spectrum equal to the pointwise product of two spectra.
 

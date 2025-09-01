@@ -1,5 +1,5 @@
+from __future__ import annotations
 import numpy as np
-from typing import Self
 from numpy.typing import NDArray
 
 
@@ -108,7 +108,7 @@ class SpectrumTransform:
         spectrometer_frequency: NDArray,
         ref_coord: NDArray,
         ref_shift: NDArray,
-    ) -> Self:
+    ) -> SpectrumTransform:
         """
         Create a SpectrumTransform from spectrum referencing information.
         All arguments must be NDArrays with shape `(ndim,)`
@@ -143,7 +143,7 @@ class SpectrumTransform:
 
         return cls(ndim=len(shape), shape=shape, scaling=scaling, offset=offset)
 
-    def slice(self, axis: int) -> Self:
+    def slice(self, axis: int) -> SpectrumTransform:
         new_shape = tuple(n for i, n in enumerate(self.shape) if i != axis)
         new_scaling = np.delete(self.scaling, axis)
         new_offset = np.delete(self.offset, axis)

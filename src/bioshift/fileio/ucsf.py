@@ -1,4 +1,5 @@
-from typing import Any, Self
+from __future__ import annotations
+from typing import Any
 from pathlib import Path
 import struct
 import numpy as np
@@ -26,7 +27,7 @@ class UCSFSpectrumReader(SpectrumReader):
         self._params = self._get_params()
 
     @classmethod
-    def from_path(cls, path: Path) -> Self:
+    def from_path(cls, path: Path) -> UCSFSpectrumReader:
         return cls(path)
 
     def _get_params(self) -> dict[str, Any]:
