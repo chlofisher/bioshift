@@ -6,14 +6,13 @@ authors = [
     { name = "Chloe Fisher", email = "dev@chlofisher.com" }
 ]
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.11"
 dependencies = [
     "biopython>=1.85",
     "jax>=0.7.0",
     "numpy>=2.3.1",
     "pyyaml>=6.0.2",
     "scikit-image>=0.25.2",
-    "scipy>=1.16.0",
 ]
 
 [project.optional-dependencies]
