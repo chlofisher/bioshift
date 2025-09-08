@@ -1,14 +1,20 @@
-from bioshift.core import Spectrum
-from bioshift.core import NMRNucleus
-from bioshift.core import SpectrumTransform
-from bioshift.core import Peak, PeakList
-from bioshift import analysis
+from bioshift.core import (
+    Spectrum,
+    NMRNucleus,
+    SpectrumTransform,
+    Peak,
+    Shift,
+    NMRAtom,
+    NMRResidue,
+)
 
 __all__ = [
     "Spectrum",
     "NMRNucleus",
     "SpectrumTransform",
     "Peak",
-    "PeakList",
-    "analysis",
+    "Shift",
+    "NMRNucleus",
+    "NMRAtom",
+    "NMRResidue",
 ]

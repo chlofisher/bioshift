@@ -1,2 +1,2 @@
-from .peakpicking import difference_of_gaussians
+from . import peakpicking, assignment
 from .filters import normalize

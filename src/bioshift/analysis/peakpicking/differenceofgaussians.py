@@ -1,7 +1,8 @@
 from bioshift.core.spectrum import Spectrum
-from bioshift.core.peak import PeakList
+from bioshift.core.peak import Peak, Shift, peak_list_from_array
 
 import numpy as np
+from numpy.typing import NDArray
 import skimage
 
 
@@ -14,13 +15,13 @@ def difference_of_gaussians(
     overlap=0.5,
     threshold_rel=None,
     exclude_border=False,
-) -> PeakList:
+) -> NDArray:
 
     min_sigma_scaled = np.array(min_sigma) * spectrum.transform.inverse_scaling
     max_sigma_scaled = np.array(max_sigma) * spectrum.transform.inverse_scaling
 
     # skimage is expecting an image, so need to invert the coordinates
-    arr = spectrum.array[::-1, ::-1]
+    arr = np.flip(spectrum.array)
 
     feature_array = skimage.feature.blob_dog(
         image=arr,
@@ -33,7 +34,11 @@ def difference_of_gaussians(
         exclude_border=exclude_border,
     )
 
-    peaks = spectrum.transform.grid_to_shift(feature_array[:, :2])
-    widths = feature_array[:, 2:] * spectrum.transform.scaling
+    shifts = spectrum.transform.grid_to_shift(feature_array[:, :2])
+    linewidths = feature_array[:, 2:] * spectrum.transform.scaling
 
-    return PeakList(shifts=peaks, widths=widths)
+    return peak_list_from_array(
+        shifts=shifts, linewidths=linewidths, nuclei=spectrum.nuclei
+    )
+
+    # return np.stack(shifts, linewidths, axis=2)

@@ -4,8 +4,8 @@ from typing import Any
 from pathlib import Path
 import numpy as np
 
-from bioshift.core.spectrum import NMRNucleus
 from bioshift.core.spectrumtransform import SpectrumTransform
+from bioshift.core.spectrum import NMRNucleus
 from bioshift.fileio.spectrumreader import SpectrumReader
 from bioshift.fileio.blockedspectrum import BlockedSpectrumDataSource
 

@@ -7,8 +7,7 @@ from scipy.optimize import curve_fit
 from functools import partial
 
 from bioshift.core.spectrum import Spectrum
-from bioshift.core.peak import PeakList
-
+from bioshift.core.peak import peak_list_from_array
 
 LN2 = np.log(2.0)
 
@@ -104,9 +103,9 @@ def _unflatten_params(
 
 def fit(
     spectrum: Spectrum,
-    initial_peaks: PeakList,
+    initial_peaks: NDArray,
     max_shift_change: tuple[int],
-) -> PeakList:
+) -> NDArray:
     n_peaks = len(initial_peaks)
 
     transform = spectrum.transform
@@ -126,8 +125,8 @@ def fit(
     xdata_decimated = xdata[:, ::10]
     ydata_decimated = ydata[::10]
 
-    initial_shifts = initial_peaks.shifts.T.ravel()
-    initial_widths = initial_peaks.widths.T.ravel()
+    initial_shifts = initial_peaks[:, 0].T.ravel()
+    initial_widths = initial_peaks[:, 1].T.ravel()
 
     p0 = np.concatenate((initial_shifts, initial_widths))
 
@@ -177,4 +176,6 @@ def fit(
     shifts = popt[:k].reshape((-1, ndim), order="F")
     widths = popt[k : 2 * k].reshape((-1, ndim), order="F")
 
-    return PeakList(shifts=shifts, widths=widths)
+    return peak_list_from_array(
+        shifts=shifts, linewidths=widths, nuclei=spectrum.nuclei
+    )

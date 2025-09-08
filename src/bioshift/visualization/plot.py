@@ -6,7 +6,7 @@ from bioshift.core import Spectrum, NMRNucleus
 
 
 def _axis_label(nuc: NMRNucleus) -> str:
-    return f"{nuc} [ppm]"
+    return f"{nuc.name} [ppm]"
 
 
 def plot_spectrum_heatmap(

@@ -1,6 +1,7 @@
 from __future__ import annotations
 from numpy.typing import NDArray
 from os import PathLike
+from enum import Enum
 
 from bioshift.core.spectrumdatasource import (
     SpectrumDataSource,
@@ -9,7 +10,13 @@ from bioshift.core.spectrumdatasource import (
     SliceDataSource,
 )
 from bioshift.core.spectrumtransform import SpectrumTransform
-from bioshift.core.nucleus import NMRNucleus
+from bioshift.core.peak import NMRNucleus
+
+
+class NMRNucleus(Enum):
+    H1 = "1H"
+    N15 = "15N"
+    C13 = "13C"
 
 
 class Spectrum:

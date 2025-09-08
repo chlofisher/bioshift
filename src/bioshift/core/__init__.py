@@ -1,6 +1,6 @@
-from .spectrum import Spectrum
+from .spectrum import Spectrum, NMRNucleus
 from .spectrumdatasource import SpectrumDataSource, TransformedDataSource, SumDataSource
-from .assignment import Assignment, init_protein_structure, import_protein_structure
-from .nucleus import NMRNucleus
-from .peak import Peak, PeakList
+from .structure import init_protein_structure, import_protein_structure
+
+from .peak import Peak, Shift, NMRResidue, NMRAtom
 from .spectrumtransform import SpectrumTransform
