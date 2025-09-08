@@ -1,0 +1,1 @@
+from .predictionfromshifts import predict_assignment_from_shifts
