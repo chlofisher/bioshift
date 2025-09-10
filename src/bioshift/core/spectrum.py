@@ -10,7 +10,6 @@ from bioshift.core.spectrumdatasource import (
     SliceDataSource,
 )
 from bioshift.core.spectrumtransform import SpectrumTransform
-from bioshift.core.peak import NMRNucleus
 
 
 class NMRNucleus(Enum):

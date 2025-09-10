@@ -6,7 +6,7 @@ from bioshift.core import Spectrum, NMRNucleus
 
 
 def _axis_label(nuc: NMRNucleus) -> str:
-    return f"{nuc.name} [ppm]"
+    return f"{str(nuc)} [ppm]"
 
 
 def plot_spectrum_heatmap(
@@ -98,7 +98,7 @@ def plot_spectrum_contour(
 
         levels = np.concatenate((negative_contours, positive_contours))
 
-    ax.contourf(X, Y, intensity, levels=levels, linewidths=linewidths, **kwargs)
+    ax.contour(X, Y, intensity, levels=levels, linewidths=linewidths, **kwargs)
 
     if invert_axes:
         ax.invert_xaxis()

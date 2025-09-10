@@ -1,1 +1,2 @@
 from .predictionfromshifts import predict_assignment_from_shifts
+from .findalignedpeaks import init_residues
