@@ -34,11 +34,12 @@ def difference_of_gaussians(
         exclude_border=exclude_border,
     )
 
-    shifts = spectrum.transform.grid_to_shift(feature_array[:, :2])
-    linewidths = feature_array[:, 2:] * spectrum.transform.scaling
+    ndim = spectrum.ndim
+    shifts = spectrum.transform.grid_to_shift(feature_array[:, :ndim])
+    linewidths = feature_array[:, ndim:] * spectrum.transform.scaling
 
-    return peak_list_from_array(
-        shifts=shifts, linewidths=linewidths, nuclei=spectrum.nuclei
-    )
+    # return peak_list_from_array(
+    #     shifts=shifts, linewidths=linewidths, nuclei=spectrum.nuclei
+    # )
 
-    # return np.stack(shifts, linewidths, axis=2)
+    return shifts, linewidths
