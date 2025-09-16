@@ -5,6 +5,7 @@ from enum import Enum
 
 from bioshift.core.spectrumdatasource import (
     SpectrumDataSource,
+    ProjectionDataSource,
     TransformedDataSource,
     SumDataSource,
     SliceDataSource,
@@ -16,6 +17,11 @@ class NMRNucleus(Enum):
     H1 = "1H"
     N15 = "15N"
     C13 = "13C"
+
+
+class Experiment(Enum):
+    NHSQC = "NHSQC"
+    HNCACB = "HNCACB"
 
 
 class Spectrum:
@@ -210,3 +216,22 @@ class Spectrum:
             data_source=slice_data_source,
             transform=self.transform.slice(axis),
         )
+
+    def project(self, axis: int):
+        data_source = ProjectionDataSource(
+            parent=self.data_source, axis=axis
+        )
+
+        nuclei = tuple(nuc for i, nuc in enumerate(self.nuclei) if i != axis)
+
+        return Spectrum(
+            ndim=self.ndim - 1,
+            nuclei=nuclei,
+            data_source=data_source,
+            transform=self.transform.slice(axis),
+        )
+
+
+
+
+

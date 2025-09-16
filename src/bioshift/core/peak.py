@@ -11,6 +11,7 @@ class NMRAtom(Enum):
     N = "N"
     CA = "CA"
     CB = "CB"
+    CO = "CO"
 
 
 @dataclass

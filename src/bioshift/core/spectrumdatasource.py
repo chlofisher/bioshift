@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Callable
 from numpy.typing import NDArray
 import math
+import numpy as np
 
 
 class SpectrumDataSource(ABC):
@@ -27,6 +28,7 @@ class SliceDataSource(SpectrumDataSource):
         self.parent = parent
         self.axis = axis
         self.level = level
+        self.dtype = parent.dtype
 
     def _load_data(self) -> NDArray:
         parent_data = self.parent.get_data()
@@ -39,6 +41,21 @@ class SliceDataSource(SpectrumDataSource):
         above = parent_data.take(ceil, axis=self.axis).squeeze(self.axis)
 
         return below * (1 - frac) + above * frac
+
+
+class ProjectionDataSource(SpectrumDataSource):
+    parent: SpectrumDataSource
+    axis: int
+
+    def __init__(self, parent, axis):
+        self.parent = parent
+        self.axis = axis
+        self.dtype = parent.dtype
+
+    def _load_data(self) -> NDArray:
+        parent_data = self.parent.get_data()
+        projection = np.trapz(parent_data, axis=self.axis)
+        return projection
 
 
 class TransformedDataSource(SpectrumDataSource):

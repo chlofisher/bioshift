@@ -67,7 +67,7 @@ class HeatmapSliceViewer(SliceViewer):
     def __init__(self, spectrum, slice_axis=0, z0=None, step=None, norm=None, **kwargs):
         max = np.max(np.abs(spectrum.array))
         if norm is None:
-            norm = matplotlib.colors.CenteredNorm(vcenter=0, halfrange=max * 0.5)
+            norm = matplotlib.colors.CenteredNorm(vcenter=0, halfrange=max)
 
         self.norm = norm
 
