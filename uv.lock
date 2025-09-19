@@ -44,6 +44,7 @@ source = { editable = "." }
 dependencies = [
     { name = "biopython" },
     { name = "jax" },
+    { name = "matplotlib" },
     { name = "numpy" },
     { name = "pyyaml" },
     { name = "scikit-image" },
@@ -61,14 +62,12 @@ dev = [
     { name = "pdoc" },
     { name = "pytest" },
 ]
-plot = [
-    { name = "matplotlib" },
-]
 
 [package.metadata]
 requires-dist = [
     { name = "biopython", specifier = ">=1.85" },
     { name = "jax", specifier = ">=0.7.0" },
+    { name = "matplotlib", specifier = ">=3.10.6" },
     { name = "matplotlib", marker = "extra == 'plot'", specifier = ">=3.10.5" },
     { name = "numpy", specifier = ">=2.3.1" },
     { name = "pyside6", marker = "extra == 'plot'", specifier = ">=6.9.1" },
@@ -83,7 +82,7 @@ dev = [
     { name = "pdoc", specifier = ">=15.0.4" },
     { name = "pytest", specifier = ">=8.4.1" },
 ]
-plot = [{ name = "matplotlib", specifier = ">=3.10.6" }]
+plot = []
 
 [[package]]
 name = "colorama"

@@ -24,7 +24,8 @@ pip install bioshift
 import bioshift
 
 spec = bioshift.Spectrum.load("./example/n15hsqc.ucsf")
-spec.plot(style="heatmap", show=True)
+
+bioshift.plot.heatmap(spec, show=True)
 ```
 
 ## Documentation
