@@ -6,49 +6,49 @@ from enum import Enum
 from bioshift.core.spectrum import NMRNucleus
 
 
-class NMRAtom(Enum):
-    H = "H"
-    N = "N"
-    CA = "CA"
-    CB = "CB"
-    CO = "CO"
-
-
-@dataclass
-class NMRResidue:
-    shifts: list[Shift]
-
-
-@dataclass
-class Shift:
-    shift: float
-    linewidth: float | None
-    nucleus: NMRNucleus
-    atom: NMRAtom | None
-    residue: NMRResidue | None
-
-
-@dataclass
-class Peak:
-    shifts: dict[NMRNucleus, Shift]
-
-
-def peak_list_from_array(
-    shifts: NDArray, nuclei: list[NMRNucleus], linewidths: NDArray = None
-) -> list[Peak]:
-
-    peaks = []
-    for shift, width in zip(shifts, linewidths):
-        shift_list = [
-            Shift(shift=s, linewidth=w, nucleus=n, atom=None, residue=None)
-            for s, w, n in zip(shift, width, nuclei)
-        ]
-
-        peak = Peak(shifts=shift_list)
-        peaks.append(peak)
-
-    return peaks
-
+# class NMRAtom(Enum):
+#     H = "H"
+#     N = "N"
+#     CA = "CA"
+#     CB = "CB"
+#     CO = "CO"
+#
+#
+# @dataclass
+# class NMRResidue:
+#     shifts: list[Shift]
+#
+#
+# @dataclass
+# class Shift:
+#     shift: float
+#     linewidth: float | None
+#     nucleus: NMRNucleus
+#     atom: NMRAtom | None
+#     residue: NMRResidue | None
+#
+#
+# @dataclass
+# class Peak:
+#     shifts: dict[NMRNucleus, Shift]
+#
+#
+# def peak_list_from_array(
+#     shifts: NDArray, nuclei: list[NMRNucleus], linewidths: NDArray = None
+# ) -> list[Peak]:
+#
+#     peaks = []
+#     for shift, width in zip(shifts, linewidths):
+#         shift_list = [
+#             Shift(shift=s, linewidth=w, nucleus=n, atom=None, residue=None)
+#             for s, w, n in zip(shift, width, nuclei)
+#         ]
+#
+#         peak = Peak(shifts=shift_list)
+#         peaks.append(peak)
+#
+#     return peaks
+#
 
 # @dataclass
 # class Peak:

@@ -1,5 +1,4 @@
 from bioshift.core.spectrum import Spectrum
-from bioshift.core.peak import Peak, Shift, peak_list_from_array
 
 import numpy as np
 from numpy.typing import NDArray

@@ -1,7 +1,6 @@
 import numpy as np
 from numpy.typing import NDArray
 
-from bioshift.core.peak import NMRResidue
 from bioshift.core.spectrum import Experiment
 
 

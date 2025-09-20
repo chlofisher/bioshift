@@ -21,7 +21,9 @@ class NMRNucleus(Enum):
 
 class Experiment(Enum):
     NHSQC = "NHSQC"
+    HNCO = "HNCO"
     HNCACB = "HNCACB"
+    HNCA = "HNCA"
 
 
 class Spectrum:
@@ -230,8 +232,3 @@ class Spectrum:
             data_source=data_source,
             transform=self.transform.slice(axis),
         )
-
-
-
-
-

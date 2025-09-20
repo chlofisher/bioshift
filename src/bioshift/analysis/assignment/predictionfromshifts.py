@@ -1,53 +1,50 @@
-from __future__ import annotations
 from importlib import resources
 import numpy as np
-from Bio.Seq import Seq
-from Bio.Data.IUPACData import protein_letters_1to3
-from scipy.stats import gaussian_kde
+from numpy.typing import NDArray
+from scipy import stats
 
-from bioshift.core.peak import NMRAtom, NMRResidue
+from bioshift.core.constants import AMINO_ACIDS_3
 
 
-def predict_assignment_from_shifts(residue: NMRResidue, sequence: Seq):
+def predict_amino_acid(spin_system: dict[str, float]) -> NDArray:
     # Keys for rows in the shift_tables
     # TODO: Store this in the .npz file
     ATOM_KEYS = ["H", "N", "CA", "CB"]
 
-    row_indices = [
-        ATOM_KEYS.index(shift.atom.name)
-        for shift in residue.shifts
-        if shift.atom is not None
-    ]
+    row_indices = [ATOM_KEYS.index(key) for key in spin_system.keys()]
 
-    shift_array = np.array([shift.shift for shift in residue.shifts])
+    shift_array = np.array(list(spin_system.values()))
+    print(shift_array)
 
-    cb_shift: bool = NMRAtom.CB in [shift.atom for shift in residue.shifts]
+    # Check if there is a beta carbon shift, as this precludes glycine.
+    cb_shift: bool = "CB" in spin_system.keys()
 
-    n = len(sequence)
+    n = 20
 
     p_delta = 0
-    p_delta_given_res = np.zeros(n)
+    p_delta_given_aa = np.zeros(n)
 
     with resources.open_binary("bioshift.data", "shift_tables.npz") as f:
         shift_tables = np.load(f)
 
-        for i, aa in enumerate(sequence):
-            aa_three_letter = protein_letters_1to3[aa]
-
-            is_proline: bool = aa == "P"
-            is_glycine: bool = aa == "G"
+        for i, aa in enumerate(AMINO_ACIDS_3):
+            is_proline: bool = aa == "Pro"
+            is_glycine: bool = aa == "Gly"
 
             if is_proline or (is_glycine and cb_shift):
-                # print(f"Ignoring {aa}{i+1}")
                 continue
 
-            table = shift_tables[aa_three_letter][row_indices]
+            table: NDArray = shift_tables[aa][row_indices]
 
-            kde = gaussian_kde(table, bw_method="silverman")
+            kde = stats.gaussian_kde(table, bw_method="silverman")
             prob_density = kde(shift_array).item()
 
             p_delta += prob_density
-            p_delta_given_res[i] = prob_density
+            p_delta_given_aa[i] = prob_density
 
-    p_res_given_delta = p_delta_given_res / p_delta
-    return p_res_given_delta
+    if np.close(p_delta, 0):
+        return None, p_delta
+
+    p_aa_given_delta = p_delta_given_aa / p_delta
+
+    return p_aa_given_delta, p_delta

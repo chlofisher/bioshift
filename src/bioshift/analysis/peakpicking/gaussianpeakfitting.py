@@ -7,7 +7,6 @@ from scipy.optimize import curve_fit
 from functools import partial
 
 from bioshift.core.spectrum import Spectrum
-from bioshift.core.peak import peak_list_from_array
 
 LN2 = np.log(2.0)
 
@@ -176,6 +175,4 @@ def fit(
     shifts = popt[:k].reshape((-1, ndim), order="F")
     widths = popt[k : 2 * k].reshape((-1, ndim), order="F")
 
-    return peak_list_from_array(
-        shifts=shifts, linewidths=widths, nuclei=spectrum.nuclei
-    )
+    return shifts, widths
