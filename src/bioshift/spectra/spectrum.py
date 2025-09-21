@@ -2,15 +2,16 @@ from __future__ import annotations
 from numpy.typing import NDArray
 from os import PathLike
 from enum import Enum
+import math
+import numpy as np
+from functools import partial
+import skimage
 
-from bioshift.core.spectrumdatasource import (
+from bioshift.spectra.spectrumdatasource import (
     SpectrumDataSource,
-    ProjectionDataSource,
     TransformedDataSource,
-    SumDataSource,
-    SliceDataSource,
 )
-from bioshift.core.spectrumtransform import SpectrumTransform
+from bioshift.spectra.spectrumtransform import SpectrumTransform
 
 
 class NMRNucleus(Enum):
@@ -19,11 +20,12 @@ class NMRNucleus(Enum):
     C13 = "13C"
 
 
-class Experiment(Enum):
+class NMRExperiment(Enum):
     NHSQC = "NHSQC"
     HNCO = "HNCO"
     HNCACB = "HNCACB"
     HNCA = "HNCA"
+    HNCOCACB = "HN(CO)CACB"
 
 
 class Spectrum:
@@ -36,7 +38,7 @@ class Spectrum:
 
     Example usage:
     ```python
-    spectrum = Spectrum.load('spectrum_file.ucsf')
+    spectrum = Spectrum.load('./spectrum_file.ucsf')
     ```
     """
 
@@ -51,6 +53,9 @@ class Spectrum:
 
     transform: SpectrumTransform
     """Object storing the transformation from array coordinate space to chemical shift space."""
+
+    experiment: NMRExperiment
+    """Enum value for the type of NMR experiment the spectrum is from (e.g., HSQC, HNCACB)"""
 
     @property
     def shape(self) -> NDArray:
@@ -77,20 +82,6 @@ class Spectrum:
     def __array__(self, dtype=None, copy=None):
         return self.data_source.get_data()
 
-    def __array_ufunc__(self, ufunc, method, *inputs, **kwargs):
-        if method == "__call__":
-            new_data_source = TransformedDataSource(
-                parent=self.data_source, ufunc=ufunc
-            )
-            return self.__class__(
-                ndim=self.ndim,
-                nuclei=self.nuclei,
-                transform=self.transform,
-                data_source=new_data_source,
-            )
-        else:
-            return NotImplemented
-
     @property
     def array(self) -> NDArray:
         return self.__array__()
@@ -107,48 +98,9 @@ class Spectrum:
             Spectrum object
         """
 
-        from bioshift.fileio.loadspectrum import load_spectrum
+        from bioshift.io import load_spectrum
 
         return load_spectrum(path)
-
-    def add(self, other: Spectrum) -> Spectrum:
-        """
-        Return a new spectrum equal to the pointwise sum of two spectra.
-
-        Args:
-            other: The spectrum to add.
-        Returns:
-            A new Spectrum whose values are the sum of those of the two previous spectra.
-        Raises:
-            ValueError: If the shapes of the two spectra do not match
-        """
-
-        if other.shape != self.shape:
-            raise ValueError("Mismatched spectrum dimensions.")
-
-        new_data_source = SumDataSource(
-            source1=self.data_source, source2=other.data_source
-        )
-
-        return Spectrum(
-            ndim=self.ndim,
-            nuclei=self.nuclei,
-            data_source=new_data_source,
-            transform=self.transform,
-        )
-
-    def subtract(self, other: Spectrum) -> Spectrum:
-        """
-        Return a new spectrum equal to the pointwise difference of two spectra.
-
-        Args:
-            other: The spectrum to subtract.
-        Returns:
-            A new Spectrum whose values are the difference of those of the two previous spectra.
-        Raises:
-            ValueError: If the shapes of the two spectra do not match
-        """
-        return self.add(-other)
 
     def __neg__(self) -> Spectrum:
         """
@@ -159,29 +111,6 @@ class Spectrum:
         """
         new_data_source = TransformedDataSource(
             parent=self.data_source, func=lambda arr: -arr
-        )
-
-        return Spectrum(
-            ndim=self.ndim,
-            nuclei=self.nuclei,
-            data_source=new_data_source,
-            transform=self.transform,
-        )
-
-    def multiply(self, other) -> Spectrum:
-        """
-        Return a new spectrum equal to the pointwise product of two spectra.
-
-        Args:
-            other: The spectrum to multiply by.
-        Returns:
-            A new Spectrum whose values are the product of those of the two previous spectra.
-        Raises:
-            ValueError: If the shapes of the two spectra do not match
-        """
-
-        new_data_source = TransformedDataSource(
-            parent=self.data_source, func=lambda arr: arr * other
         )
 
         return Spectrum(
@@ -206,8 +135,18 @@ class Spectrum:
             + self.transform.inverse_offset[axis]
         )
 
-        slice_data_source = SliceDataSource(
-            parent=self.data_source, axis=axis, level=level
+        def slice_func(arr: NDArray):
+            floor = (math.floor(level),)
+            ceil = (math.ceil(level),)
+            frac = level - floor
+
+            below = arr.take(floor, axis=axis).squeeze(axis)
+            above = arr.take(ceil, axis=axis).squeeze(axis)
+
+            return below * (1 - frac) + above * frac
+
+        slice_data_source = TransformedDataSource(
+            parent=self.data_source, func=slice_func
         )
 
         nuclei = tuple(nuc for i, nuc in enumerate(self.nuclei) if i != axis)
@@ -220,9 +159,8 @@ class Spectrum:
         )
 
     def project(self, axis: int):
-        data_source = ProjectionDataSource(
-            parent=self.data_source, axis=axis
-        )
+        project_func = partial(np.trapz, axis=axis)
+        data_source = TransformedDataSource(parent=self.data_source, func=project_func)
 
         nuclei = tuple(nuc for i, nuc in enumerate(self.nuclei) if i != axis)
 
@@ -231,4 +169,54 @@ class Spectrum:
             nuclei=nuclei,
             data_source=data_source,
             transform=self.transform.slice(axis),
+        )
+
+    def blur(self, sigma: tuple[float]):
+        if len(sigma) != self.ndim:
+            raise ValueError(
+                f"""Mismatched dimensions. Spectrum is {input.ndim}D,
+                but a {len(sigma)}D vector of sigmas was provided."""
+            )
+
+        sigma_scaled = np.array(sigma) / input.transform.scaling
+        gaussian_func = partial(skimage.filters.gaussian, sigma=sigma_scaled)
+
+        data_source = TransformedDataSource(parent=self.data_source, func=gaussian_func)
+
+        return Spectrum(
+            ndim=self.ndim,
+            nuclei=self.nuclei,
+            data_source=data_source,
+            transform=self.transform,
+        )
+
+    def threshold(self, level: float):
+        def threshold_func(arr: NDArray):
+            return np.where(np.abs(arr) < level, 0, arr)
+
+        data_source = TransformedDataSource(
+            parent=self.data_source, func=threshold_func
+        )
+
+        return Spectrum(
+            ndim=self.ndim,
+            nuclei=self.nuclei,
+            data_source=data_source,
+            transform=self.transform,
+        )
+
+    def normalize(self):
+        def normalize_func(arr: NDArray):
+            max = np.abs(arr).max()
+            return arr / max
+
+        data_source = TransformedDataSource(
+            parent=self.data_source, func=normalize_func
+        )
+
+        return Spectrum(
+            ndim=self.ndim,
+            nuclei=self.nuclei,
+            data_source=data_source,
+            transform=self.transform,
         )

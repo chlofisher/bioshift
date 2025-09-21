@@ -1,9 +1,8 @@
 from pathlib import Path
 from os import PathLike
 
-from bioshift.core.spectrum import Spectrum
-from bioshift.fileio.azara import AzaraSpectrumReader
-from bioshift.fileio.ucsf import UCSFSpectrumReader
+from bioshift.spectra import Spectrum
+from bioshift.io import AzaraSpectrumReader, UCSFSpectrumReader
 
 
 REGISTRY = [AzaraSpectrumReader, UCSFSpectrumReader]

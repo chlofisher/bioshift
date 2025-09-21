@@ -3,7 +3,7 @@ from numpy.typing import NDArray
 from dataclasses import dataclass
 from enum import Enum
 
-from bioshift.core.spectrum import NMRNucleus
+from bioshift.spectra import NMRNucleus
 
 
 # class NMRAtom(Enum):

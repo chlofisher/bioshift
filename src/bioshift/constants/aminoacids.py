@@ -48,3 +48,31 @@ AMINO_ACIDS_3 = [
 
 AMINO_ACIDS_3_TO_1 = dict(zip(AMINO_ACIDS_3, AMINO_ACIDS_1))
 AMINO_ACIDS_1_TO_3 = dict(zip(AMINO_ACIDS_1, AMINO_ACIDS_3))
+
+"""
+Statistics collected from UniProtKB
+https://www.uniprot.org/uniprotkb/statistics
+Non-standard amino acids were removed, and percentages renormalized.
+"""
+AMINO_ACID_FREQUENCY = {
+    "Leu": 0.09813,
+    "Ala": 0.08913,
+    "Gly": 0.07222,
+    "Ser": 0.06942,
+    "Val": 0.06842,
+    "Glu": 0.06272,
+    "Arg": 0.05852,
+    "Thr": 0.05562,
+    "Ile": 0.05482,
+    "Asp": 0.05482,
+    "Pro": 0.05052,
+    "Lys": 0.04971,
+    "Phe": 0.03881,
+    "Gln": 0.03821,
+    "Asn": 0.03821,
+    "Tyr": 0.02871,
+    "Met": 0.02331,
+    "His": 0.02241,
+    "Cys": 0.01330,
+    "Trp": 0.01300,
+}

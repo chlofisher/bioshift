@@ -1,9 +1,7 @@
 from abc import ABC, abstractmethod
 from pathlib import Path
 
-from bioshift.core.spectrum import Spectrum, NMRNucleus
-from bioshift.core.spectrumtransform import SpectrumTransform
-from bioshift.core.spectrumdatasource import SpectrumDataSource
+from bioshift.spectra import Spectrum, NMRNucleus, SpectrumTransform, SpectrumDataSource
 
 
 class SpectrumReader(ABC):

@@ -1,12 +1,11 @@
 import numpy as np
 import jax.numpy as jnp
 from jax import jit
-
 from numpy.typing import NDArray
 from scipy.optimize import curve_fit
 from functools import partial
 
-from bioshift.core.spectrum import Spectrum
+from bioshift.spectra import Spectrum
 
 LN2 = np.log(2.0)
 

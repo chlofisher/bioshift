@@ -3,7 +3,7 @@ import math
 from numpy.typing import NDArray
 from typing import Optional
 
-from bioshift.core.spectrumdatasource import SpectrumDataSource
+from bioshift.spectra import SpectrumDataSource
 
 
 class BlockedSpectrumDataSource(SpectrumDataSource):

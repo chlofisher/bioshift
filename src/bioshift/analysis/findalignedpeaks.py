@@ -1,8 +1,6 @@
 import numpy as np
 from numpy.typing import NDArray
 
-from bioshift.core.spectrum import Experiment
-
 
 def _peak_distance_matrix(
     nhsqc_peaks: NDArray, hncacb_peaks: NDArray, axis: int, scaling: NDArray
@@ -26,18 +24,7 @@ def _peak_distance_matrix(
 def match_projected_peaks(
     nhsqc_peaks: NDArray, hncacb_peaks: NDArray, axis: int, scaling: NDArray
 ):
-    residues = [
-        NMRResidue().add_peak(peak, experiment=Experiment.NHSQC) for peak in nhsqc_peaks
-    ]
-
     distance_matrix = _peak_distance_matrix(nhsqc_peaks, hncacb_peaks, axis, scaling)
-
     indices = np.argmin(distance_matrix, axis=0)
 
     return indices
-
-    # i is the index of a HSQC peak, and j is the index of a corresponding HNCACB peak
-    for i, j in enumerate(indices):
-        residues[i].add_peak(hncacb_peaks[j], experiment=Experiment.HNCACB)
-
-    return residues

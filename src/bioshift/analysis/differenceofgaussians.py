@@ -1,8 +1,8 @@
-from bioshift.core.spectrum import Spectrum
-
 import numpy as np
 from numpy.typing import NDArray
 import skimage
+
+from bioshift.spectra import Spectrum
 
 
 def difference_of_gaussians(

@@ -1,13 +1,10 @@
 from numpy.typing import NDArray
-# import numpy as np
-import time
-from jax import numpy as np
+import numpy as np
 from jax import scipy, jit
 from functools import partial
-
 from matplotlib import pyplot as plt
 
-from bioshift.core.spectrum import Spectrum
+from bioshift.spectra import Spectrum
 
 
 @partial(jit, static_argnums=3)
@@ -55,13 +52,18 @@ def restricted_pick(
         coord_blocks, peak_blocks, width_blocks
     ):
         gaussians = _gaussian(
-            x=coord_block, mu=peak_block, sigma=np.array((0.25, 0.05)), ndim=spectrum.ndim - 1
+            x=coord_block,
+            mu=peak_block,
+            sigma=np.array((0.25, 0.05)),
+            ndim=spectrum.ndim - 1,
         )
 
         gaussians = np.expand_dims(gaussians, axis=axis)
         filtered = gaussians * np.expand_dims(spectrum.array, axis=-1)
 
-        integral_axes = [ax for ax in range(spectrum.ndim+1) if ax not in [axis, spectrum.ndim]]
+        integral_axes = [
+            ax for ax in range(spectrum.ndim + 1) if ax not in [axis, spectrum.ndim]
+        ]
         res = filtered
 
         for ax in sorted(integral_axes, reverse=True):
@@ -75,7 +77,6 @@ def restricted_pick(
     plt.show()
 
     return output
-
 
     # for peak, width in zip(peaks, widths):
     #     gaussian = _gaussian(coords, mu=peak, sigma=width *

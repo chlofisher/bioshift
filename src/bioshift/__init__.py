@@ -1,11 +1,16 @@
-from bioshift.core import (
+from bioshift.spectra import (
     Spectrum,
-    NMRNucleus,
     SpectrumTransform,
+    NMRNucleus,
+    NMRExperiment,
 )
+
+from bioshift.io import load_spectrum
 
 __all__ = [
     "Spectrum",
-    "NMRNucleus",
     "SpectrumTransform",
+    "NMRExperiment",
+    "NMRNucleus",
+    "load_spectrum",
 ]

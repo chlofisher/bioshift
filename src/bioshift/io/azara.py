@@ -4,10 +4,8 @@ from typing import Any
 from pathlib import Path
 import numpy as np
 
-from bioshift.core.spectrumtransform import SpectrumTransform
-from bioshift.core.spectrum import NMRNucleus
-from bioshift.fileio.spectrumreader import SpectrumReader
-from bioshift.fileio.blockedspectrum import BlockedSpectrumDataSource
+from bioshift.spectra import SpectrumTransform, NMRNucleus
+from bioshift.fileio import SpectrumReader, BlockedSpectrumDataSource
 
 
 def _spc_from_par(par_path: Path) -> Path:
@@ -217,7 +215,7 @@ class AzaraSpectrumReader(SpectrumReader):
                     case "nuc":
                         nuclei[dim - 1] = value.strip()
                     case "params":
-                        raise unsupported_key_error("sigmas")
+                        raise unsupported_key_error("params")
                     case "sigmas":
                         raise unsupported_key_error("sigmas")
 

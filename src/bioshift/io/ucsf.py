@@ -4,9 +4,9 @@ from pathlib import Path
 import struct
 import numpy as np
 
-from bioshift.core.spectrumtransform import SpectrumTransform
-from bioshift.fileio.blockedspectrum import BlockedSpectrumDataSource
-from bioshift.fileio.spectrumreader import SpectrumReader
+from bioshift.spectra import SpectrumTransform
+from bioshift.io.blockedspectrum import BlockedSpectrumDataSource
+from bioshift.io.spectrumreader import SpectrumReader
 
 
 GLOBAL_HEADER_SIZE = 180
