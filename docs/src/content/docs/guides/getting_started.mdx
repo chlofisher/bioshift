@@ -1,5 +1,53 @@
 ---
 title: Getting Started
-description: Getting started with BioShift.
+description: Installing BioShift and importing it into Python.
 ---
 
+import { Steps, Tabs, TabItem } from '@astrojs/starlight/components';
+
+
+<Steps>
+    1. **Installation**
+        <br/>
+        BioShift can be installed from the Python Package Index (PyPI) using your favourite Python package manager (pip, uv, poetry, etc.). 
+        You are very strongly recommended to use BioShift inside of a 
+        [virtual environment](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/).
+        This guide assumes you are familiar with how to use virtual environments in Python.
+        <br/>
+        <Tabs>
+            <TabItem label="pip">
+                ```
+                pip install bioshift
+                ```
+            </TabItem>
+            <TabItem label="uv">
+                ```
+                uv add bioshift
+                ```
+                See https://docs.astral.sh/uv/guides/projects/ for more information on using uv for python dependency management.
+            </TabItem>
+            <TabItem label="poetry">
+                ```
+                poetry install bioshift
+                ```
+                See https://python-poetry.org/docs/basic-usage/#setting-a-python-version for more information on using poetry for python dependency management.
+            </TabItem>
+            <TabItem label="conda">
+                If you are using conda to manage the dependencies for your project,
+                you can install BioShift into your conda environment using
+                `pip install bioshift`.
+                <br/>
+                Note that installing packages in a conda environment using pip can cause some issues; 
+                please consult the [conda documentation](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#using-pip-in-an-environment)
+                for more information on using PyPI packages in a Conda environment.
+            </TabItem>
+        </Tabs>
+    2. **Usage**
+        <br/>
+        ```python
+        import bioshift
+
+        # Load a spectrum from a .ucsf file
+        spectrum = bioshift.Spectrum.load('./nhsqc.ucsf')
+        ```
+</Steps>
