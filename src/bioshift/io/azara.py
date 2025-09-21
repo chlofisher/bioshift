@@ -5,7 +5,8 @@ from pathlib import Path
 import numpy as np
 
 from bioshift.spectra import SpectrumTransform, NMRNucleus
-from bioshift.fileio import SpectrumReader, BlockedSpectrumDataSource
+from bioshift.io.spectrumreader import SpectrumReader 
+from bioshift.io.blockedspectrum import BlockedSpectrumDataSource
 
 
 def _spc_from_par(par_path: Path) -> Path:
