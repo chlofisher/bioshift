@@ -138,7 +138,7 @@ class SpectrumTransform:
         delta_0 = np.array(ref_shift)
         i_0 = np.array(ref_coord)
 
-        scaling = w / (N * f)
+        scaling = - w / (N * f)
         offset = delta_0 - scaling * i_0
 
         return cls(ndim=len(shape), shape=shape, scaling=scaling, offset=offset)
@@ -151,3 +151,17 @@ class SpectrumTransform:
         return SpectrumTransform(
             ndim=self.ndim - 1, shape=new_shape, scaling=new_scaling, offset=new_offset
         )
+
+    def transpose(self, axes=None):
+        if axes is None:
+            axes = range(self.ndim)[::-1]
+
+        new_shape = np.array([self.shape[ax] for ax in axes])
+        new_scaling = np.array([self.scaling[ax] for ax in axes])
+        new_offset = np.array([self.offset[ax] for ax in axes])
+
+        return SpectrumTransform(
+            ndim=self.ndim, shape=new_shape, scaling=new_scaling, offset=new_offset
+        )
+
+

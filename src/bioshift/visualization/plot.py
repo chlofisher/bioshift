@@ -1,8 +1,9 @@
-import matplotlib
 from matplotlib.colors import CenteredNorm
 from matplotlib import pyplot as plt
 import numpy as np
-from bioshift.core import Spectrum, NMRNucleus
+from numpy.typing import NDArray
+
+from bioshift.spectra import Spectrum, NMRNucleus
 
 
 def _axis_label(nuc: NMRNucleus) -> str:
@@ -24,6 +25,7 @@ def heatmap(
     ax=None,
     aspect="auto",
     show=False,
+    invert_axes=True,
     **kwargs,
 ):
     fig, ax = _init_axes(ax)
@@ -41,7 +43,7 @@ def heatmap(
     y = np.linspace(min_shift[0], max_shift[0], ny)
     X, Y = np.meshgrid(x, y)
 
-    intensity = spectrum.array[::, ::-1]
+    intensity = spectrum.array
 
     im = ax.imshow(
         intensity,
@@ -51,8 +53,9 @@ def heatmap(
         **kwargs,
     )
 
-    ax.invert_xaxis()
-    ax.invert_yaxis()
+    if invert_axes:
+        ax.invert_xaxis()
+        ax.invert_yaxis()
 
     ax.set_xlabel(_axis_label(spectrum.nuclei[1]))
     ax.set_ylabel(_axis_label(spectrum.nuclei[0]))
@@ -72,6 +75,7 @@ def contour(
     levels=25,
     linewidths=0.65,
     show=False,
+    invert_axes=True,
     **kwargs,
 ):
     if spectrum.ndim != 2:
@@ -89,7 +93,7 @@ def contour(
     y = np.linspace(min_shift[0], max_shift[0], ny)
     X, Y = np.meshgrid(x, y)
 
-    intensity = spectrum.array[::-1, ::-1]
+    intensity = spectrum.array
     intensity = np.where(np.abs(intensity) < threshold, 0, intensity)
 
     positive_contours = []
@@ -105,8 +109,9 @@ def contour(
 
     ax.contour(X, Y, intensity, levels=levels, linewidths=linewidths, **kwargs)
 
-    ax.invert_xaxis()
-    ax.invert_yaxis()
+    if invert_axes:
+        ax.invert_xaxis()
+        ax.invert_yaxis()
 
     ax.set_xlabel(_axis_label(spectrum.nuclei[1]))
     ax.set_ylabel(_axis_label(spectrum.nuclei[0]))
@@ -117,7 +122,7 @@ def contour(
     return ax
 
 
-def line(spectrum: Spectrum, ax=None, show=False, **kwargs):
+def line(spectrum: Spectrum, ax=None, show=False, invert_axes=True, **kwargs):
     if spectrum.ndim != 1:
         raise ValueError("Spectrum must be 1D for line plot.")
 
@@ -130,14 +135,26 @@ def line(spectrum: Spectrum, ax=None, show=False, **kwargs):
 
     x = np.linspace(min_shift, max_shift, nx)
 
-    intensity = spectrum.array[::-1]
+    intensity = spectrum.array
 
     ax.plot(x, intensity, **kwargs)
 
-    ax.invert_xaxis()
+    if invert_axes:
+        ax.invert_xaxis()
+
     ax.set_xlabel(_axis_label(spectrum.nuclei[0]))
 
     if show:
         plt.show()
 
     return ax
+
+def scatter_peaks(peaks: NDArray, ax=None, show=False, **kwargs):
+    fig, ax = _init_axes(ax)
+
+    coords = [column for column in peaks.T]
+
+    ax.scatter(*coords[::-1])
+
+    if show:
+        plt.show()

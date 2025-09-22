@@ -1,5 +1,5 @@
-from bioshift.core import Spectrum
-from bioshift.visualization import plot_spectrum_heatmap, plot_spectrum_contour
+from bioshift.spectra import Spectrum
+from bioshift.visualization.plot import heatmap, contour
 from matplotlib import pyplot as plt
 import matplotlib
 import numpy as np
@@ -79,7 +79,7 @@ class HeatmapSliceViewer(SliceViewer):
 
     def plot(self):
         slice: Spectrum = self._get_slice()
-        plot_spectrum_heatmap(slice, ax=self.ax, norm=self.norm, **self.kwargs)
+        heatmap(slice, ax=self.ax, norm=self.norm, **self.kwargs)
 
         return self.ax
 
@@ -98,7 +98,7 @@ class ContourSliceViewer(SliceViewer):
         for collection in self.ax.collections:
             collection.remove()
 
-        plot_spectrum_contour(
+        contour(
             slice,
             threshold=self.threshold,
             ax=self.ax,
@@ -108,7 +108,7 @@ class ContourSliceViewer(SliceViewer):
 
     def plot(self):
         slice: Spectrum = self._get_slice()
-        plot_spectrum_contour(
+        contour(
             slice, threshold=self.threshold, ax=self.ax, invert_axes=True, **self.kwargs
         )
 

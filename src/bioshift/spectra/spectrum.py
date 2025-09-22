@@ -220,3 +220,24 @@ class Spectrum:
             data_source=data_source,
             transform=self.transform,
         )
+
+    def transpose(self, axes=None):
+        if axes is None:
+            axes = range(self.ndim)[::-1]
+
+        transpose_func = partial(np.transpose, axes=axes)
+        data_source = TransformedDataSource(
+            parent=self.data_source, func=transpose_func
+        )
+
+        new_nuclei = tuple(self.nuclei[ax] for ax in axes)
+        new_transform = self.transform.transpose(axes)
+
+        return Spectrum(
+            ndim=self.ndim,
+            nuclei=new_nuclei,
+            data_source=data_source,
+            transform=new_transform
+        )
+
+        

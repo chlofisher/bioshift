@@ -5,7 +5,7 @@ from pathlib import Path
 import numpy as np
 
 from bioshift.spectra import SpectrumTransform, NMRNucleus
-from bioshift.io.spectrumreader import SpectrumReader 
+from bioshift.io.spectrumreader import SpectrumReader
 from bioshift.io.blockedspectrum import BlockedSpectrumDataSource
 
 
