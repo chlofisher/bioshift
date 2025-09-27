@@ -68,7 +68,13 @@ class Spectrum:
         """
         return self.transform.shape
 
-    def __init__(self, ndim, nuclei, data_source, transform):
+    def __init__(
+        self,
+        ndim: int,
+        nuclei: tuple[NMRNucleus],
+        data_source: SpectrumDataSource,
+        transform: SpectrumTransform,
+    ):
         self.ndim = ndim
         self.nuclei = nuclei
         self.data_source = data_source
@@ -82,12 +88,9 @@ class Spectrum:
             f")"
         )
 
-    def __array__(self, dtype=None, copy=None):
-        return self.data_source.get_data()
-
     @property
     def array(self) -> NDArray:
-        return self.__array__()
+        return self.data_source.get_data()
 
     @classmethod
     def load(cls, path: str | PathLike) -> Spectrum:
@@ -172,8 +175,9 @@ class Spectrum:
         )
 
     def project(self, axis: int):
-        project_func = partial(np.trapz, axis=axis)
-        data_source = TransformedDataSource(parent=self.data_source, func=project_func)
+        data_source = TransformedDataSource(
+            parent=self.data_source, func=partial(np.trapz, axis=axis)
+        )
 
         nuclei = tuple(nuc for i, nuc in enumerate(self.nuclei) if i != axis)
 
@@ -187,11 +191,11 @@ class Spectrum:
     def blur(self, sigma: tuple[float]):
         if len(sigma) != self.ndim:
             raise ValueError(
-                f"""Mismatched dimensions. Spectrum is {input.ndim}D,
+                f"""Mismatched dimensions. Spectrum is {self.ndim}D,
                 but a {len(sigma)}D vector of sigmas was provided."""
             )
 
-        sigma_scaled = np.array(sigma) / input.transform.scaling
+        sigma_scaled = np.abs(np.array(sigma) / self.transform.scaling)
         gaussian_func = partial(skimage.filters.gaussian, sigma=sigma_scaled)
 
         data_source = TransformedDataSource(parent=self.data_source, func=gaussian_func)
@@ -204,7 +208,7 @@ class Spectrum:
         )
 
     def threshold(self, level: float):
-        def threshold_func(arr: NDArray):
+        def threshold_func(arr: NDArray) -> NDArray:
             return np.where(np.abs(arr) < level, 0, arr)
 
         data_source = TransformedDataSource(
@@ -219,7 +223,7 @@ class Spectrum:
         )
 
     def normalize(self):
-        def normalize_func(arr: NDArray):
+        def normalize_func(arr: NDArray) -> NDArray:
             max = np.abs(arr).max()
             return arr / max
 
@@ -250,7 +254,5 @@ class Spectrum:
             ndim=self.ndim,
             nuclei=new_nuclei,
             data_source=data_source,
-            transform=new_transform
+            transform=new_transform,
         )
-
-        
