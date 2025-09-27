@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 import numpy as np
 from numpy.typing import NDArray
 
@@ -19,6 +20,7 @@ class SpectrumTransform:
     scaling: NDArray
     """Vector of diagonal components of the affine transformation matrix. 
     Components are scaling values along each axis."""
+
     offset: NDArray
     """Constant offset vector for the affine transformation."""
 
@@ -138,10 +140,25 @@ class SpectrumTransform:
         delta_0 = np.array(ref_shift)
         i_0 = np.array(ref_coord)
 
-        scaling = - w / (N * f)
+        scaling = -w / (N * f)
         offset = delta_0 - scaling * i_0
 
         return cls(ndim=len(shape), shape=shape, scaling=scaling, offset=offset)
+
+    @property
+    def axes(self) -> tuple[NDArray]:
+        axes = tuple(
+            np.linspace(min, max, n)
+            for n, min, max in zip(
+                self.shape, self.bounds[0], self.bounds[1]
+            )
+        )
+        return axes
+
+    @property
+    def grid(self) -> tuple[NDArray]:
+        return np.meshgrid(*self.axes, indexing="ij")
+        
 
     def slice(self, axis: int) -> SpectrumTransform:
         new_shape = tuple(n for i, n in enumerate(self.shape) if i != axis)
@@ -163,5 +180,3 @@ class SpectrumTransform:
         return SpectrumTransform(
             ndim=self.ndim, shape=new_shape, scaling=new_scaling, offset=new_offset
         )
-
-
