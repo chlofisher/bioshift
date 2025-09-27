@@ -1,6 +1,7 @@
 from numpy.typing import NDArray
 import numpy as np
 from jax import scipy, jit
+from jax import numpy as jnp
 from functools import partial
 from matplotlib import pyplot as plt
 
@@ -9,13 +10,13 @@ from bioshift.spectra import Spectrum
 
 @partial(jit, static_argnums=3)
 def _gaussian(x, mu, sigma, ndim=2):
-    mu = np.array(mu)
-    sigma = np.array(sigma)
+    mu = jnp.array(mu)
+    sigma = jnp.array(sigma)
 
-    exponent = -0.5 * np.sum(((x - mu) / sigma) ** 2, axis=-1)
-    coeff = 1 / (np.sqrt((2 * np.pi) ** ndim * np.linalg.norm(sigma)))
+    exponent = -0.5 * jnp.sum(((x - mu) / sigma) ** 2, axis=-1)
+    coeff = 1 / (jnp.sqrt((2 * jnp.pi) ** ndim * jnp.linalg.norm(sigma)))
 
-    return coeff * np.exp(exponent)
+    return coeff * jnp.exp(exponent)
 
 
 def restricted_pick(
