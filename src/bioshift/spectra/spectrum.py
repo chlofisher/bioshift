@@ -1,11 +1,14 @@
 from __future__ import annotations
-from numpy.typing import NDArray
+
+import math
 from os import PathLike
 from enum import Enum
-import math
-import numpy as np
 from functools import partial
+
+import numpy as np
+from numpy.typing import NDArray
 import skimage
+from scipy.interpolate import RegularGridInterpolator
 
 from bioshift.spectra.spectrumdatasource import (
     SpectrumDataSource,
@@ -119,6 +122,16 @@ class Spectrum:
             data_source=new_data_source,
             transform=self.transform,
         )
+
+    def intensity(self, x: NDArray) -> float:
+        interp = RegularGridInterpolator(
+            points=self.transform.axes,
+            values=self.array,
+            method="linear",
+            bounds_error=False,
+            fill_value=0,
+        )
+        return interp(x)
 
     def slice(self, axis: int, z: float):
         """
