@@ -50,10 +50,11 @@ def heatmap(
         extent=[min_shift[1], max_shift[1], min_shift[0], max_shift[0]],
         aspect=aspect,
         norm=norm,
+        origin="lower",
         **kwargs,
     )
 
-    if invert_axes:
+    if not invert_axes:
         ax.invert_xaxis()
         ax.invert_yaxis()
 
@@ -149,6 +150,7 @@ def line(spectrum: Spectrum, ax=None, show=False, invert_axes=True, **kwargs):
 
     return ax
 
+
 def scatter_peaks(peaks: NDArray, ax=None, show=False, **kwargs):
     fig, ax = _init_axes(ax)
 
@@ -158,3 +160,5 @@ def scatter_peaks(peaks: NDArray, ax=None, show=False, **kwargs):
 
     if show:
         plt.show()
+
+    return ax
