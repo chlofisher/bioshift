@@ -5,7 +5,7 @@ from scipy import stats
 
 from bioshift.constants import AMINO_ACIDS_3, AMINO_ACID_FREQUENCY
 
-DATA_PATH = "shifts/shifts_HNCACB.npz"
+SHIFT_TABLE_PATH = "shifts/shifts_HNCACB.npz"
 
 
 def predict_amino_acid(*spin_systems: dict[str, float]) -> NDArray:
@@ -34,7 +34,7 @@ def predict_amino_acid(*spin_systems: dict[str, float]) -> NDArray:
     p_delta_given_aa = np.zeros((n_points, 20))
     p_aa = np.array([AMINO_ACID_FREQUENCY[aa] for aa in AMINO_ACIDS_3])
 
-    with resources.open_binary("bioshift.data", DATA_PATH) as f:
+    with resources.open_binary("bioshift.data", SHIFT_TABLE_PATH) as f:
         shift_tables = np.load(f)
 
         for i, aa in enumerate(AMINO_ACIDS_3):
