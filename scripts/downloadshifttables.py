@@ -60,6 +60,7 @@ ATOMS_GLY = ["H", "N", "CA"]
 BMRB_API_URL = "http://api.bmrb.io/current/search/chemical_shifts"
 MAX_Z_SCORE = 6
 
+
 def main() -> None:
     save_path = sys.argv[1]
     save_shift_tables(save_path)
@@ -92,7 +93,9 @@ def save_shift_tables(path: str):
             continue
 
         atoms = ATOMS if aa != "Gly" else ATOMS_GLY
-        table = get_shift_table(raw_json=shift_data, aa=aa, atoms=atoms, z_max=MAX_Z_SCORE)
+        table = get_shift_table(
+            raw_json=shift_data, aa=aa, atoms=atoms, z_max=MAX_Z_SCORE
+        )
         shift_tables[aa] = table
 
     np.savez(path, **shift_tables)
@@ -127,8 +130,7 @@ def get_shift_table(raw_json: dict, aa: str, atoms: list[str], z_max: float = np
     }
 
     # unpack the dictionary into a list of lists and convert to an np array.
-    shift_table = [[entry[atom] for atom in atoms]
-        for key, entry in entry_data.items()]
+    shift_table = [[entry[atom] for atom in atoms] for key, entry in entry_data.items()]
 
     shift_table = np.array(shift_table).T
 
