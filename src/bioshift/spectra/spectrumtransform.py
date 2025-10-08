@@ -15,17 +15,12 @@ class SpectrumTransform:
     shape: NDArray
     """Shape of the underlying data array."""
 
-    bounds: NDArray
-
     scaling: NDArray
     """Vector of diagonal components of the affine transformation matrix. 
     Components are scaling values along each axis."""
 
     offset: NDArray
     """Constant offset vector for the affine transformation."""
-
-    inverse_scaling: NDArray
-    inverse_offset: NDArray
 
     def __init__(self, ndim, shape, scaling, offset):
         """Initialise the SpectrumTransform. Performs validation logic and
@@ -146,19 +141,16 @@ class SpectrumTransform:
         return cls(ndim=len(shape), shape=shape, scaling=scaling, offset=offset)
 
     @property
-    def axes(self) -> tuple[NDArray]:
+    def axes(self) -> tuple[NDArray, ...]:
         axes = tuple(
             np.linspace(min, max, n)
-            for n, min, max in zip(
-                self.shape, self.bounds[0], self.bounds[1]
-            )
+            for n, min, max in zip(self.shape, self.bounds[0], self.bounds[1])
         )
         return axes
 
     @property
-    def grid(self) -> tuple[NDArray]:
+    def grid(self) -> tuple[NDArray, ...]:
         return np.meshgrid(*self.axes, indexing="ij")
-        
 
     def slice(self, axis: int) -> SpectrumTransform:
         new_shape = tuple(n for i, n in enumerate(self.shape) if i != axis)

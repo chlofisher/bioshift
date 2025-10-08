@@ -1,18 +1,22 @@
 from importlib import resources
+from typing import Collection
+
 import numpy as np
 from numpy.typing import NDArray
+
 from scipy import stats
 
 from bioshift.constants import AMINO_ACIDS_3, AMINO_ACID_FREQUENCY
 
+
 SHIFT_TABLE_PATH = "shifts/shifts_HNCACB.npz"
 
 
-def predict_amino_acid(*spin_systems: dict[str, float]) -> NDArray:
+def predict_amino_acid(*spin_systems: dict[str, float]) -> tuple[NDArray, float]:
     # Keys for rows in the shift_tables
     SHIFT_TABLE_ROW_KEYS = ["H", "N", "CA", "CB"]
 
-    atom_keys: list[str] = spin_systems[0].keys()
+    atom_keys: Collection[str] = spin_systems[0].keys()
     same_keys: bool = all(sys.keys() == atom_keys for sys in spin_systems)
 
     if not same_keys:
@@ -54,4 +58,4 @@ def predict_amino_acid(*spin_systems: dict[str, float]) -> NDArray:
 
     p_aa_given_delta = p_aa * p_delta_given_aa / p_delta[:, np.newaxis]
 
-    return p_aa_given_delta, p_delta
+    return p_aa_given_delta, p_delta.item()

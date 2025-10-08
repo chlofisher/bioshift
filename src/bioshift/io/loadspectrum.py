@@ -2,11 +2,16 @@ from pathlib import Path
 from os import PathLike
 
 from bioshift.spectra import Spectrum
+from bioshift.io.spectrumreader import SpectrumReader
 from bioshift.io.azara import AzaraSpectrumReader
 from bioshift.io.ucsf import UCSFSpectrumReader
 
 
-REGISTRY = [AzaraSpectrumReader, UCSFSpectrumReader]
+REGISTRY: list[type[SpectrumReader]] = [AzaraSpectrumReader, UCSFSpectrumReader]
+
+
+class UnsupportedSpectrumFileError(Exception):
+    pass
 
 
 def load_spectrum(path: str | PathLike) -> Spectrum:
@@ -19,3 +24,5 @@ def load_spectrum(path: str | PathLike) -> Spectrum:
         if reader_cls.can_read(path):
             reader = reader_cls.from_path(path)
             return reader.read()
+
+    raise UnsupportedSpectrumFileError(f"Spectrum file {path} can not be read.")

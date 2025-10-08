@@ -2,8 +2,8 @@ from pathlib import Path
 import re
 import numpy as np
 
-from bioshift.core.spectrumtransform import SpectrumTransform
-from bioshift.fileio.spectrumreader import SpectrumReader
+from bioshift.spectra import SpectrumTransform
+from bioshift.io.spectrumreader import SpectrumReader
 
 
 class XEASYSpectrumReader(SpectrumReader):

@@ -4,7 +4,7 @@ from pathlib import Path
 import struct
 import numpy as np
 
-from bioshift.spectra import SpectrumTransform
+from bioshift.spectra import SpectrumTransform, NMRNucleus
 from bioshift.io.blockedspectrum import BlockedSpectrumDataSource
 from bioshift.io.spectrumreader import SpectrumReader
 
@@ -19,7 +19,7 @@ def _get_header_size(ndim):
 
 class UCSFSpectrumReader(SpectrumReader):
     path: Path
-    _params: dict
+    _params: dict[str, Any]
 
     def __init__(self, path: Path):
         self.path = path
@@ -39,7 +39,7 @@ class UCSFSpectrumReader(SpectrumReader):
             May also have keys 'integer', 'swap', 'endianness'.
         """
 
-        params = {}
+        params: dict[str, Any] = {}
 
         with open(self.path, "rb") as file:
             file.seek(10)
@@ -77,12 +77,13 @@ class UCSFSpectrumReader(SpectrumReader):
                 Expecting version 2."""
             )
 
-        shape = [None] * ndim
-        block_shape = [None] * ndim
-        nuclei = [None] * ndim
-        spectrometer_frequency = [None] * ndim
-        spectral_width = [None] * ndim
-        center_shift = [None] * ndim
+        shape: list[int] = [0] * ndim
+        block_shape: list[int] = [0] * ndim
+        nuclei: list[str] = [""] * ndim
+        spectrometer_frequency: list[float] = [0.0] * ndim
+
+        spectral_width: list[float] = [0.0] * ndim
+        center_shift: list[float] = [0.0] * ndim
 
         for i in range(ndim):
             start = GLOBAL_HEADER_SIZE + i * AXIS_HEADER_SIZE
@@ -112,8 +113,8 @@ class UCSFSpectrumReader(SpectrumReader):
     def get_ndim(self) -> int:
         return self._params["ndim"]
 
-    def get_nuclei(self) -> tuple[str, ...]:
-        return self._params["nuclei"]
+    def get_nuclei(self) -> tuple[NMRNucleus, ...]:
+        return tuple(NMRNucleus(nuc) for nuc in self._params["nuclei"])
 
     def get_transform(self) -> SpectrumTransform:
         return SpectrumTransform.from_reference(

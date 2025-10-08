@@ -1,5 +1,6 @@
-from matplotlib.colors import CenteredNorm
 from matplotlib import pyplot as plt
+from matplotlib.colors import CenteredNorm
+
 import numpy as np
 from numpy.typing import NDArray
 
@@ -97,10 +98,9 @@ def contour(
     intensity = spectrum.array
     intensity = np.where(np.abs(intensity) < threshold, 0, intensity)
 
-    positive_contours = []
     max = np.max(np.abs(intensity))
 
-    positive_contours = np.linspace(0, max, num=levels // 2)
+    positive_contours: NDArray = np.linspace(0, max, num=levels // 2)
     positive_contours = np.array(
         [level for level in positive_contours if level >= threshold]
     )

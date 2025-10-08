@@ -12,7 +12,6 @@ class BlockedSpectrumDataSource(SpectrumDataSource):
     block_volume: int
     n_blocks: tuple[int]
     header_size: int
-    block_volume: int
 
     _memmap: np.memmap
     _cache: Optional[NDArray] = None
@@ -53,4 +52,4 @@ class BlockedSpectrumDataSource(SpectrumDataSource):
         return self._memmap[start:end].reshape(self.block_shape)
 
     def _get_block_index(self, idx: tuple[int, ...]) -> int:
-        return np.ravel_multi_index(idx, self.n_blocks, order="C")
+        return int(np.ravel_multi_index(idx, self.n_blocks, order="C"))

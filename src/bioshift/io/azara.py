@@ -28,7 +28,7 @@ def _spc_from_par(par_path: Path) -> Path:
     try:
         # Need to peek ahead at the .par file before fully loading the
         # params to check for a .spc file
-        params = _parse_par_file(par_path)
+        params: list[tuple[str, ...]] = _parse_par_file(par_path)
 
         data_file_param = next(p for p in params if p[0] == "file")
         spc_file = data_file_param[1].strip()
@@ -77,7 +77,7 @@ def _par_from_spc(spc_path: Path) -> Path:
     )
 
 
-def _parse_par_file(par_path: Path) -> list[tuple[str]]:
+def _parse_par_file(par_path: Path) -> list[tuple[str, ...]]:
     with open(par_path) as file:
         lines = file.readlines()
 
@@ -126,9 +126,9 @@ class AzaraSpectrumReader(SpectrumReader):
              'params' are detected. .par files containing these keys are
              intended for internal use within Azara only.
         """
-        raw_params = _parse_par_file(self.par_path)
+        raw_params: list[tuple[str, ...]] = _parse_par_file(self.par_path)
 
-        params = {"header_size": 0, "dtype": np.float32}
+        params: dict[str, Any] = {"header_size": 0, "dtype": np.float32}
 
         def unsupported_key_error(key):
             return ValueError(
@@ -138,8 +138,8 @@ class AzaraSpectrumReader(SpectrumReader):
 
         # Iterate over all params to get global params
         for param in raw_params:
-            key = param[0]
-            value = param[1] if len(param) >= 2 else None
+            key: str = param[0]
+            value: str = param[1] if len(param) >= 2 else ""
 
             match key:
                 case "ndim":
@@ -183,38 +183,38 @@ class AzaraSpectrumReader(SpectrumReader):
 
         ndim = params["ndim"]
 
-        shape = [0] * ndim
-        block_shape = [0] * ndim
-        nuclei = [0] * ndim
-        spectral_width = [0] * ndim
-        spectrometer_frequency = [0] * ndim
-        ref_ppm = [0] * ndim
-        ref_coord = [0] * ndim
+        shape: list[int] = [0] * ndim
+        block_shape: list[int] = [0] * ndim
+        nuclei: list[str] = [""] * ndim
+        spectral_width: list[float] = [0.0] * ndim
+        spectrometer_frequency: list[float] = [0.0] * ndim
+        ref_ppm: list[float] = [0.0] * ndim
+        ref_coord: list[float] = [0.0] * ndim
 
         # Iterate over each pair of 'dim' positions to get blocks of
         # params associated with each axis.
         for start, stop in zip(dim_positions, dim_positions[1:]):
             for param in raw_params[start:stop]:
-                key = param[0]
-                value = param[1] if len(param) >= 2 else None
+                key_ax: str = param[0]
+                value_ax: str = param[1] if len(param) >= 2 else ""
 
-                match key:
+                match key_ax:
                     case "dim":
-                        dim = int(value)
+                        dim = int(value_ax)
                     case "npts":
-                        shape[dim - 1] = int(value)
+                        shape[dim - 1] = int(value_ax)
                     case "block":
-                        block_shape[dim - 1] = int(value)
+                        block_shape[dim - 1] = int(value_ax)
                     case "sw":
-                        spectral_width[dim - 1] = float(value)
+                        spectral_width[dim - 1] = float(value_ax)
                     case "sf":
-                        spectrometer_frequency[dim - 1] = float(value)
+                        spectrometer_frequency[dim - 1] = float(value_ax)
                     case "refppm":
-                        ref_ppm[dim - 1] = float(value)
+                        ref_ppm[dim - 1] = float(value_ax)
                     case "refpt":
-                        ref_coord[dim - 1] = float(value)
+                        ref_coord[dim - 1] = float(value_ax)
                     case "nuc":
-                        nuclei[dim - 1] = value.strip()
+                        nuclei[dim - 1] = value_ax.strip()
                     case "params":
                         raise unsupported_key_error("params")
                     case "sigmas":

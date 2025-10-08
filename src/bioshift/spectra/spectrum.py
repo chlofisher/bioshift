@@ -71,7 +71,7 @@ class Spectrum:
     def __init__(
         self,
         ndim: int,
-        nuclei: tuple[NMRNucleus],
+        nuclei: tuple[NMRNucleus, ...],
         data_source: SpectrumDataSource,
         transform: SpectrumTransform,
     ):
@@ -126,7 +126,7 @@ class Spectrum:
             transform=self.transform,
         )
 
-    def intensity(self, x: NDArray) -> float:
+    def intensity(self, x: NDArray) -> NDArray:
         interp = RegularGridInterpolator(
             points=self.transform.axes,
             values=self.array,

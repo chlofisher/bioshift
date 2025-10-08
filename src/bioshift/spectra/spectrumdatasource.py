@@ -4,7 +4,7 @@ from numpy.typing import NDArray
 
 
 class SpectrumDataSource(ABC):
-    _cache: NDArray = None
+    _cache: NDArray | None = None
 
     def get_data(self) -> NDArray:
         if self._cache is None:

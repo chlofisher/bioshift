@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Callable
 from functools import partial
 
 import numpy as np
@@ -8,6 +8,7 @@ from scipy.optimize import curve_fit
 
 import jax
 from jax import numpy as jnp
+
 
 from bioshift.spectra import Spectrum
 
@@ -21,14 +22,14 @@ def _gaussian_model(x: jax.Array, *params, ndim: int, n_peaks: int) -> jax.Array
     k = ndim * n_peaks
 
     # (n_peaks, 1, ndim)
-    shifts = params_array[:k].reshape((-1, 1, ndim), order="F") 
+    shifts = params_array[:k].reshape((-1, 1, ndim), order="F")
     widths = params_array[k : 2 * k].reshape((-1, 1, ndim), order="F")
 
     # (n_peaks, 1)
     intensities = params_array[2 * k :, None]
 
     # (1, n_datapoints, ndim)
-    x = x.transpose()[None, :, :]  
+    x = x.transpose()[None, :, :]
     z = (x - shifts) / widths
 
     # (n_peaks, n_datapoints)
@@ -78,17 +79,13 @@ def _jacobian(x: jax.Array, *params, ndim: int, n_peaks: int) -> jax.Array:
     return jnp.concatenate((df_dmu_flat, df_dgamma_flat, df_dintensity), axis=0).T
 
 
-def _flatten_params(
-    shifts: NDArray,
-    widths: NDArray,
-    intensities: NDArray
-) -> NDArray:
-    return jnp.concatenate([shifts.ravel(), widths.ravel(), intensities])
+def _flatten_params(shifts: NDArray, widths: NDArray, intensities: NDArray) -> NDArray:
+    return np.concatenate([shifts.ravel(), widths.ravel(), intensities])
 
 
 def _unflatten_params(
     params: NDArray, ndim: int, n_peaks: int
-) -> tuple[NDArray, NDArray]:
+) -> tuple[NDArray, NDArray, NDArray]:
 
     k = ndim * n_peaks
     shifts = params[:k].reshape((-1, ndim), order="F")
@@ -115,9 +112,9 @@ class GaussianPeakModel:
         self,
         ndim: int,
         n_peaks_init: int,
-        shifts_init: Optional[NDArray] = None,
-        widths_init: Optional[NDArray] = None,
-        intensities_init: Optional[NDArray] = None,
+        shifts_init: NDArray | None = None,
+        widths_init: NDArray | None = None,
+        intensities_init: NDArray | None = None,
     ):
         n_peaks_match = True
         for arr in (shifts_init, widths_init, intensities_init):
@@ -132,7 +129,7 @@ class GaussianPeakModel:
         self.widths_init = widths_init
         self.intensities_init = intensities_init
 
-    def _xgrid(self, spectrum, region=None, samples=None) -> NDArray:
+    def _xgrid(self, spectrum, region=None, samples=None) -> tuple[NDArray, ...]:
         if region is not None and samples is None:
             raise ValueError(
                 (
@@ -158,8 +155,8 @@ class GaussianPeakModel:
     def fit(
         self,
         spectrum: Spectrum,
-        region: Optional[NDArray] = None,
-        samples: Optional[NDArray] = None,
+        region: NDArray | None = None,
+        samples: NDArray | None = None,
     ):
         spectrum = spectrum.normalize()
 
@@ -196,7 +193,9 @@ class GaussianPeakModel:
             self.widths_init = np.array([0.1, 0.1, 0.02]) * (1 + random)
 
         width_min = np.zeros(n_peaks * ndim)
-        width_max = np.concat([np.ones(n_peaks), np.ones(n_peaks), np.ones(n_peaks) * 0.1])
+        width_max = np.concat(
+            [np.ones(n_peaks), np.ones(n_peaks), np.ones(n_peaks) * 0.1]
+        )
 
         p0 = np.concatenate(
             [
@@ -211,13 +210,13 @@ class GaussianPeakModel:
 
         param_bounds = (min, max)
 
-        model = partial(
+        model: Callable = partial(
             _gaussian_model,
             ndim=ndim,
             n_peaks=n_peaks,
         )
 
-        jacobian = partial(
+        jacobian: Callable = partial(
             _jacobian,
             ndim=ndim,
             n_peaks=n_peaks,
@@ -238,4 +237,9 @@ class GaussianPeakModel:
 
     def residual(self, spectrum):
         params = _flatten_params(self.shifts, self.widths, self.intensities)
-        return _gaussian_model(spectrum.transform.grid, *params, spectrum.ndim, n_peaks=len(self.intensities))
+        return _gaussian_model(
+            spectrum.transform.grid,
+            *params,
+            spectrum.ndim,
+            n_peaks=len(self.intensities),
+        )
