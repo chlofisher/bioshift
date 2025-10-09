@@ -4,10 +4,10 @@ from matplotlib.colors import CenteredNorm
 import numpy as np
 from numpy.typing import NDArray
 
-from bioshift.spectra import Spectrum, NMRNucleus
+from bioshift.spectra import Spectrum
 
 
-def _axis_label(nuc: NMRNucleus) -> str:
+def _axis_label(nuc: str) -> str:
     return f"{str(nuc)} [ppm]"
 
 

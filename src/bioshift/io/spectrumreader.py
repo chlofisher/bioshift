@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from pathlib import Path
 
-from bioshift.spectra import Spectrum, NMRNucleus, SpectrumTransform, SpectrumDataSource
+from bioshift.spectra import Spectrum, SpectrumTransform, SpectrumDataSource
 
 
 class SpectrumReader(ABC):
@@ -22,7 +22,7 @@ class SpectrumReader(ABC):
             New spectrum object.
         """
         ndim: int = self.get_ndim()
-        nuclei: tuple[NMRNucleus, ...] = self.get_nuclei()
+        nuclei: tuple[str, ...] = self.get_nuclei()
         datasource: SpectrumDataSource = self.get_data()
         transform: SpectrumTransform = self.get_transform()
 
@@ -34,7 +34,7 @@ class SpectrumReader(ABC):
     def get_ndim(self) -> int: ...
 
     @abstractmethod
-    def get_nuclei(self) -> tuple[NMRNucleus, ...]: ...
+    def get_nuclei(self) -> tuple[str, ...]: ...
 
     @abstractmethod
     def get_data(self) -> SpectrumDataSource: ...

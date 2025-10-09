@@ -14,53 +14,54 @@ The recommended way of creating Spectrum instances from spectrum files
 is by using the `Spectrum.load()` function. This automatically determines
 the format of the spectrum and selects the correct SpectrumReader.
 
-Example usage:
+Example:
 ```python
 spectrum = Spectrum.load('./spectrum_file.ucsf')
 ```
 #### ndim
 ```python
-ndim: 'int'
+ndim: int
 ```
 Number of dimensions of the spectrum.
 #### nuclei
 ```python
-nuclei: 'tuple[NMRNucleus, ...]'
+nuclei: tuple[str, ...]
 ```
 The type of nucleus (13C, 1H, etc.) associated with each axis.
 #### data_source
 ```python
-data_source: 'SpectrumDataSource'
+data_source: bioshift.spectra.spectrumdatasource.SpectrumDataSource
 ```
 Object responsible for lazy-loading and parsing spectrum data.
 #### transform
 ```python
-transform: 'SpectrumTransform'
+transform: bioshift.spectra.spectrumtransform.SpectrumTransform
 ```
 Object storing the transformation from array coordinate space to chemical shift space.
 #### experiment
 ```python
-experiment: 'NMRExperiment'
+experiment: bioshift.spectra.spectrum.NMRExperiment
 ```
 Enum value for the type of NMR experiment the spectrum is from (e.g., HSQC, HNCACB)
 #### shape
 ```python
-shape: 'NDArray'
+shape: numpy.ndarray[tuple[typing.Any, ...], numpy.dtype[~_ScalarT]]
 ```
 Returns:
 Shape of the underlying data array.
 #### array
 ```python
-array: 'NDArray'
+array: numpy.ndarray[tuple[typing.Any, ...], numpy.dtype[~_ScalarT]]
 ```
-
+Get the raw data of the spectrum as a numpy array.
 #### load
 ```python
 @classmethod
-def load(cls, path: 'str | PathLike') -> 'Spectrum':
+def load(cls, path: str | os.PathLike) -> bioshift.spectra.spectrum.Spectrum:
 ```
 Create a spectrum from a path to a spectrum file.
 Automatically determines the file format and dispatches the correct spectrum reader.
+Currently spectra stored in .ucsf and .spc(.par) files are supported.
 
 
 ###### Arguments:
@@ -71,9 +72,35 @@ Automatically determines the file format and dispatches the correct spectrum rea
 ###### Returns:
 > Spectrum object
 
+#### intensity
+```python
+def intensity(
+    self,
+    shift: numpy.ndarray[tuple[typing.Any, ...], numpy.dtype[~_ScalarT]] | tuple[numpy.ndarray[tuple[typing.Any, ...], numpy.dtype[~_ScalarT]], ...]
+) -> numpy.ndarray[tuple[typing.Any, ...], numpy.dtype[~_ScalarT]]:
+```
+Evaluate the interpolated intensity at given chemical shift coords.
+
+This method wraps `scipy.interpolate.RegularGridInterpolator` to interpolate
+values from a regularly spaced ND grid (`self.array`) defined over axes
+stored in `self.transform.axes`.
+
+###### Arguments:
+ - **shift:**  Coordinates at which to evaluate
+ - the intensity. 
+ - **Accepts:**  - A NumPy array of shape (n_points, ndim), where each row is a point.
+   - A tuple of arrays (e.g., from `np.meshgrid`) of equal shape, which
+     will be stacked into coordinate points.
+
+
+
+###### Returns:
+> Interpolated intensity values at the specified coordinates.
+> If `shift` is a tuple of meshgrid arrays, the output shape matches the grid shape.
+
 #### slice
 ```python
-def slice(self, axis: 'int', z: 'float'):
+def slice(self, axis: int, z: float) -> bioshift.spectra.spectrum.Spectrum:
 ```
 Take a slice from the spectrum along the specified axis.
 
@@ -85,27 +112,86 @@ Take a slice from the spectrum along the specified axis.
 
 
 ###### Returns:
-> A new spectrum, with one fewer dimension.
+> A new spectrum, with one fewer dimension, corresponding to the slice plane.
 
 #### project
 ```python
-def project(self, axis: 'int'):
+def project(self, axis: int) -> bioshift.spectra.spectrum.Spectrum:
 ```
+Project the spectrum along one of its coordinate axes by taking the integral.
+
+
+###### Arguments:
+ - **axis:**  The axis along which to project the spectrum.
+
+
+
+###### Returns:
+> A new spectrum with one fewer dimension.
 
 #### blur
 ```python
-def blur(self, sigma: 'tuple[float]'):
+def blur(self, sigma: tuple[float]) -> bioshift.spectra.spectrum.Spectrum:
 ```
+Apply a gaussian blur to the spectrum.
+
+
+###### Arguments:
+ - **sigma:**  The standard deviation of the gaussian kernel used for the blur.
+
+
+
+###### Returns:
+> A new spectrum which has been blurred.
 
 #### threshold
 ```python
-def threshold(self, level: 'float'):
+def threshold(
+    self,
+    level: float,
+    soft: bool = True
+) -> bioshift.spectra.spectrum.Spectrum:
 ```
+Apply a threshold to the spectrum.
+
+
+###### Arguments:
+ - **level:**  The threshold level. All points with intensities below this value are set to zero.
+ - **soft:**  If set to True, values above the threshold are shifted down by the threshold level,
+ - in order to keep the spectrum continuous.
+
+
+
+###### Returns:
+> A new spectrum with all points below the threshold value set to zero.
 
 #### normalize
 ```python
-def normalize(self):
+def normalize(self) -> bioshift.spectra.spectrum.Spectrum:
 ```
+Normalize the spectrum to have maximum 1.0.
+
+###### Returns:
+> A new spectrum with all values divided by the maximum of the original.
+
+#### transpose
+```python
+def transpose(
+    self,
+    axes: tuple[int, ...] | None = None
+) -> bioshift.spectra.spectrum.Spectrum:
+```
+Transpose the spectrum, swapping the ordering of the axes.
+
+###### Arguments:
+ - **Axes:**  Tuple of integers defining the new ordering of the axes. 
+ - If None are provided, then the default behaviour is to invert 
+ - the ordering of the axes (the same as np.transpose)
+
+
+
+###### Returns:
+> A new spectrum with axes reordered.
 
 ## SpectrumTransform
 ```python
@@ -115,45 +201,48 @@ Represents a diagonal affine transformation used to map between
 coordinates in the raw spectrum array and chemical shift values.
 #### ndim
 ```python
-ndim: 'int'
+ndim: int
 ```
 Number of dimensions in the spectrum.
 #### shape
 ```python
-shape: 'NDArray'
+shape: numpy.ndarray[tuple[typing.Any, ...], numpy.dtype[~_ScalarT]]
 ```
 Shape of the underlying data array.
-#### bounds
-```python
-bounds: 'NDArray'
-```
-Bounds of the spectrum (in array grid coordinates).
 #### scaling
 ```python
-scaling: 'NDArray'
+scaling: numpy.ndarray[tuple[typing.Any, ...], numpy.dtype[~_ScalarT]]
 ```
 Vector of diagonal components of the affine transformation matrix. 
 Components are scaling values along each axis.
 #### offset
 ```python
-offset: 'NDArray'
+offset: numpy.ndarray[tuple[typing.Any, ...], numpy.dtype[~_ScalarT]]
 ```
 Constant offset vector for the affine transformation.
+#### bounds
+```python
+bounds: numpy.ndarray[tuple[typing.Any, ...], numpy.dtype[~_ScalarT]]
+```
+Bounds of the spectrum (in array grid coordinates).
 #### inverse_scaling
 ```python
-inverse_scaling: 'NDArray'
+inverse_scaling: numpy.ndarray[tuple[typing.Any, ...], numpy.dtype[~_ScalarT]]
 ```
 Vector containing the diagonal entries of the affine transformation matrix for
 the inverse transform. Used to convert from chemical shifts to grid coords.
 #### inverse_offset
 ```python
-inverse_offset: 'NDArray'
+inverse_offset: numpy.ndarray[tuple[typing.Any, ...], numpy.dtype[~_ScalarT]]
 ```
 Vector offset for the inverse transform.
 Used to convert from chemical shifts to grid coords.
 #### grid_to_shift
 ```python
-def grid_to_shift(self, x: 'NDArray') -> 'NDArray':
+def grid_to_shift(
+    self,
+    x: numpy.ndarray[tuple[typing.Any, ...], numpy.dtype[~_ScalarT]]
+) -> numpy.ndarray[tuple[typing.Any, ...], numpy.dtype[~_ScalarT]]:
 ```
 Convert a grid coord to a chemical shift.
 
@@ -169,7 +258,7 @@ Convert a grid coord to a chemical shift.
 
 #### shift_to_grid
 ```python
-def shift_to_grid(self, x) -> 'NDArray':
+def shift_to_grid(self, x) -> numpy.ndarray[tuple[typing.Any, ...], numpy.dtype[~_ScalarT]]:
 ```
 Convert a grid coord to a chemical shift.
 
@@ -186,12 +275,12 @@ Convert a grid coord to a chemical shift.
 @classmethod
 def from_reference(
     cls,
-    shape: 'NDArray',
-    spectral_width: 'NDArray',
-    spectrometer_frequency: 'NDArray',
-    ref_coord: 'NDArray',
-    ref_shift: 'NDArray'
-) -> 'SpectrumTransform':
+    shape: numpy.ndarray[tuple[typing.Any, ...], numpy.dtype[~_ScalarT]],
+    spectral_width: numpy.ndarray[tuple[typing.Any, ...], numpy.dtype[~_ScalarT]],
+    spectrometer_frequency: numpy.ndarray[tuple[typing.Any, ...], numpy.dtype[~_ScalarT]],
+    ref_coord: numpy.ndarray[tuple[typing.Any, ...], numpy.dtype[~_ScalarT]],
+    ref_shift: numpy.ndarray[tuple[typing.Any, ...], numpy.dtype[~_ScalarT]]
+) -> bioshift.spectra.spectrumtransform.SpectrumTransform:
 ```
 Create a SpectrumTransform from spectrum referencing information.
 All arguments must be NDArrays with shape `(ndim,)`
@@ -212,9 +301,24 @@ All arguments must be NDArrays with shape `(ndim,)`
 > `SpectrumTransform` object with scaling and offset vectors calculated
 > from the reference data.
 
+#### axes
+```python
+axes: tuple[numpy.ndarray[tuple[typing.Any, ...], numpy.dtype[~_ScalarT]], ...]
+```
+
+#### grid
+```python
+grid: tuple[numpy.ndarray[tuple[typing.Any, ...], numpy.dtype[~_ScalarT]], ...]
+```
+
 #### slice
 ```python
-def slice(self, axis: 'int') -> 'SpectrumTransform':
+def slice(self, axis: int) -> bioshift.spectra.spectrumtransform.SpectrumTransform:
+```
+
+#### transpose
+```python
+def transpose(self, axes=None):
 ```
 
 ## NMRExperiment
@@ -245,26 +349,6 @@ HNCA = <NMRExperiment.HNCA: 'HNCA'>
 #### HNCOCACB
 ```python
 HNCOCACB = <NMRExperiment.HNCOCACB: 'HN(CO)CACB'>
-```
-
-## NMRNucleus
-```python
-class NMRNucleus(enum.Enum):
-```
-
-#### H1
-```python
-H1 = <NMRNucleus.H1: '1H'>
-```
-
-#### N15
-```python
-N15 = <NMRNucleus.N15: '15N'>
-```
-
-#### C13
-```python
-C13 = <NMRNucleus.C13: '13C'>
 ```
 
 ## load_spectrum

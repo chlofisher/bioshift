@@ -4,7 +4,7 @@ from pathlib import Path
 import struct
 import numpy as np
 
-from bioshift.spectra import SpectrumTransform, NMRNucleus
+from bioshift.spectra import SpectrumTransform
 from bioshift.io.blockedspectrum import BlockedSpectrumDataSource
 from bioshift.io.spectrumreader import SpectrumReader
 
@@ -113,8 +113,8 @@ class UCSFSpectrumReader(SpectrumReader):
     def get_ndim(self) -> int:
         return self._params["ndim"]
 
-    def get_nuclei(self) -> tuple[NMRNucleus, ...]:
-        return tuple(NMRNucleus(nuc) for nuc in self._params["nuclei"])
+    def get_nuclei(self) -> tuple[str, ...]:
+        return self._params["nuclei"]
 
     def get_transform(self) -> SpectrumTransform:
         return SpectrumTransform.from_reference(

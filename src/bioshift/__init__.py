@@ -1,7 +1,6 @@
 from bioshift.spectra import (
     Spectrum,
     SpectrumTransform,
-    NMRNucleus,
     NMRExperiment,
 )
 
@@ -11,6 +10,5 @@ __all__ = [
     "Spectrum",
     "SpectrumTransform",
     "NMRExperiment",
-    "NMRNucleus",
     "load_spectrum",
 ]

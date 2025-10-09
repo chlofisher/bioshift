@@ -64,7 +64,7 @@ def render_markdown(doc, depth):
         return
 
     header_level = 2 * depth
-    print(f"{"#" * header_level} {doc.name}")
+    print(f"""{"#" * header_level} {doc.name}""")
 
     if isinstance(doc, pdoc.doc.Function):
         print("```python")
@@ -78,7 +78,7 @@ def render_markdown(doc, depth):
         definition = f"class {doc.name}"
 
         if len(doc.bases) > 0:
-            definition += f"({", ".join([base[2] for base in doc.bases])})"
+            definition += f"""({", ".join([base[2] for base in doc.bases])})"""
 
         definition += ":"
 

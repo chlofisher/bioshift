@@ -4,7 +4,7 @@ from typing import Any
 from pathlib import Path
 import numpy as np
 
-from bioshift.spectra import SpectrumTransform, NMRNucleus
+from bioshift.spectra import SpectrumTransform
 from bioshift.io.spectrumreader import SpectrumReader
 from bioshift.io.blockedspectrum import BlockedSpectrumDataSource
 
@@ -234,7 +234,7 @@ class AzaraSpectrumReader(SpectrumReader):
     def get_ndim(self) -> int:
         return self._params["ndim"]
 
-    def get_nuclei(self) -> tuple[NMRNucleus, ...]:
+    def get_nuclei(self) -> tuple[str, ...]:
         return self._params["nuclei"]
 
     def get_data(self) -> BlockedSpectrumDataSource:

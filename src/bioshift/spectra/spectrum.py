@@ -17,10 +17,10 @@ from bioshift.spectra.spectrumdatasource import (
 from bioshift.spectra.spectrumtransform import SpectrumTransform
 
 
-class NMRNucleus(Enum):
-    H1 = "1H"
-    N15 = "15N"
-    C13 = "13C"
+# class NMRNucleus(Enum):
+#     H1 = "H"
+#     N15 = "N"
+#     C13 = "C"
 
 
 class NMRExperiment(Enum):
@@ -39,7 +39,7 @@ class Spectrum:
     is by using the `Spectrum.load()` function. This automatically determines
     the format of the spectrum and selects the correct SpectrumReader.
 
-    Example usage:
+    Example:
     ```python
     spectrum = Spectrum.load('./spectrum_file.ucsf')
     ```
@@ -48,7 +48,7 @@ class Spectrum:
     ndim: int
     """Number of dimensions of the spectrum."""
 
-    nuclei: tuple[NMRNucleus, ...]
+    nuclei: tuple[str, ...]
     """The type of nucleus (13C, 1H, etc.) associated with each axis."""
 
     data_source: SpectrumDataSource
@@ -90,6 +90,9 @@ class Spectrum:
 
     @property
     def array(self) -> NDArray:
+        """
+        Get the raw data of the spectrum as a numpy array.
+        """
         return self.data_source.get_data()
 
     @classmethod
@@ -97,13 +100,13 @@ class Spectrum:
         """
         Create a spectrum from a path to a spectrum file.
         Automatically determines the file format and dispatches the correct spectrum reader.
+        Currently spectra stored in .ucsf and .spc(.par) files are supported.
 
         Args:
             path: Path to the spectrum file.
         Returns:
             Spectrum object
         """
-
         from bioshift.io import load_spectrum
 
         return load_spectrum(path)
@@ -126,7 +129,24 @@ class Spectrum:
             transform=self.transform,
         )
 
-    def intensity(self, x: NDArray) -> NDArray:
+    def intensity(self, shift: NDArray | tuple[NDArray, ...]) -> NDArray:
+        """
+        Evaluate the interpolated intensity at given chemical shift coords.
+
+        This method wraps `scipy.interpolate.RegularGridInterpolator` to interpolate
+        values from a regularly spaced ND grid (`self.array`) defined over axes
+        stored in `self.transform.axes`.
+        Args:
+            shift: Coordinates at which to evaluate the intensity. 
+            Accepts:
+                - A NumPy array of shape (n_points, ndim), where each row is a point.
+                - A tuple of arrays (e.g., from `np.meshgrid`) of equal shape, which
+                  will be stacked into coordinate points.
+        Returns:
+            Interpolated intensity values at the specified coordinates.
+            If `shift` is a tuple of meshgrid arrays, the output shape matches the grid shape.
+        """
+
         interp = RegularGridInterpolator(
             points=self.transform.axes,
             values=self.array,
@@ -134,9 +154,9 @@ class Spectrum:
             bounds_error=False,
             fill_value=0,
         )
-        return interp(x)
+        return interp(shift)
 
-    def slice(self, axis: int, z: float):
+    def slice(self, axis: int, z: float) -> Spectrum:
         """
         Take a slice from the spectrum along the specified axis.
 
@@ -144,7 +164,7 @@ class Spectrum:
             axis: The index of the axis perpendicular to the slice plane.
             z: The chemical shift of the plane along the specified axis.
         Returns:
-            A new spectrum, with one fewer dimension.
+            A new spectrum, with one fewer dimension, corresponding to the slice plane.
         """
         level = (
             z * self.transform.inverse_scaling[axis]
@@ -174,7 +194,15 @@ class Spectrum:
             transform=self.transform.slice(axis),
         )
 
-    def project(self, axis: int):
+    def project(self, axis: int) -> Spectrum:
+        """
+        Project the spectrum along one of its coordinate axes by taking the integral.
+
+        Args:
+            axis: The axis along which to project the spectrum.
+        Returns:
+            A new spectrum with one fewer dimension.
+        """
         data_source = TransformedDataSource(
             parent=self.data_source, func=partial(np.trapz, axis=axis)
         )
@@ -188,7 +216,15 @@ class Spectrum:
             transform=self.transform.slice(axis),
         )
 
-    def blur(self, sigma: tuple[float]):
+    def blur(self, sigma: tuple[float]) -> Spectrum:
+        """
+        Apply a gaussian blur to the spectrum.
+        
+        Args:
+            sigma: The standard deviation of the gaussian kernel used for the blur.
+        Returns:
+            A new spectrum which has been blurred.
+        """
         if len(sigma) != self.ndim:
             raise ValueError(
                 f"""Mismatched dimensions. Spectrum is {self.ndim}D,
@@ -207,9 +243,23 @@ class Spectrum:
             transform=self.transform,
         )
 
-    def threshold(self, level: float):
-        def threshold_func(arr: NDArray) -> NDArray:
-            return np.where(np.abs(arr) < level, 0, arr)
+    def threshold(self, level: float, soft: bool=True) -> Spectrum:
+        """
+        Apply a threshold to the spectrum.
+
+        Args:
+            level: The threshold level. All points with intensities below this value are set to zero.
+            soft: If set to True, values above the threshold are shifted down by the threshold level,
+            in order to keep the spectrum continuous.
+        Returns:
+            A new spectrum with all points below the threshold value set to zero.
+        """
+        if soft:
+            def threshold_func(arr: NDArray) -> NDArray:
+                return np.where(np.abs(arr) < level, 0, arr)
+        else:
+            def threshold_func(arr: NDArray) -> NDArray:
+                return np.where(np.abs(arr) < level, 0, arr - level * np.sign(arr))
 
         data_source = TransformedDataSource(
             parent=self.data_source, func=threshold_func
@@ -222,7 +272,12 @@ class Spectrum:
             transform=self.transform,
         )
 
-    def normalize(self):
+    def normalize(self) -> Spectrum:
+        """
+        Normalize the spectrum to have maximum 1.0.
+        Returns:
+            A new spectrum with all values divided by the maximum of the original.
+        """
         def normalize_func(arr: NDArray) -> NDArray:
             max = np.abs(arr).max()
             return arr / max
@@ -238,7 +293,16 @@ class Spectrum:
             transform=self.transform,
         )
 
-    def transpose(self, axes=None):
+    def transpose(self, axes: tuple[int, ...] | None=None) -> Spectrum:
+        """
+        Transpose the spectrum, swapping the ordering of the axes.
+        Args:
+            Axes: Tuple of integers defining the new ordering of the axes. 
+            If None are provided, then the default behaviour is to invert 
+            the ordering of the axes (the same as np.transpose)
+        Returns:
+            A new spectrum with axes reordered.
+        """
         if axes is None:
             axes = range(self.ndim)[::-1]
 
