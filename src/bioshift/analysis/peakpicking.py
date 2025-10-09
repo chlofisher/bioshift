@@ -1,5 +1,6 @@
 import numpy as np
 from numpy.typing import NDArray
+
 import skimage
 
 from bioshift.spectra import Spectrum
@@ -11,7 +12,7 @@ def difference_of_gaussians(
     k: float,
     threshold_rel: float = 0.1,
     negative_peaks: bool = True,
-):
+) -> NDArray:
     sigma_scaled = np.abs(np.array(sigma) * spectrum.transform.inverse_scaling)
 
     normalized = spectrum.normalize()
@@ -26,7 +27,7 @@ def difference_of_gaussians(
 
     if negative_peaks:
         negative_features = skimage.feature.peak_local_max(
-            dog, threshold_rel=threshold_rel
+            -dog, threshold_rel=threshold_rel
         )
 
         features = np.vstack((positive_features, negative_features))
