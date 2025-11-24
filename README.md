@@ -14,12 +14,18 @@
 - Assign peptide residues using triple-resonance backbone assignment and statistical predictions from chemical shift values
 
 ## Quick Start
-Install from PyPI in a virtual environment using `pip` or your python package manager of choice (`uv`, `poetry`, etc.). 
+The quickest way to install is to clone the source and use `uv` to install locally.
 
 ```bash
-pip install bioshift
+git clone https://github.com/chlofisher/bioshift
+```
+then in your python project directory
+```bash
+uv init
+uv pip install ~/path/to/bioshift/
 ```
 
+You can then import into your own python files.
 ```python
 import bioshift
 
